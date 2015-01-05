@@ -1,0 +1,5 @@
+.*
+!.gitignore
+*.gem
+*.lock
+*cassette*
