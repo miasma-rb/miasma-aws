@@ -30,7 +30,7 @@ module Miasma
             list << content
           end
           set = result.get(*result_key.slice(0, 3))
-          if(set && set['NextToken'])
+          if(set.is_a?(Hash) && set['NextToken'])
             list += all_result_pages(set['NextToken'], *result_key, &block)
           end
           list.compact
