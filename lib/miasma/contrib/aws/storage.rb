@@ -262,11 +262,13 @@ module Miasma
               )
               file.etag = result.get(:body, 'CompleteMultipartUploadResult', 'ETag')
             else
-              if(file.attributes[:body].is_a?(IO) || file.attributes[:body].is_a?(StringIO))
+              if(file.attributes[:body].respond_to?(:readpartial))
                 args[:headers]['Content-Length'] = file.body.size.to_s
                 file.body.rewind
-                args[:body] = file.body.read
+                args[:body] = file.body.readpartial(file.body.size)
                 file.body.rewind
+              else
+                args[:headers]['Content-Length'] = 0
               end
               result = request(
                 args.merge(
