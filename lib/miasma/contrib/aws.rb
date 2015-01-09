@@ -196,7 +196,7 @@ module Miasma
         def generate_signature(http_method, path, opts)
           to_sign = [
             algorithm,
-            AwsApiCore.time_iso8601,
+            opts.to_smash.fetch(:headers, 'X-Amz-Date', AwsApiCore.time_iso8601),
             credential_scope,
             hashed_canonical_request(
               can_req = build_canonical_request(http_method, path, opts)
