@@ -356,6 +356,7 @@ module Miasma
         # @param file [Models::Storage::File]
         # @return [IO, HTTP::Response::Body]
         def file_body(file)
+          file_content = nil
           if(file.persisted?)
             result = request(
               :path => file_path(file),
@@ -365,19 +366,20 @@ module Miasma
             content = result[:body]
             begin
               if(content.is_a?(String))
-                StringIO.new(content)
+                file_content = StringIO.new(content)
               else
                 if(content.respond_to?(:stream!))
                   content.stream!
                 end
-                content
+                file_content = content
               end
             rescue HTTP::StateError
-              StringIO.new(content.to_s)
+              file_content = StringIO.new(content.to_s)
             end
           else
-            StringIO.new('')
+            file_content = StringIO.new('')
           end
+          File::Streamable(file_content)
         end
 
         # Simple callback to allow request option adjustments prior to
