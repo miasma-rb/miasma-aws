@@ -379,7 +379,7 @@ module Miasma
           else
             file_content = StringIO.new('')
           end
-          File::Streamable(file_content)
+          File::Streamable.new(file_content)
         end
 
         # Simple callback to allow request option adjustments prior to
