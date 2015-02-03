@@ -72,6 +72,14 @@ module Miasma
             if(stack)
               next if stack.id != stk['StackId'] && stk['StackId'].split('/')[1] != stack.id
             end
+            state = stk['StackStatus'].downcase.to_sym
+            unless(Miasma::Models::Orchestration::VALID_RESOURCE_STATES.include?(state))
+              parts = state.to_s.split('_')
+              state = [state.first, *state.slice(-2, state.size)].join('_').to_sym
+              unless(Miasma::Models::Orchestration::VALID_RESOURCE_STATES.include?(state))
+                state = :unknown
+              end
+            end
             new_stack = stack || Stack.new(self)
             new_stack.load_data(
               :id => stk['StackId'],
@@ -84,7 +92,7 @@ module Miasma
               :timeout_in_minutes => stk['TimeoutInMinutes'] ? stk['TimeoutInMinutes'].to_i : nil,
               :status => stk['StackStatus'],
               :status_reason => stk['StackStatusReason'],
-              :state => stk['StackStatus'].downcase.to_sym,
+              :state => state,
               :template_description => stk['TemplateDescription'],
               :disable_rollback => !!stk['DisableRollback'],
               :outputs => [stk.get('Outputs', 'member')].flatten(1).compact.map{|o|
