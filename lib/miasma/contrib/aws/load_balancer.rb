@@ -103,7 +103,7 @@ module Miasma
         def load_balancer_data(balancer=nil)
           params = Smash.new('Action' => 'DescribeLoadBalancers')
           if(balancer)
-            params.merge('LoadBalancerNames.member.1' => balancer.id || balancer.name)
+            params.merge!('LoadBalancerNames.member.1' => balancer.id || balancer.name)
           end
           result = all_result_pages(nil, :body, 'DescribeLoadBalancersResponse', 'DescribeLoadBalancersResult', 'LoadBalancerDescriptions', 'member') do |options|
             request(
@@ -111,23 +111,42 @@ module Miasma
               :params => options.merge(params)
             )
           end
+          if(balancer)
+            health_result = all_result_pages(nil, :body, 'DescribeInstanceHealthResponse', 'DescribeInstanceHealthResult', 'InstanceStates', 'member') do |options|
+              request(
+                :path => '/',
+                :params => options.merge(
+                  'LoadBalancerName' => balancer.id || balancer.name,
+                  'Action' => 'DescribeInstanceHealth'
+                )
+              )
+            end
+          end
           result.map do |blr|
             (balancer || Balancer.new(self)).load_data(
-              :id => blr['LoadBalancerName'],
-              :name => blr['LoadBalancerName'],
-              :state => :active,
-              :status => 'ACTIVE',
-              :created => blr['CreatedTime'],
-              :updated => blr['CreatedTime'],
-              :public_addresses => [
-                Balancer::Address.new(
-                  :address => blr['DNSName'],
-                  :version => 4
+              Smash.new(
+                :id => blr['LoadBalancerName'],
+                :name => blr['LoadBalancerName'],
+                :state => :active,
+                :status => 'ACTIVE',
+                :created => blr['CreatedTime'],
+                :updated => blr['CreatedTime'],
+                :public_addresses => [
+                  Balancer::Address.new(
+                    :address => blr['DNSName'],
+                    :version => 4
+                  )
+                ],
+                :servers => [blr.get('Instances', 'member')].flatten(1).compact.map{|i|
+                  Balancer::Server.new(self.api_for(:compute), :id => i['InstanceId'])
+                }
+              ).merge(
+                health_result.nil? ? {} : Smash.new(
+                  :server_states => health_result.nil? ? nil : health_result.map{|i|
+                    Balancer::ServerState.new(self.api_for(:compute), :id => i['InstanceId'], :status => i['State'], :reason => i['ReasonCode'], :state => i['State'] == 'InService' ? :up : :down)
+                  }
                 )
-              ],
-              :servers => [blr.get('Instances', 'member')].flatten(1).compact.map{|i|
-                Balancer::Server.new(self.api_for(:compute), :id => i['InstanceId'])
-              }
+              )
             ).valid_state
           end
         end
