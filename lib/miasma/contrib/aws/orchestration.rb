@@ -75,8 +75,8 @@ module Miasma
             state = stk['StackStatus'].downcase.to_sym
             unless(Miasma::Models::Orchestration::VALID_RESOURCE_STATES.include?(state))
               parts = state.to_s.split('_')
-              state = [state.first, *state.slice(-2, state.size)].join('_').to_sym
-              unless(Miasma::Models::Orchestration::VALID_RESOURCE_STATES.include?(state))
+              state = [parts.first, *parts.slice(-2, parts.size)].join('_').to_sym
+              unless(Miasma::Models::Orchestration::VALID_RESOURCE_STATES.include?(parts))
                 state = :unknown
               end
             end
