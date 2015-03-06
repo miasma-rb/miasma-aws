@@ -136,7 +136,7 @@ module Miasma
             result = request(
               :path => '/',
               :method => :post,
-              :params => Smash.new(
+              :form => Smash.new(
                 'Action' => 'UpdateStack'
               ).merge(params)
             )
@@ -148,7 +148,7 @@ module Miasma
             result = request(
               :path => '/',
               :method => :post,
-              :params => Smash.new(
+              :form => Smash.new(
                 'Action' => 'CreateStack',
                 'DisableRollback' => !!stack.disable_rollback
               ).merge(params)
@@ -227,7 +227,7 @@ module Miasma
             result = request(
               :method => :post,
               :path => '/',
-              :params => Smash.new(
+              :form => Smash.new(
                 'Action' => 'ValidateTemplate',
                 'TemplateBody' => MultiJson.dump(stack.template)
               )
