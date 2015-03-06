@@ -207,7 +207,7 @@ module Miasma
                 args.merge(
                   Smash.new(
                     :path => file_path(file),
-                    :endpoint => bucket_endpoint(bucket),
+                    :endpoint => bucket_endpoint(file.bucket),
                     :params => {
                       :uploads => true
                     }
@@ -223,7 +223,7 @@ module Miasma
                   request(
                     :method => :put,
                     :path => file_path(file),
-                    :endpoint => bucket_endpoint(bucket),
+                    :endpoint => bucket_endpoint(file.bucket),
                     :headers => Smash.new(
                       'Content-Length' => content.size,
                       'Content-MD5' => Digest::MD5.hexdigest(content)
