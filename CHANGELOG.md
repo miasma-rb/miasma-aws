@@ -1,3 +1,7 @@
+## v0.1.6
+* Fix state assignment when undefined within orchestration stacks
+* Fix multi-part S3 uploads
+
 ## v0.1.4
 * Fix values set within load balancer reload
 * Ensure state is valid for orchestration stack prior to set
