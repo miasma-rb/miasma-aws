@@ -9,7 +9,7 @@ module Miasma
 
         # Service name of the API
         API_SERVICE = 's3'
-        # Supported version of the AutoScaling API
+        # Supported version of the Storage API
         API_VERSION = '2006-03-01'
 
         include Contrib::AwsApiCore::ApiCommon
@@ -191,7 +191,7 @@ module Miasma
           if(file.dirty?)
             file.load_data(file.attributes)
             args = Smash.new
-            args[:headers] = Smash[
+            headers = Smash[
               Smash.new(
                 :content_type => 'Content-Type',
                 :content_disposition => 'Content-Disposition',
@@ -202,10 +202,14 @@ module Miasma
                 end
               end.compact
             ]
-            if(file.attributes[:body].is_a?(IO) && file.body.size >= Storage::MAX_BODY_SIZE_FOR_STRINGIFY)
+            unless(headers.empty?)
+              args[:headers] = headers
+            end
+            if(file.attributes[:body].respond_to?(:read) && file.attributes[:body].size >= Storage::MAX_BODY_SIZE_FOR_STRINGIFY)
               upload_id = request(
                 args.merge(
                   Smash.new(
+                    :method => :post,
                     :path => file_path(file),
                     :endpoint => bucket_endpoint(file.bucket),
                     :params => {
@@ -214,61 +218,74 @@ module Miasma
                   )
                 )
               ).get(:body, 'InitiateMultipartUploadResult', 'UploadId')
-              count = 1
-              parts = []
-              file.body.rewind
-              while(content = file.body.read(Storage::READ_BODY_CHUNK_SIZE))
-                parts << [
-                  count,
-                  request(
-                    :method => :put,
-                    :path => file_path(file),
-                    :endpoint => bucket_endpoint(file.bucket),
-                    :headers => Smash.new(
-                      'Content-Length' => content.size,
-                      'Content-MD5' => Digest::MD5.hexdigest(content)
-                    ),
-                    :params => Smash.new(
-                      'partNumber' => count,
-                      'uploadId' => upload_id
-                    ),
-                    :body => content
-                  ).get(:body, :headers, :etag)
-                ]
-                count += 1
-              end
-              complete = SimpleXml.xml_out(
-                Smash.new(
-                  'CompleteMultipartUpload' => {
-                    'Part' => parts.map{|part|
-                      {'PartNumber' => part.first, 'ETag' => part.last}
+              begin
+                count = 1
+                parts = []
+                file.body.rewind
+                while(content = file.body.read(Storage::READ_BODY_CHUNK_SIZE))
+                  parts << [
+                    count,
+                    request(
+                      :method => :put,
+                      :path => file_path(file),
+                      :endpoint => bucket_endpoint(file.bucket),
+                      :headers => Smash.new(
+                        'Content-Length' => content.size,
+                        'Content-MD5' => Base64.urlsafe_encode64(Digest::MD5.digest(content))
+                      ),
+                      :params => Smash.new(
+                        'partNumber' => count,
+                        'uploadId' => upload_id
+                      ),
+                      :body => content
+                    ).get(:headers, :etag)
+                  ]
+                  count += 1
+                end
+                complete = XmlSimple.xml_out(
+                  Smash.new(
+                    'CompleteMultipartUpload' => {
+                      'Part' => parts.map{|part|
+                        {'PartNumber' => part.first, 'ETag' => part.last}
+                      }
                     }
-                  }
-                ),
-                'AttrPrefix' => true,
-                'KeepRoot' => true
-              )
-              result = request(
-                :method => :post,
-                :path => file_path(file),
-                :endpoint => bucket_endpoint(file.bucket),
-                :params => Smash.new(
-                  'UploadId' => upload_id
-                ),
-                :headers => Smash.new(
-                  'Content-Length' => complete.size
-                ),
-                :body => complete
-              )
-              file.etag = result.get(:body, 'CompleteMultipartUploadResult', 'ETag')
+                  ),
+                  'AttrPrefix' => true,
+                  'KeepRoot' => true
+                )
+                result = request(
+                  :method => :post,
+                  :path => file_path(file),
+                  :endpoint => bucket_endpoint(file.bucket),
+                  :params => Smash.new(
+                    'uploadId' => upload_id
+                  ),
+                  :headers => Smash.new(
+                    'Content-Length' => complete.size
+                  ),
+                  :body => complete
+                )
+                file.etag = result.get(:body, 'CompleteMultipartUploadResult', 'ETag')
+              rescue
+                request(
+                  :method => :delete,
+                  :path => file_path(file),
+                  :endpoint => bucket_endpoint(file.bucket),
+                  :params => {
+                    'uploadId' => upload_id
+                  },
+                  :expects => 204
+                )
+                raise
+              end
             else
               if(file.attributes[:body].respond_to?(:readpartial))
-                args[:headers]['Content-Length'] = file.body.size.to_s
+                args.set(:headers, 'Content-Length', file.body.size.to_s)
                 file.body.rewind
                 args[:body] = file.body.readpartial(file.body.size)
                 file.body.rewind
               else
-                args[:headers]['Content-Length'] = 0
+                args.set(:headers, 'Content-Length', 0)
               end
               result = request(
                 args.merge(
