@@ -35,6 +35,10 @@ module Miasma
           'AWS::AutoScaling::AutoScalingGroup' => Smash.new(
             :api => :auto_scale,
             :collection => :groups
+          ),
+          'AWS::CloudFormation::Stack' => Smash.new(
+            :api => :orchestration,
+            :collection => :stacks
           )
         )
 
