@@ -5,6 +5,12 @@ module Miasma
     class Orchestration
       class Aws < Orchestration
 
+        # Extended stack model to provide AWS specific stack options
+        class Stack < Orchestration::Stack
+          attribute :stack_policy_body, Hash, :coerce => lambda{|v| MultiJson.load(v).to_smash}
+          attribute :stack_policy_url, String
+        end
+
         # Service name of the API
         API_SERVICE = 'cloudformation'
         # Supported version of the AutoScaling API
@@ -57,7 +63,8 @@ module Miasma
             descriptions = all_result_pages(nil, :body, 'DescribeStacksResponse', 'DescribeStacksResult', 'Stacks', 'member') do |options|
               request(
                 :path => '/',
-                :params => options.merge(d_params)
+                :form => options.merge(d_params),
+                :method => :post
               )
             end
           else
@@ -66,7 +73,8 @@ module Miasma
           lists = all_result_pages(nil, :body, 'ListStacksResponse', 'ListStacksResult', 'StackSummaries', 'member') do |options|
             request(
               :path => '/',
-              :params => options.merge(l_params)
+              :form => options.merge(l_params),
+              :method => :post
             )
           end.map do |stk|
             desc = descriptions.detect do |d_stk|
@@ -131,6 +139,21 @@ module Miasma
           (stack.notification_topics || []).each_with_index do |topic, idx|
             params["NotificationARNs.member.#{idx + 1}"] = topic
           end
+          (stack.tags || []).each_with_index do |tag, idx|
+            params["Tags.member.#{idx + 1}"] = tag
+          end
+          if(stack.stack_policy_body)
+            params['StackPolicyBody'] = MultiJson.dump(stack.stack_policy_body)
+          end
+          if(stack.stack_policy_url)
+            params['StackPolicyURL'] = stack.stack_policy_url
+          end
+          unless(stack.disable_rollback.nil?)
+            params['OnFailure'] = stack.disable_rollback ? 'nothing' : 'delete'
+          end
+          if(params['OnFailure'])
+            params['OnFailure'] = params['OnFailure'] == 'nothing' ? 'DO_NOTHING' : params['OnFailure'].upcase
+          end
           if(stack.template.empty?)
             params['UsePreviousTemplate'] = true
           else
@@ -153,8 +176,7 @@ module Miasma
               :path => '/',
               :method => :post,
               :form => Smash.new(
-                'Action' => 'CreateStack',
-                'DisableRollback' => !!stack.disable_rollback
+                'Action' => 'CreateStack'
               ).merge(params)
             )
             stack.id = result.get(:body, 'CreateStackResponse', 'CreateStackResult', 'StackId')
