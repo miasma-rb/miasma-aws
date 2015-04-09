@@ -67,6 +67,17 @@ module Miasma
                 :method => :post
               )
             end
+            policy = request(
+              :path => '/',
+              :method => :get,
+              :params => Smash.new(
+                'Action' => 'GetStackPolicy',
+                'StackName' => stack.id
+              )
+            ).get(:body, 'GetStackPolicyResult', 'StackPolicyBody')
+            if(policy)
+              descriptions.first[:stack_policy] = MultiJson.load(policy).to_smash
+            end
           else
             descriptions = []
           end
@@ -123,7 +134,10 @@ module Miasma
                 [stk.fetch('Parameters', 'member', [])].flatten(1).map{|param|
                   [param['ParameterKey'], param['ParameterValue']]
                 }
-              ]
+              ],
+              :custom => Smash.new(
+                :stack_policy_body => policy
+              )
             ).valid_state
           end
         end
