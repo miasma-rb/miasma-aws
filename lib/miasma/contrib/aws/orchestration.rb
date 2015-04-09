@@ -114,6 +114,11 @@ module Miasma
                   :description => o['Description']
                 )
               },
+              :tags => Smash[
+                [stk.fetch('Tags', 'member', [])].flatten(1).map{|param|
+                  [param['Key'], param['Value']]
+                }
+              ],
               :parameters => Smash[
                 [stk.fetch('Parameters', 'member', [])].flatten(1).map{|param|
                   [param['ParameterKey'], param['ParameterValue']]
