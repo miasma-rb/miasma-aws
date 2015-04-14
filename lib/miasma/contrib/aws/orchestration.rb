@@ -172,7 +172,7 @@ module Miasma
             params['OnFailure'] = stack.disable_rollback ? 'nothing' : 'delete'
           end
           if(stack.on_failure)
-            params['OnFailure'] = stack.on_failure == 'nothing' ? 'DO_NOTHING' : params['OnFailure'].upcase
+            params['OnFailure'] = stack.on_failure == 'nothing' ? 'DO_NOTHING' : stack.on_failure.upcase
           end
           if(stack.template.empty?)
             params['UsePreviousTemplate'] = true
