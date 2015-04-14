@@ -1,3 +1,10 @@
+## v0.1.8
+* Include resource mapping for Stack
+* Add support for aws credentials file
+* Add stack tagging support
+* Enable on failure option for stack creation
+* Update list requests to use post + form to prevent param limitations via get
+
 ## v0.1.6
 * Fix state assignment when undefined within orchestration stacks
 * Fix multi-part S3 uploads
