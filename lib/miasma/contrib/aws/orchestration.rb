@@ -314,7 +314,8 @@ module Miasma
           results = all_result_pages(nil, :body, 'DescribeStackResourcesResponse', 'DescribeStackResourcesResult', 'StackResources', 'member') do |options|
             request(
               :path => '/',
-              :params => options.merge(
+              :method => :post,
+              :form => options.merge(
                 Smash.new(
                   'Action' => 'DescribeStackResources',
                   'StackName' => stack.id
@@ -353,7 +354,8 @@ module Miasma
           results = all_result_pages(nil, :body, 'DescribeStackEventsResponse', 'DescribeStackEventsResult', 'StackEvents', 'member') do |options|
             request(
               :path => '/',
-              :params => options.merge(
+              :method => :post,
+              :form => options.merge(
                 'Action' => 'DescribeStackEvents',
                 'StackName' => stack.id
               )
