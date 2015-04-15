@@ -1,3 +1,6 @@
+## v0.1.10
+* Fix disable rollback mapping value to on failure
+
 ## v0.1.8
 * Include resource mapping for Stack
 * Add support for aws credentials file
