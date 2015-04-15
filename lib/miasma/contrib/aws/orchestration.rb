@@ -169,7 +169,7 @@ module Miasma
             params['StackPolicyURL'] = stack.custom[:stack_policy_url]
           end
           unless(stack.disable_rollback.nil?)
-            params['OnFailure'] = stack.disable_rollback ? 'nothing' : 'delete'
+            params['OnFailure'] = stack.disable_rollback ? 'DO_NOTHING' : 'ROLLBACK'
           end
           if(stack.on_failure)
             params['OnFailure'] = stack.on_failure == 'nothing' ? 'DO_NOTHING' : stack.on_failure.upcase
