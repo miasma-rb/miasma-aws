@@ -23,7 +23,7 @@ module Miasma
           args[:aws_region] = args.fetch(:aws_bucket_region, 'us-east-1')
           super(args)
           aws_region = cache_region
-          if(aws_bucket_region)
+          if(aws_bucket_region && aws_bucket_region != 'us-east-1')
             self.aws_host = "s3-#{aws_bucket_region}.amazonaws.com"
           else
             self.aws_host = 's3.amazonaws.com'
