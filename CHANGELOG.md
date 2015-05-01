@@ -1,3 +1,9 @@
+## v0.1.12
+* Update default file paths to use `Dir.home` instead of ~ expansion
+* Fix bug reading .aws/credentials when whitespace is used
+* Add support for .aws/config
+* Auto detect us-east-1 region and do not use custom s3 endpoint
+
 ## v0.1.10
 * Fix disable rollback mapping value to on failure
 
