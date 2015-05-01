@@ -329,6 +329,7 @@ module Miasma
           klass.class_eval do
             attribute :aws_profile_name, String, :default => 'default'
             attribute :aws_credentials_file, String, :required => true, :default => File.join(Dir.home, '.aws/credentials')
+            attribute :aws_config_file, String, :required => true, :default => File.join(Dir.home, '.aws/config')
             attribute :aws_access_key_id, String, :required => true
             attribute :aws_secret_access_key, String, :required => true
             attribute :aws_region, String, :required => true
@@ -363,35 +364,50 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def custom_setup(creds)
-          if(creds[:aws_profile_name] && File.exists?(creds[:aws_credentials_file]))
-            creds.replace(load_aws_credentials(creds[:aws_profile_name]).merge(creds))
+          if(creds[:aws_profile_name])
+            creds.replace(
+              load_aws_file(
+                aws_config_file
+                creds[:aws_profile_name]
+              ).merge(
+                load_aws_file(
+                  aws_credentials_file
+                  creds[:aws_profile_name]
+                )
+              ).merge(creds)
+            )
           end
         end
 
-        # Load credentials from the AWS credentials file
+        # Load configuration from the AWS configuration file
         #
+        # @param file_path [String] path to configuration file
         # @param profile [String] name of profile to load
         # @return [Smash]
-        def load_aws_credentials(profile)
-          credentials = Smash.new.tap do |creds|
-            key = nil
-            File.readlines(aws_credentials_file).each do |line|
-              line.strip!
-              if(line.start_with?('[') && line.end_with?(']'))
-                key = line.tr('[]', '')
-                creds[key] = Smash.new
-              else
-                creds[key].merge!(Smash[*line.split('=').map(&:strip)])
+        def load_aws_file(file_path, profile)
+          if(File.exists?(file_path))
+            l_config = Smash.new.tap do |creds|
+              key = nil
+              File.readlines(file_path).each do |line|
+                line.strip!
+                if(line.start_with?('[') && line.end_with?(']'))
+                  key = line.tr('[]', '').strip
+                  creds[key] = Smash.new
+                else
+                  creds[key].merge!(Smash[*line.split('=').map(&:strip)])
+                end
               end
             end
-          end
-          credentials.fetch(
-            :default, Smash.new
-          ).merge(
-            credentials.fetch(
-              profile, Smash.new
+            l_config.fetch(
+              :default, Smash.new
+            ).merge(
+              l_config.fetch(
+                profile, Smash.new
+              )
             )
-          )
+          else
+            Smash.new
+          end
         end
 
         # Setup for API connections
