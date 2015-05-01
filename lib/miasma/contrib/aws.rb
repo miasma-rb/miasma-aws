@@ -327,7 +327,7 @@ module Miasma
 
         def self.included(klass)
           klass.class_eval do
-            attribute :aws_profile_name, String
+            attribute :aws_profile_name, String, :default => 'default'
             attribute :aws_credentials_file, String, :required => true, :default => File.join(Dir.home, '.aws/credentials')
             attribute :aws_access_key_id, String, :required => true
             attribute :aws_secret_access_key, String, :required => true
@@ -363,7 +363,7 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def custom_setup(creds)
-          if(creds[:aws_profile_name])
+          if(creds[:aws_profile_name] && File.exists?(creds[:aws_credentials_file]))
             creds.replace(load_aws_credentials(creds[:aws_profile_name]).merge(creds))
           end
         end
@@ -381,7 +381,7 @@ module Miasma
                 key = line.tr('[]', '')
                 creds[key] = Smash.new
               else
-                creds[key].merge!(Smash[*line.split('=')])
+                creds[key].merge!(Smash[*line.split('=').map(&:strip)])
               end
             end
           end
