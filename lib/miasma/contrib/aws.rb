@@ -367,11 +367,11 @@ module Miasma
           if(creds[:aws_profile_name])
             creds.replace(
               load_aws_file(
-                aws_config_file
+                aws_config_file,
                 creds[:aws_profile_name]
               ).merge(
                 load_aws_file(
-                  aws_credentials_file
+                  aws_credentials_file,
                   creds[:aws_profile_name]
                 )
               ).merge(creds)
