@@ -222,7 +222,7 @@ module Miasma
                 count = 1
                 parts = []
                 file.body.rewind
-                while(content = file.body.read(Storage::READ_BODY_CHUNK_SIZE))
+                while(content = file.body.read(Storage::READ_BODY_CHUNK_SIZE * 1.5))
                   parts << [
                     count,
                     request(
@@ -231,7 +231,7 @@ module Miasma
                       :endpoint => bucket_endpoint(file.bucket),
                       :headers => Smash.new(
                         'Content-Length' => content.size,
-                        'Content-MD5' => Base64.urlsafe_encode64(Digest::MD5.digest(content))
+                        'Content-MD5' => Digest::MD5.base64digest(content)
                       ),
                       :params => Smash.new(
                         'partNumber' => count,
@@ -266,7 +266,7 @@ module Miasma
                   :body => complete
                 )
                 file.etag = result.get(:body, 'CompleteMultipartUploadResult', 'ETag')
-              rescue
+              rescue => e
                 request(
                   :method => :delete,
                   :path => file_path(file),
