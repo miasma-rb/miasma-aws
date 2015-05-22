@@ -15,6 +15,33 @@ module Miasma
         include Contrib::AwsApiCore::ApiCommon
         include Contrib::AwsApiCore::RequestUtils
 
+        # Fetch all results when tokens are being used
+        # for paging results
+        #
+        # @param next_token [String]
+        # @param result_key [Array<String, Symbol>] path to result
+        # @yield block to perform request
+        # @yieldparam options [Hash] request parameters (token information)
+        # @return [Array]
+        # @note this is customized to S3 since its API is slightly
+        #   different than the usual token based fetching
+        def all_result_pages(next_token, *result_key, &block)
+          list = []
+          options = next_token ? Smash.new('marker' => next_token) : Smash.new
+          result = block.call(options)
+          content = result.get(*result_key.dup)
+          if(content.is_a?(Array))
+            list += content
+          else
+            list << content
+          end
+          set = result.get(*result_key.slice(0, 2))
+          if(set.is_a?(Hash) && set['IsTruncated'] && set['Contents'])
+            list += all_result_pages(set['Contents'].last['Key'], *result_key, &block)
+          end
+          list.compact
+        end
+
         # Simple init override to force HOST and adjust region for
         # signatures if required
         def initialize(args)
