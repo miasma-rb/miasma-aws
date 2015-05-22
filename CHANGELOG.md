@@ -1,3 +1,7 @@
+## v0.1.14
+* Fix checksum generation on multi-part uploads
+* Fix paginated fetching of bucket objects
+
 ## v0.1.12
 * Update default file paths to use `Dir.home` instead of ~ expansion
 * Fix bug reading .aws/credentials when whitespace is used
