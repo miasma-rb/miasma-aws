@@ -399,14 +399,14 @@ module Miasma
             creds[:aws_access_key_id_original] = creds[:aws_access_key_id]
             creds[:aws_secret_access_key_original] = creds[:aws_secret_access_key]
           end
-          # TODO: proxy aws_host?
           sts = Miasma::Contrib::Aws::Api::Sts.new(
             :aws_access_key_id => creds[:aws_access_key_id_original],
             :aws_secret_access_key => creds[:aws_secret_access_key_original],
             :aws_region => creds.fetch(:aws_sts_region, 'us-east-1'),
             :aws_credentials_file => creds.fetch(:aws_credentials_file, aws_credentials_file),
             :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
-            :aws_profile_name => creds[:aws_profile_name]
+            :aws_profile_name => creds[:aws_profile_name],
+            :aws_host => creds[:aws_host]
           )
           role_info = sts.assume_role(creds[:aws_sts_role_arn])
           creds.merge!(role_info)
