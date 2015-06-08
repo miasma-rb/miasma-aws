@@ -6,6 +6,9 @@ require 'openssl'
 
 module Miasma
   module Contrib
+    module Aws
+      autoload :Api, 'miasma-aws/api'
+    end
     # Core API for AWS access
     class AwsApiCore
 
@@ -396,29 +399,17 @@ module Miasma
             creds[:aws_access_key_id_original] = creds[:aws_access_key_id]
             creds[:aws_secret_access_key_original] = creds[:aws_secret_access_key]
           end
-          aws_access_key_id = creds[:aws_access_key_id_original]
-          aws_secret_access_key = creds[:aws_secret_access_key_original]
-          aws_region = creds[:aws_region]
-          result = request(
-            :path => '/',
-            :endpoint => 'https://sts.amazonaws.com',
-            :params => Smash.new.tap{|params|
-              params['RoleArn'] = creds[:aws_sts_role_arn]
-              if(creds[:aws_sts_external_id])
-                params['ExternalId'] = creds[:aws_sts_external_id]
-              end
-              params['RoleSessionName'] = creds.fetch(
-                :aws_sts_role_session_name,
-                "miasma-#{SecureRandom.uuid}"
-              )
-            }
+          # TODO: proxy aws_host?
+          sts = Miasma::Contrib::Aws::Api::Sts.new(
+            :aws_access_key_id => creds[:aws_access_key_id_original],
+            :aws_secret_access_key => creds[:aws_secret_access_key_original],
+            :aws_region => creds.fetch(:aws_sts_region, 'us-east-1'),
+            :aws_credentials_file => creds.fetch(:aws_credentials_file, aws_credentials_file),
+            :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
+            :aws_profile_name => creds[:aws_profile_name]
           )
-          creds[:aws_sts_token] = result.get('AssumeRoleResult', 'Credentials', 'SessionToken')
-          creds[:aws_secret_access_key] = result.get('AssumeRoleResult', 'Credentials', 'SecretAccessKey')
-          creds[:aws_access_key_id] = result.get('AssumeRoleResult', 'Credentials', 'AccessKeyId')
-          creds[:aws_sts_token_expires] = Time.parse(result.get('AssumeRoleResult', 'Credentials', 'Expiration'))
-          creds[:aws_sts_assumed_role_arn] = result.get('AssumeRoleResult', 'AssumedRoleUser', 'Arn')
-          creds[:aws_sts_assumed_role_id] = result.get('AssumeRoleResult', 'AssumedRoleUser', 'AssumedRoleId')
+          role_info = sts.assume_role(creds[:aws_sts_role_arn])
+          creds.merge!(role_info)
           true
         end
 
