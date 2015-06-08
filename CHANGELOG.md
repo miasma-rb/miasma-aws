@@ -1,3 +1,8 @@
+## v0.1.16
+* Add new `aws_sts_token` attribute for credentials
+* Automatically include STS token on requests if available
+* Add support for assuming roles via STS
+
 ## v0.1.14
 * Fix checksum generation on multi-part uploads
 * Fix paginated fetching of bucket objects
