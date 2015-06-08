@@ -328,6 +328,10 @@ module Miasma
         def self.included(klass)
           klass.class_eval do
             attribute :aws_profile_name, String, :default => 'default'
+            attribute :aws_sts_token, String
+            attribute :aws_sts_role_arn, String
+            attribute :aws_sts_external_id, String
+            attribute :aws_sts_role_session_name, String
             attribute :aws_credentials_file, String, :required => true, :default => File.join(Dir.home, '.aws/credentials')
             attribute :aws_config_file, String, :required => true, :default => File.join(Dir.home, '.aws/config')
             attribute :aws_access_key_id, String, :required => true
@@ -377,6 +381,45 @@ module Miasma
               ).merge(creds)
             )
           end
+          if(creds[:aws_sts_role_arn])
+            sts_assume_role!(creds)
+          end
+          true
+        end
+
+        # Assume requested role and replace key id and secret
+        #
+        # @param creds [Hash]
+        # @return [TrueClass]
+        def sts_assume_role!(creds)
+          unless(creds[:aws_access_key_id_original])
+            creds[:aws_access_key_id_original] = creds[:aws_access_key_id]
+            creds[:aws_secret_access_key_original] = creds[:aws_secret_access_key]
+          end
+          aws_access_key_id = creds[:aws_access_key_id_original]
+          aws_secret_access_key = creds[:aws_secret_access_key_original]
+          aws_region = creds[:aws_region]
+          result = request(
+            :path => '/',
+            :endpoint => 'https://sts.amazonaws.com',
+            :params => Smash.new.tap{|params|
+              params['RoleArn'] = creds[:aws_sts_role_arn]
+              if(creds[:aws_sts_external_id])
+                params['ExternalId'] = creds[:aws_sts_external_id]
+              end
+              params['RoleSessionName'] = creds.fetch(
+                :aws_sts_role_session_name,
+                "miasma-#{SecureRandom.uuid}"
+              )
+            }
+          )
+          creds[:aws_sts_token] = result.get('AssumeRoleResult', 'Credentials', 'SessionToken')
+          creds[:aws_secret_access_key] = result.get('AssumeRoleResult', 'Credentials', 'SecretAccessKey')
+          creds[:aws_access_key_id] = result.get('AssumeRoleResult', 'Credentials', 'AccessKeyId')
+          creds[:aws_sts_token_expires] = Time.parse(result.get('AssumeRoleResult', 'Credentials', 'Expiration'))
+          creds[:aws_sts_assumed_role_arn] = result.get('AssumeRoleResult', 'AssumedRoleUser', 'Arn')
+          creds[:aws_sts_assumed_role_id] = result.get('AssumeRoleResult', 'AssumedRoleUser', 'AssumedRoleId')
+          true
         end
 
         # Load configuration from the AWS configuration file
@@ -455,6 +498,9 @@ module Miasma
           if(self.class::API_VERSION)
             if(options[:form])
               options.set(:form, 'Version', self.class::API_VERSION)
+              if(aws_sts_token)
+                options.set(:form, 'SecurityToken', aws_sts_token)
+              end
             else
               options[:params] = options.fetch(
                 :params, Smash.new
@@ -463,6 +509,9 @@ module Miasma
                   'Version' => self.class::API_VERSION
                 )
               )
+              if(aws_sts_token)
+                options.set(:params, 'SecurityToken', aws_sts_token)
+              end
             end
           end
           update_request(connection, options)
