@@ -6,6 +6,9 @@ require 'openssl'
 
 module Miasma
   module Contrib
+    module Aws
+      autoload :Api, 'miasma-aws/api'
+    end
     # Core API for AWS access
     class AwsApiCore
 
@@ -328,6 +331,10 @@ module Miasma
         def self.included(klass)
           klass.class_eval do
             attribute :aws_profile_name, String, :default => 'default'
+            attribute :aws_sts_token, String
+            attribute :aws_sts_role_arn, String
+            attribute :aws_sts_external_id, String
+            attribute :aws_sts_role_session_name, String
             attribute :aws_credentials_file, String, :required => true, :default => File.join(Dir.home, '.aws/credentials')
             attribute :aws_config_file, String, :required => true, :default => File.join(Dir.home, '.aws/config')
             attribute :aws_access_key_id, String, :required => true
@@ -377,6 +384,33 @@ module Miasma
               ).merge(creds)
             )
           end
+          if(creds[:aws_sts_role_arn])
+            sts_assume_role!(creds)
+          end
+          true
+        end
+
+        # Assume requested role and replace key id and secret
+        #
+        # @param creds [Hash]
+        # @return [TrueClass]
+        def sts_assume_role!(creds)
+          unless(creds[:aws_access_key_id_original])
+            creds[:aws_access_key_id_original] = creds[:aws_access_key_id]
+            creds[:aws_secret_access_key_original] = creds[:aws_secret_access_key]
+          end
+          # TODO: proxy aws_host?
+          sts = Miasma::Contrib::Aws::Api::Sts.new(
+            :aws_access_key_id => creds[:aws_access_key_id_original],
+            :aws_secret_access_key => creds[:aws_secret_access_key_original],
+            :aws_region => creds.fetch(:aws_sts_region, 'us-east-1'),
+            :aws_credentials_file => creds.fetch(:aws_credentials_file, aws_credentials_file),
+            :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
+            :aws_profile_name => creds[:aws_profile_name]
+          )
+          role_info = sts.assume_role(creds[:aws_sts_role_arn])
+          creds.merge!(role_info)
+          true
         end
 
         # Load configuration from the AWS configuration file
@@ -455,6 +489,9 @@ module Miasma
           if(self.class::API_VERSION)
             if(options[:form])
               options.set(:form, 'Version', self.class::API_VERSION)
+              if(aws_sts_token)
+                options.set(:form, 'SecurityToken', aws_sts_token)
+              end
             else
               options[:params] = options.fetch(
                 :params, Smash.new
@@ -463,6 +500,9 @@ module Miasma
                   'Version' => self.class::API_VERSION
                 )
               )
+              if(aws_sts_token)
+                options.set(:params, 'SecurityToken', aws_sts_token)
+              end
             end
           end
           update_request(connection, options)
