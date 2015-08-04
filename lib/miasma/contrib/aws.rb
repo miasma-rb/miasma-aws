@@ -349,6 +349,11 @@ module Miasma
 
             # @return [Contrib::AwsApiCore::SignatureV4]
             attr_reader :signer
+
+            # Local metadata host
+            INSTANCE_PROFILE_HOST = 'http://169.254.169.254'
+            # Local instance credentials path
+            INSTANCE_PROFILE_PATH = 'latest/meta-data/iam/security-credentials'
           end
           # AWS config file key remapping
           klass.const_set(:CONFIG_FILE_REMAP,
@@ -398,6 +403,29 @@ module Miasma
           if(creds[:aws_sts_role_arn])
             sts_assume_role!(creds)
           end
+          if(creds[:aws_iam_instance_profile])
+            load_instance_credentials!(creds)
+          end
+          true
+        end
+
+        # Attempt to load credentials from instance metadata
+        #
+        # @param creds [Hash]
+        # @return [TrueClass]
+        def load_instance_credentials!(creds)
+          role = HTTP.get(self.const_get(:INSTANCE_PROFILE_HOST)).body.to_s.strip
+          data = HTTP.get(
+            [
+              self.const_get(:INSTANCE_PROFILE_HOST),
+              self.const_get(:INSTANCE_PROFILE_PATH),
+              role
+            ].join('/')
+          ).body
+          creds[:aws_access_key_id] = data['AccessKeyId']
+          creds[:aws_secret_access_key] = data['SecretAccessKey']
+          creds[:aws_sts_token] = data['Token']
+          creds[:aws_sts_token_expires] = Time.xmlschema(data['Expiration'])
           true
         end
 
