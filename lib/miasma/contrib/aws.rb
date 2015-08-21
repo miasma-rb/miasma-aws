@@ -349,19 +349,16 @@ module Miasma
 
             # @return [Contrib::AwsApiCore::SignatureV4]
             attr_reader :signer
-
-            # Local metadata host
-            INSTANCE_PROFILE_HOST = 'http://169.254.169.254'
-            # Local instance credentials path
-            INSTANCE_PROFILE_PATH = 'latest/meta-data/iam/security-credentials'
           end
+
           # AWS config file key remapping
           klass.const_set(:CONFIG_FILE_REMAP,
             Smash.new(
               'region' => 'aws_region'
             )
           )
-
+          klass.const_set(:INSTANCE_PROFILE_HOST, 'http://169.254.169.254')
+          klass.const_set(:INSTANCE_PROFILE_PATH, 'latest/meta-data/iam/security-credentials')
         end
 
         # Build new API for specified type using current provider / creds
