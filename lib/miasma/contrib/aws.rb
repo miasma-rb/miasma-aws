@@ -342,6 +342,10 @@ module Miasma
             attribute :aws_region, String, :required => true
             attribute :aws_host, String
             attribute :aws_bucket_region, String
+            attribute :api_endpoint, String, :required => true, :default => 'amazonaws.com'
+            attribute :euca_compat, [String, Symbol], :allowed_values => [:path, :dns], :coerce => lambda{|v| v.to_sym}
+            attribute :euca_dns_map, Smash, :coerce => lambda{|v| v.to_smash}, :default => Smash.new
+            attribute :ssl_enabled, [TrueClass, FalseClass], :default => true
 
             # @return [Contrib::AwsApiCore::SignatureV4]
             attr_reader :signer
@@ -447,11 +451,33 @@ module Miasma
         # Setup for API connections
         def connect
           unless(aws_host)
-            self.aws_host = [
-              self.class::API_SERVICE.downcase,
-              aws_region,
-              'amazonaws.com'
-            ].join('.')
+            if(euca_compat)
+              service_name = (
+                self.class.const_defined?(:EUCA_API_SERVICE) ?
+                self.class::EUCA_API_SERVICE :
+                self.class::API_SERVICE
+              ).downcase
+            else
+              service_name = self.class::API_SERVICE.downcase
+            end
+            if(euca_compat == :path)
+              self.aws_host = [
+                api_endpoint,
+                'services',
+                service_name
+              ].join('/')
+            elsif(euca_compat == :dns && euca_dns_map[service_name])
+              self.aws_host = [
+                euca_dns_map[service_name],
+                api_endpoint
+              ].join('.')
+            else
+              self.aws_host = [
+                service_name,
+                aws_region,
+                api_endpoint
+              ].join('.')
+            end
           end
           @signer = Contrib::AwsApiCore::SignatureV4.new(
             aws_access_key_id, aws_secret_access_key, aws_region, self.class::API_SERVICE
@@ -473,7 +499,7 @@ module Miasma
 
         # @return [String] endpoint for request
         def endpoint
-          "https://#{aws_host}"
+          "http#{'s' if ssl_enabled}://#{aws_host}"
         end
 
         # Override to inject signature

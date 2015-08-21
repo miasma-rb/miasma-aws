@@ -42,7 +42,13 @@ Miasma.api(
 
 ### Other attributes
 
-* `aws_host` - Use custom DNS endpoint for API requests
+* `aws_host` - Provide customized full endpoint (without http/https) for API requests
+* `api_endpoint` - Use custom endpoint when constructing (defaults to 'amazonaws.com')
+* `euca_compat`- Enable compatibility mode for eucalyptus. Allowed values:
+  * `path` - Construct using `services/SERVICE_NAME`
+  * `dns` - Construct using DNS subdomains (`SERVICE_NAME.REGION.API_ENDPOINT` by default)
+* `euca_dns_map` - Map services to custom DNS subdomains
+* `ssl_enabled` - Use SSL for API connections
 
 ## Current support matrix
 
