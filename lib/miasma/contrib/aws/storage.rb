@@ -9,6 +9,8 @@ module Miasma
 
         # Service name of the API
         API_SERVICE = 's3'
+        # Service name of the API in eucalyptus
+        EUCA_API_SERVICE = 'objectstorage'
         # Supported version of the Storage API
         API_VERSION = '2006-03-01'
 
