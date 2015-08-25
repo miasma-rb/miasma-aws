@@ -1,0 +1,5 @@
+[default]
+output=json
+
+[profile blah
+region=south
