@@ -350,6 +350,13 @@ module Miasma
             # @return [Contrib::AwsApiCore::SignatureV4]
             attr_reader :signer
           end
+          # AWS config file key remapping
+          klass.const_set(:CONFIG_FILE_REMAP,
+            Smash.new(
+              'region' => 'aws_region'
+            )
+          )
+
         end
 
         # Build new API for specified type using current provider / creds
@@ -426,13 +433,30 @@ module Miasma
           if(File.exists?(file_path))
             l_config = Smash.new.tap do |creds|
               key = nil
-              File.readlines(file_path).each do |line|
+              File.readlines(file_path).each_with_index do |line, idx|
                 line.strip!
-                if(line.start_with?('[') && line.end_with?(']'))
-                  key = line.tr('[]', '').strip
+                next if line.empty? || line.start_with?('#')
+                if(line.start_with?('['))
+                  unless(line.end_with?(']'))
+                    raise ArgumentError.new("Failed to parse aws file! (#{file_path} line #{idx + 1})")
+                  end
+                  key = line.tr('[]', '').strip.sub(/^profile /, '')
                   creds[key] = Smash.new
                 else
-                  creds[key].merge!(Smash[*line.split('=').map(&:strip)])
+                  unless(key)
+                    raise ArgumentError.new("Failed to parse aws file! (#{file_path} line #{idx + 1}) - No section defined!")
+                  end
+                  line_args = line.split('=', 2).map(&:strip)
+                  line_args.first.replace(
+                    self.class.const_get(:CONFIG_FILE_REMAP).fetch(
+                      line_args.first, line_args.first
+                    )
+                  )
+                  begin
+                    creds[key].merge!(Smash[*line_args])
+                  rescue => e
+                    raise ArgumentError.new("Failed to parse aws file! (#{file_path} line #{idx + 1})")
+                  end
                 end
               end
             end

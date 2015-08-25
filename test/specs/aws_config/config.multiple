@@ -1,0 +1,10 @@
+[default]
+region=north
+output=json
+
+[profile thing1]
+region=south
+
+[profile thing2]
+output=text
+customized=thing

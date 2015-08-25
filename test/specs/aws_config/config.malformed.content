@@ -1,0 +1,5 @@
+[default]
+region=west
+
+[profile thing1]
+region
