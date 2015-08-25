@@ -330,7 +330,7 @@ module Miasma
 
         def self.included(klass)
           klass.class_eval do
-            attribute :aws_profile_name, String, :default => 'default'
+            attribute :aws_profile_name, [FalseClass, String], :default => 'default'
             attribute :aws_sts_token, String
             attribute :aws_sts_role_arn, String
             attribute :aws_sts_external_id, String
@@ -339,6 +339,7 @@ module Miasma
             attribute :aws_config_file, String, :required => true, :default => File.join(Dir.home, '.aws/config')
             attribute :aws_access_key_id, String, :required => true
             attribute :aws_secret_access_key, String, :required => true
+            attribute :aws_iam_instance_profile, [TrueClass, FalseClass], :default => true
             attribute :aws_region, String, :required => true
             attribute :aws_host, String
             attribute :aws_bucket_region, String
