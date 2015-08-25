@@ -29,6 +29,10 @@ Miasma.api(
 * `aws_credentials_file` - Specify custom credentials file
 * `aws_config_file` - Specify custom configuration file
 
+### Instance related attributes
+
+* `aws_iam_instance_profile` - Extract and use instance IAM credentials
+
 ### Secure Token Service related:
 
 * `aws_sts_token` - Set STS token to use with current key ID and secret
