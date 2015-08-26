@@ -339,12 +339,12 @@ module Miasma
             attribute :aws_config_file, String, :required => true, :default => File.join(Dir.home, '.aws/config')
             attribute :aws_access_key_id, String, :required => true
             attribute :aws_secret_access_key, String, :required => true
-            attribute :aws_iam_instance_profile, [TrueClass, FalseClass], :default => true
+            attribute :aws_iam_instance_profile, [TrueClass, FalseClass], :default => false
             attribute :aws_region, String, :required => true
             attribute :aws_host, String
             attribute :aws_bucket_region, String
             attribute :api_endpoint, String, :required => true, :default => 'amazonaws.com'
-            attribute :euca_compat, [String, Symbol], :allowed_values => [:path, :dns], :coerce => lambda{|v| v.to_sym}
+            attribute :euca_compat, [String, Symbol], :allowed_values => [:path, :dns], :coerce => lambda{|v| v.is_a?(String) ? v.to_sym : v}
             attribute :euca_dns_map, Smash, :coerce => lambda{|v| v.to_smash}, :default => Smash.new
             attribute :ssl_enabled, [TrueClass, FalseClass], :default => true
 
@@ -412,11 +412,11 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def load_instance_credentials!(creds)
-          role = HTTP.get(self.const_get(:INSTANCE_PROFILE_HOST)).body.to_s.strip
+          role = HTTP.get(self.class.const_get(:INSTANCE_PROFILE_HOST)).body.to_s.strip
           data = HTTP.get(
             [
-              self.const_get(:INSTANCE_PROFILE_HOST),
-              self.const_get(:INSTANCE_PROFILE_PATH),
+              self.class.const_get(:INSTANCE_PROFILE_HOST),
+              self.class.const_get(:INSTANCE_PROFILE_PATH),
               role
             ].join('/')
           ).body
