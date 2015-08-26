@@ -1,3 +1,6 @@
+# v0.1.20
+* Fix credential loading bug (#11)
+
 # v0.1.18
 * Make aws file parsing more robust
 * Fix aws config file parsing section name generation (#10)
