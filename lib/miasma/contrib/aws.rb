@@ -486,12 +486,16 @@ module Miasma
                 end
               end
             end
-            l_config.fetch(
+
+            l_profile = l_config.fetch(profile, Smash.new)
+            if source_profile = l_profile[:source_profile]
+              l_profile.merge!(l_config.fetch(source_profile, Smash.new))
+            end
+
+            l_creds = l_config.fetch(
               :default, Smash.new
             ).merge(
-              l_config.fetch(
-                profile, Smash.new
-              )
+              l_profile
             )
           else
             Smash.new
