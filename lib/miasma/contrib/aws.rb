@@ -488,12 +488,14 @@ module Miasma
             end
 
             l_profile = l_config.fetch(profile, Smash.new)
-            if source_profile = l_profile[:source_profile]
-              l_profile.merge!(l_config.fetch(source_profile, Smash.new))
-            end
+            l_profile[:aws_sts_role_arn] = l_profile.delete(:role_arn)
+            l_source_profile = Smash.new
+            l_source_profile = l_config.fetch(l_profile[:source_profile], Smash.new)
 
             l_creds = l_config.fetch(
               :default, Smash.new
+            ).merge(
+              l_source_profile
             ).merge(
               l_profile
             )
