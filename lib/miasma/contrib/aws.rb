@@ -344,7 +344,7 @@ module Miasma
             attribute :aws_host, String
             attribute :aws_bucket_region, String
             attribute :api_endpoint, String, :required => true, :default => 'amazonaws.com'
-            attribute :euca_compat, [String, Symbol], :allowed_values => [:path, :dns], :coerce => lambda{|v| v.is_a?(String) ? v.to_sym : v}
+            attribute :euca_compat, Symbol, :allowed_values => [:path, :dns], :coerce => lambda{|v| v.is_a?(String) ? v.to_sym : v}
             attribute :euca_dns_map, Smash, :coerce => lambda{|v| v.to_smash}, :default => Smash.new
             attribute :ssl_enabled, [TrueClass, FalseClass], :default => true
 
@@ -506,7 +506,7 @@ module Miasma
                 self.class.const_defined?(:EUCA_API_SERVICE) ?
                 self.class::EUCA_API_SERVICE :
                 self.class::API_SERVICE
-              ).downcase
+              )
             else
               service_name = self.class::API_SERVICE.downcase
             end

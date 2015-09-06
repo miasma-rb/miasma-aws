@@ -13,6 +13,8 @@ module Miasma
 
         # Service name of the API
         API_SERVICE = 'cloudformation'
+        # Service name of the eucalyptus API
+        EUCA_API_SERVICE = 'CloudFormation'
         # Supported version of the AutoScaling API
         API_VERSION = '2010-05-15'
 
