@@ -355,7 +355,8 @@ module Miasma
           # AWS config file key remapping
           klass.const_set(:CONFIG_FILE_REMAP,
             Smash.new(
-              'region' => 'aws_region'
+              'region' => 'aws_region',
+              'role_arn' => 'aws_sts_role_arn'
             )
           )
           klass.const_set(:INSTANCE_PROFILE_HOST, 'http://169.254.169.254')
@@ -488,7 +489,6 @@ module Miasma
             end
 
             l_profile = l_config.fetch(profile, Smash.new)
-            l_profile[:aws_sts_role_arn] = l_profile.delete(:role_arn)
             l_source_profile = l_config.fetch(l_profile[:source_profile], Smash.new)
 
             l_creds = l_config.fetch(
