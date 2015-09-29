@@ -361,6 +361,7 @@ module Miasma
           )
           klass.const_set(:INSTANCE_PROFILE_HOST, 'http://169.254.169.254')
           klass.const_set(:INSTANCE_PROFILE_PATH, 'latest/meta-data/iam/security-credentials')
+          klass.const_set(:INSTANCE_PROFILE_AZ_PATH, 'latest/meta-data/placement/availability-zone')
         end
 
         # Build new API for specified type using current provider / creds
@@ -413,7 +414,13 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def load_instance_credentials!(creds)
-          role = HTTP.get(self.class.const_get(:INSTANCE_PROFILE_HOST)).body.to_s.strip
+          role = HTTP.get(
+            [
+              self.class.const_get(:INSTANCE_PROFILE_HOST),
+              self.class.const_get(:INSTANCE_PROFILE_PATH),
+              ''
+            ].join('/')
+          ).body.to_s.strip
           data = HTTP.get(
             [
               self.class.const_get(:INSTANCE_PROFILE_HOST),
@@ -421,10 +428,27 @@ module Miasma
               role
             ].join('/')
           ).body
+          unless(data.is_a?(Hash))
+            begin
+              data = MultiJson.load(data.to_s)
+            rescue MultiJson::ParseError
+              data = {}
+            end
+          end
           creds[:aws_access_key_id] = data['AccessKeyId']
           creds[:aws_secret_access_key] = data['SecretAccessKey']
           creds[:aws_sts_token] = data['Token']
           creds[:aws_sts_token_expires] = Time.xmlschema(data['Expiration'])
+          unless(creds[:aws_region])
+            az = HTTP.get(
+              [
+                self.class.const_get(:INSTANCE_PROFILE_HOST),
+                self.class.const_get(:INSTANCE_PROFILE_AZ_PATH)
+              ].join('/')
+            ).body.to_s.strip
+            az.sub!(/[a-zA-Z]+$/, '')
+            creds[:aws_region] = az
+          end
           true
         end
 
