@@ -65,35 +65,27 @@ module Miasma
             descriptions = all_result_pages(nil, :body, 'DescribeStacksResponse', 'DescribeStacksResult', 'Stacks', 'member') do |options|
               request(
                 :path => '/',
-                :form => options.merge(d_params),
+                :params => options.merge(d_params),
+                :method => :get
+              )
+            end
+          else
+            lists = all_result_pages(nil, :body, 'ListStacksResponse', 'ListStacksResult', 'StackSummaries', 'member') do |options|
+              request(
+                :path => '/',
+                :form => options.merge(l_params),
                 :method => :post
               )
             end
-            policy = request(
-              :path => '/',
-              :method => :get,
-              :params => Smash.new(
-                'Action' => 'GetStackPolicy',
-                'StackName' => stack.id
-              )
-            ).get(:body, 'GetStackPolicyResult', 'StackPolicyBody')
-            if(policy)
-              descriptions.first[:stack_policy] = MultiJson.load(policy).to_smash
-            end
-          else
             descriptions = []
           end
-          lists = all_result_pages(nil, :body, 'ListStacksResponse', 'ListStacksResult', 'StackSummaries', 'member') do |options|
-            request(
-              :path => '/',
-              :form => options.merge(l_params),
-              :method => :post
-            )
-          end.map do |stk|
-            desc = descriptions.detect do |d_stk|
-              d_stk['StackId'] == stk['StackId']
-            end || Smash.new
-            stk.merge!(desc)
+          (lists || descriptions).map do |stk|
+            if(lists)
+              desc = descriptions.detect do |d_stk|
+                d_stk['StackId'] == stk['StackId']
+              end || Smash.new
+              stk.merge!(desc)
+            end
             if(stack)
               next if stack.id != stk['StackId'] && stk['StackId'].split('/')[1] != stack.id
             end
@@ -138,7 +130,8 @@ module Miasma
                 }
               ],
               :custom => Smash.new(
-                :stack_policy_body => policy
+                :stack_policy => stk['StackPolicyBody'],
+                :stack_policy_url => stk['StackPolicyURL']
               )
             ).valid_state
           end
@@ -316,8 +309,8 @@ module Miasma
           results = all_result_pages(nil, :body, 'DescribeStackResourcesResponse', 'DescribeStackResourcesResult', 'StackResources', 'member') do |options|
             request(
               :path => '/',
-              :method => :post,
-              :form => options.merge(
+              :method => :get,
+              :params => options.merge(
                 Smash.new(
                   'Action' => 'DescribeStackResources',
                   'StackName' => stack.id
@@ -356,8 +349,8 @@ module Miasma
           results = all_result_pages(nil, :body, 'DescribeStackEventsResponse', 'DescribeStackEventsResult', 'StackEvents', 'member') do |options|
             request(
               :path => '/',
-              :method => :post,
-              :form => options.merge(
+              :method => :get,
+              :params => options.merge(
                 'Action' => 'DescribeStackEvents',
                 'StackName' => stack.id
               )
