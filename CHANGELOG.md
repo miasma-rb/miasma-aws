@@ -1,3 +1,8 @@
+# v0.1.22
+* Fix instance profile credential auto loading
+* Add support for region auto-detection when using instance profiles
+* Update requests to use HTTP GET where possible for better retry support
+
 # v0.1.20
 * Fix credential loading bug (#11)
 
