@@ -613,8 +613,8 @@ module Miasma
           if(aws_sts_token)
             options.set(:headers, 'X-Amz-Security-Token', aws_sts_token)
           end
-          update_request(connection, options)
           signature = signer.generate(http_method, path, options)
+          update_request(connection, options)
           options = Hash[options.map{|k,v|[k.to_sym,v]}]
           connection.auth(signature).send(http_method, dest, options)
         end
