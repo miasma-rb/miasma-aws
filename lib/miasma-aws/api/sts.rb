@@ -25,10 +25,7 @@ module Miasma
             req_params = Smash.new.tap do |params|
               params['Action'] = 'AssumeRole'
               params['RoleArn'] = role_arn
-              params['RoleSessionName'] = args.fetch(
-                :session_name,
-                SecureRandom.uuid.tr('-', '')
-              )
+              params['RoleSessionName'] = args[:session_name] || SecureRandom.uuid.tr('-', '')
               params['ExternalId'] = args[:external_id] if args[:external_id]
             end
             result = request(
