@@ -631,7 +631,7 @@ module Miasma
           if(exception.is_a?(Miasma::Error::ApiError))
             if([400, 500, 503].include?(exception.response.code))
               if(exception.response.code == 400)
-                exception.response.body.to_s.include?('throttl')
+                exception.response.body.to_s.downcase.include?('throttl')
               else
                 true
               end
