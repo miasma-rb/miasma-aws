@@ -633,6 +633,31 @@ module Miasma
           true
         end
 
+        # Determine if a retry is allowed based on exception
+        #
+        # @param exception [Exception]
+        # @return [TrueClass, FalseClass]
+        def perform_request_retry(exception)
+          if(exception.is_a?(Miasma::Error::ApiError))
+            if([400, 500, 503].include?(exception.response.code))
+              if(exception.response.code == 400)
+                exception.response.body.to_s.include?('throttl')
+              else
+                true
+              end
+            else
+              false
+            end
+          end
+        end
+
+        # Always allow retry
+        #
+        # @return [TrueClass]
+        def retryable_allowed?(*_)
+          true
+        end
+
       end
 
     end
