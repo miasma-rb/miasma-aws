@@ -335,6 +335,7 @@ module Miasma
             attribute :aws_sts_role_arn, String
             attribute :aws_sts_external_id, String
             attribute :aws_sts_role_session_name, String
+            attribute :aws_sts_region, String
             attribute :aws_credentials_file, String, :required => true, :default => File.join(Dir.home, '.aws/credentials')
             attribute :aws_config_file, String, :required => true, :default => File.join(Dir.home, '.aws/config')
             attribute :aws_access_key_id, String, :required => true
@@ -470,7 +471,11 @@ module Miasma
             :aws_profile_name => creds[:aws_profile_name],
             :aws_host => creds[:aws_host]
           )
-          role_info = sts.assume_role(creds[:aws_sts_role_arn])
+          role_info = sts.assume_role(
+            creds[:aws_sts_role_arn],
+            :session_name => creds[:aws_sts_role_session_name],
+            :external_id => creds[:aws_sts_external_id]
+          )
           creds.merge!(role_info)
           true
         end
