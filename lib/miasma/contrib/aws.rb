@@ -591,12 +591,10 @@ module Miasma
           dest, options = request_args
           path = URI.parse(dest).path
           options = options ? options.to_smash : Smash.new
+          options[:headers] = Smash[connection.default_headers.to_a].merge(options.fetch(:headers, Smash.new))
           if(self.class::API_VERSION)
             if(options[:form])
               options.set(:form, 'Version', self.class::API_VERSION)
-              if(aws_sts_token)
-                options.set(:form, 'SecurityToken', aws_sts_token)
-              end
             else
               options[:params] = options.fetch(
                 :params, Smash.new
@@ -605,21 +603,13 @@ module Miasma
                   'Version' => self.class::API_VERSION
                 )
               )
-              if(aws_sts_token)
-                options.set(:params, 'SecurityToken', aws_sts_token)
-              end
             end
           end
+          if(aws_sts_token)
+            options.set(:headers, 'X-Amz-Security-Token', aws_sts_token)
+          end
           update_request(connection, options)
-          signature = signer.generate(
-            http_method, path, options.merge(
-              Smash.new(
-                :headers => Smash[
-                  connection.default_headers.to_a
-                ]
-              )
-            )
-          )
+          signature = signer.generate(http_method, path, options)
           options = Hash[options.map{|k,v|[k.to_sym,v]}]
           connection.auth(signature).send(http_method, dest, options)
         end
