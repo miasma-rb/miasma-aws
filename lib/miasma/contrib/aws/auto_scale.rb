@@ -51,8 +51,9 @@ module Miasma
           end
           result = all_result_pages(nil, :body, 'DescribeAutoScalingGroupsResponse', 'DescribeAutoScalingGroupsResult', 'AutoScalingGroups', 'member') do |options|
             request(
+              :method => :post,
               :path => '/',
-              :params => options.merge(params)
+              :form => options.merge(params)
             )
           end.map do |grp|
             (group || Group.new(self)).load_data(

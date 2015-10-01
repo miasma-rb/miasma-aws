@@ -38,8 +38,9 @@ module Miasma
               end
             end
             result = request(
+              :method => :post,
               :path => '/',
-              :params => params.merge(
+              :form => params.merge(
                 Smash.new(
                   'Action' => 'CreateLoadBalancer'
                 )
@@ -107,15 +108,17 @@ module Miasma
           end
           result = all_result_pages(nil, :body, 'DescribeLoadBalancersResponse', 'DescribeLoadBalancersResult', 'LoadBalancerDescriptions', 'member') do |options|
             request(
+              :method => :post,
               :path => '/',
-              :params => options.merge(params)
+              :form => options.merge(params)
             )
           end
           if(balancer)
             health_result = all_result_pages(nil, :body, 'DescribeInstanceHealthResponse', 'DescribeInstanceHealthResult', 'InstanceStates', 'member') do |options|
               request(
+                :method => :post,
                 :path => '/',
-                :params => options.merge(
+                :form => options.merge(
                   'LoadBalancerName' => balancer.id || balancer.name,
                   'Action' => 'DescribeInstanceHealth'
                 )
@@ -158,8 +161,9 @@ module Miasma
         def balancer_destroy(balancer)
           if(balancer.persisted?)
             request(
+              :method => :post,
               :path => '/',
-              :params => Smash.new(
+              :form => Smash.new(
                 'Action' => 'DeleteLoadBalancer',
                 'LoadBalancerName' => balancer.name
               )
@@ -187,8 +191,9 @@ module Miasma
         def availability_zones
           memoize(:availability_zones) do
             res = api_for(:compute).request(
+              :method => :post,
               :path => '/',
-              :params => Smash.new(
+              :form => Smash.new(
                 'Action' => 'DescribeAvailabilityZones'
               )
             ).fetch(:body, 'DescribeAvailabilityZonesResponse', 'availabilityZoneInfo', 'item', [])
