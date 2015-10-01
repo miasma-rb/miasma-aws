@@ -437,7 +437,7 @@ module Miasma
         # happening (which implicitly forces :form) or :json is used
         # it will not properly checksum. (but that's probably okay)
         def update_request(con, opts)
-          con.default_headers['x-amz-content-sha256'] = Digest::SHA256.
+          opts[:headers]['x-amz-content-sha256'] = Digest::SHA256.
             hexdigest(opts.fetch(:body, ''))
           true
         end

@@ -64,17 +64,17 @@ module Miasma
             d_params['StackName'] = stack.id
             descriptions = all_result_pages(nil, :body, 'DescribeStacksResponse', 'DescribeStacksResult', 'Stacks', 'member') do |options|
               request(
+                :method => :post,
                 :path => '/',
-                :params => options.merge(d_params),
-                :method => :get
+                :form => options.merge(d_params)
               )
             end
           else
             lists = all_result_pages(nil, :body, 'ListStacksResponse', 'ListStacksResult', 'StackSummaries', 'member') do |options|
               request(
+                :method => :post,
                 :path => '/',
-                :form => options.merge(l_params),
-                :method => :post
+                :form => options.merge(l_params)
               )
             end
             descriptions = []
@@ -226,8 +226,9 @@ module Miasma
         def stack_destroy(stack)
           if(stack.persisted?)
             request(
+              :method => :post,
               :path => '/',
-              :params => Smash.new(
+              :form => Smash.new(
                 'Action' => 'DeleteStack',
                 'StackName' => stack.id
               )
@@ -245,8 +246,9 @@ module Miasma
         def stack_template_load(stack)
           if(stack.persisted?)
             result = request(
+              :method => :post,
               :path => '/',
-              :params => Smash.new(
+              :form => Smash.new(
                 'Action' => 'GetTemplate',
                 'StackName' => stack.id
               )
@@ -308,9 +310,9 @@ module Miasma
         def resource_all(stack)
           results = all_result_pages(nil, :body, 'DescribeStackResourcesResponse', 'DescribeStackResourcesResult', 'StackResources', 'member') do |options|
             request(
+              :method => :post,
               :path => '/',
-              :method => :get,
-              :params => options.merge(
+              :form => options.merge(
                 Smash.new(
                   'Action' => 'DescribeStackResources',
                   'StackName' => stack.id
@@ -348,9 +350,9 @@ module Miasma
         def event_all(stack, evt_id=nil)
           results = all_result_pages(nil, :body, 'DescribeStackEventsResponse', 'DescribeStackEventsResult', 'StackEvents', 'member') do |options|
             request(
+              :method => :post,
               :path => '/',
-              :method => :get,
-              :params => options.merge(
+              :form => options.merge(
                 'Action' => 'DescribeStackEvents',
                 'StackName' => stack.id
               )

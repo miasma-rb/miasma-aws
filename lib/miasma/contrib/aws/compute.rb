@@ -28,8 +28,9 @@ module Miasma
         # @todo catch bad lookup and clear model
         def server_reload(server)
           result = request(
+            :method => :post,
             :path => '/',
-            :params => {
+            :form => {
               'Action' => 'DescribeInstances',
               'InstanceId.1' => server.id
             }
@@ -52,8 +53,9 @@ module Miasma
         def server_destroy(server)
           if(server.persisted?)
             result = request(
+              :method => :post,
               :path => '/',
-              :params => {
+              :form => {
                 'Action' => 'TerminateInstances',
                 'InstanceId.1' => server.id
               }
@@ -67,8 +69,9 @@ module Miasma
           unless(server.persisted?)
             server.load_data(server.attributes)
             result = request(
+              :method => :post,
               :path => '/',
-              :params => {
+              :form => {
                 'Action' => 'RunInstances',
                 'ImageId' => server.image_id,
                 'InstanceType' => server.flavor_id,
@@ -86,7 +89,13 @@ module Miasma
         # @todo need to add auto pagination helper (as common util)
         def server_all
           results = all_result_pages(nil, :body, 'DescribeInstancesResponse', 'reservationSet', 'item') do |options|
-            request(:path => '/', :params => options.merge('Action' => 'DescribeInstances'))
+            request(
+              :method => :post,
+              :path => '/',
+              :form => options.merge(
+                'Action' => 'DescribeInstances'
+              )
+            )
           end
           results.map do |srv|
             [srv[:instancesSet][:item]].flatten.compact.map do |srv|
