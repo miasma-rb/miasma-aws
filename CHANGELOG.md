@@ -1,3 +1,8 @@
+# v0.1.24
+* Fix token usage causing request errors
+* Tune retry behavior to isolate valid retry requests
+* Properly pass external ID and session name through for STS
+
 # v0.1.22
 * Fix instance profile credential auto loading
 * Add support for region auto-detection when using instance profiles
