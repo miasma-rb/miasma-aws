@@ -1,3 +1,6 @@
+# v0.1.26
+* Fix broken S3 API interactions due to ordering in header modifications
+
 # v0.1.24
 * Fix token usage causing request errors
 * Tune retry behavior to isolate valid retry requests
