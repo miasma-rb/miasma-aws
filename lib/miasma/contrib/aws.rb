@@ -373,13 +373,18 @@ module Miasma
           memoize(type) do
             creds = attributes.dup
             creds.delete(:aws_host)
-            Miasma.api(
+            result = Miasma.api(
               Smash.new(
                 :type => type,
                 :provider => provider,
                 :credentials => creds
               )
             )
+            if(creds[:aws_access_key_id_original])
+              result.data[:aws_access_key_id_original] = creds[:aws_access_key_id_original]
+              result.data[:aws_secret_access_key_original] = creds[:aws_secret_access_key_original]
+            end
+            result
           end
         end
 
