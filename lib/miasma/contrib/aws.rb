@@ -383,7 +383,8 @@ module Miasma
           end
         end
 
-        # Allow loading credentials via local credentials file
+        # Provide custom setup functionality to support alternative
+        # credential loading.
         #
         # @param creds [Hash]
         # @return [TrueClass]
@@ -408,6 +409,21 @@ module Miasma
             load_instance_credentials!(creds)
           end
           true
+        end
+
+        # Persist any underlying stored credential data that is not a
+        # defined attribute (things like STS information)
+        #
+        # @param creds [Hash]
+        # @return [TrueClass]
+        def after_setup(creds)
+          skip = self.class.attributes.keys.map(&:to_s)
+          creds.each do |k,v|
+            k = k.to_s
+            if(k.start_with?('aws_') && !skip.include?(k))
+              data[k] = v
+            end
+          end
         end
 
         # Attempt to load credentials from instance metadata
@@ -462,21 +478,23 @@ module Miasma
             creds[:aws_access_key_id_original] = creds[:aws_access_key_id]
             creds[:aws_secret_access_key_original] = creds[:aws_secret_access_key]
           end
-          sts = Miasma::Contrib::Aws::Api::Sts.new(
-            :aws_access_key_id => creds[:aws_access_key_id_original],
-            :aws_secret_access_key => creds[:aws_secret_access_key_original],
-            :aws_region => creds.fetch(:aws_sts_region, 'us-east-1'),
-            :aws_credentials_file => creds.fetch(:aws_credentials_file, aws_credentials_file),
-            :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
-            :aws_profile_name => creds[:aws_profile_name],
-            :aws_host => creds[:aws_host]
-          )
-          role_info = sts.assume_role(
-            creds[:aws_sts_role_arn],
-            :session_name => creds[:aws_sts_role_session_name],
-            :external_id => creds[:aws_sts_external_id]
-          )
-          creds.merge!(role_info)
+          if(sts_update_required?(creds))
+            sts = Miasma::Contrib::Aws::Api::Sts.new(
+              :aws_access_key_id => creds[:aws_access_key_id_original],
+              :aws_secret_access_key => creds[:aws_secret_access_key_original],
+              :aws_region => creds.fetch(:aws_sts_region, 'us-east-1'),
+              :aws_credentials_file => creds.fetch(:aws_credentials_file, aws_credentials_file),
+              :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
+              :aws_profile_name => creds[:aws_profile_name],
+              :aws_host => creds[:aws_host]
+            )
+            role_info = sts.assume_role(
+              creds[:aws_sts_role_arn],
+              :session_name => creds[:aws_sts_role_session_name],
+              :external_id => creds[:aws_sts_external_id]
+            )
+            creds.merge!(role_info)
+          end
           true
         end
 
@@ -611,12 +629,19 @@ module Miasma
             end
           end
           if(aws_sts_token)
+            sts_assume_role!(data) if sts_update_required?
             options.set(:headers, 'X-Amz-Security-Token', aws_sts_token)
           end
           signature = signer.generate(http_method, path, options)
           update_request(connection, options)
           options = Hash[options.map{|k,v|[k.to_sym,v]}]
           connection.auth(signature).send(http_method, dest, options)
+        end
+
+        # @return [TrueClass, FalseClass]
+        def sts_update_required?(args={})
+          expiry = args.fetch(:aws_sts_token_expires, data[:aws_sts_token_expires])
+          expiry.nil? || expiry >= Time.now - 1
         end
 
         # Simple callback to allow request option adjustments prior to
