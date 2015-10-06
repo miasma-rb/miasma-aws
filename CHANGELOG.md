@@ -1,3 +1,8 @@
+# v0.1.28
+* Fix STS usage when building new API connections from existing connections (#21 and #23)
+
+__Note:__ Thanks to @cixelsyd and @imbriaco for getting this sorted
+
 # v0.1.26
 * Fix broken S3 API interactions due to ordering in header modifications
 
