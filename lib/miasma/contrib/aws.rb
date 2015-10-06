@@ -351,8 +351,6 @@ module Miasma
 
             # @return [Contrib::AwsApiCore::SignatureV4]
             attr_reader :signer
-            # @return [Smash]
-            attr_reader :originals
           end
 
           # AWS config file key remapping
@@ -375,14 +373,13 @@ module Miasma
           memoize(type) do
             creds = attributes.dup
             creds.delete(:aws_host)
-            result = Miasma.api(
+            Miasma.api(
               Smash.new(
                 :type => type,
                 :provider => provider,
                 :credentials => creds
               )
             )
-            result
           end
         end
 
@@ -587,9 +584,6 @@ module Miasma
           @signer = Contrib::AwsApiCore::SignatureV4.new(
             aws_access_key_id, aws_secret_access_key, aws_region, self.class::API_SERVICE
           )
-          if(originals)
-            data.merge!(originals)
-          end
         end
 
         # @return [String] custom escape for aws compat
