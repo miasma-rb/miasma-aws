@@ -340,6 +340,8 @@ module Miasma
             attribute :aws_config_file, String, :required => true, :default => File.join(Dir.home, '.aws/config')
             attribute :aws_access_key_id, String, :required => true
             attribute :aws_secret_access_key, String, :required => true
+            attribute :aws_access_key_id_original, String
+            attribute :aws_secret_access_key_original, String
             attribute :aws_iam_instance_profile, [TrueClass, FalseClass], :default => false
             attribute :aws_region, String, :required => true
             attribute :aws_host, String
@@ -380,10 +382,6 @@ module Miasma
                 :credentials => creds
               )
             )
-            if(creds[:aws_access_key_id_original])
-              result.data[:aws_access_key_id_original] = creds[:aws_access_key_id_original]
-              result.data[:aws_secret_access_key_original] = creds[:aws_secret_access_key_original]
-            end
             result
           end
         end
@@ -464,8 +462,12 @@ module Miasma
         # @return [TrueClass]
         def sts_assume_role!(creds)
           unless(creds[:aws_access_key_id_original])
-            creds[:aws_access_key_id_original] = creds[:aws_access_key_id]
-            creds[:aws_secret_access_key_original] = creds[:aws_secret_access_key]
+            [ creds, attributes ].each do |obj|
+              obj.merge!({
+                :aws_access_key_id_original => creds[:aws_access_key_id],
+                :aws_secret_access_key_original => creds[:aws_secret_access_key]
+              })
+            end
           end
           sts = Miasma::Contrib::Aws::Api::Sts.new(
             :aws_access_key_id => creds[:aws_access_key_id_original],
