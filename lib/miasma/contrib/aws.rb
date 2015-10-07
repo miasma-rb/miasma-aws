@@ -336,6 +336,7 @@ module Miasma
             attribute :aws_sts_external_id, String
             attribute :aws_sts_role_session_name, String
             attribute :aws_sts_region, String
+            attribute :aws_sts_host, String
             attribute :aws_credentials_file, String, :required => true, :default => File.join(Dir.home, '.aws/credentials')
             attribute :aws_config_file, String, :required => true, :default => File.join(Dir.home, '.aws/config')
             attribute :aws_access_key_id, String, :required => true
@@ -486,7 +487,7 @@ module Miasma
               :aws_credentials_file => creds.fetch(:aws_credentials_file, aws_credentials_file),
               :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
               :aws_profile_name => creds[:aws_profile_name],
-              :aws_host => creds[:aws_host]
+              :aws_host => creds[:aws_sts_host]
             )
             role_info = sts.assume_role(
               creds[:aws_sts_role_arn],
@@ -629,7 +630,7 @@ module Miasma
             end
           end
           if(aws_sts_token)
-            sts_assume_role!(data) if sts_update_required?
+            sts_assume_role!(attributes) if sts_update_required?
             options.set(:headers, 'X-Amz-Security-Token', aws_sts_token)
           end
           signature = signer.generate(http_method, path, options)
@@ -641,7 +642,8 @@ module Miasma
         # @return [TrueClass, FalseClass]
         def sts_update_required?(args={})
           expiry = args.fetch(:aws_sts_token_expires, data[:aws_sts_token_expires])
-          expiry.nil? || expiry >= Time.now - 1
+          expiry.nil? || expiry <= Time.now - 1
+          true
         end
 
         # Simple callback to allow request option adjustments prior to
