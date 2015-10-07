@@ -1,3 +1,6 @@
+# v0.1.30
+* Hotfix: Update STS expiration check logic. Add isolated STS host override.
+
 # v0.1.28
 * Fix STS usage when building new API connections from existing connections (#21 and #23)
 
