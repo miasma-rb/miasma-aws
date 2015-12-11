@@ -39,7 +39,8 @@ module Miasma
           end
           set = result.get(*result_key.slice(0, 2))
           if(set.is_a?(Hash) && set['IsTruncated'] && set['Contents'])
-            list += all_result_pages(set['Contents'].last['Key'], *result_key, &block)
+            content_key = (set['Contents'].respond_to?(:last) ? set['Contents'].last : set['Contents'])['Key']
+            list += all_result_pages(content_key, *result_key, &block)
           end
           list.compact
         end
