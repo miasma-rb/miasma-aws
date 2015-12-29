@@ -1,3 +1,8 @@
+# v0.1.32
+* Fix stack resource loading (properly load > 100 resources)
+* Remove deprecated method usage on the http library
+* Prevent lazy loading template on save in update context
+
 # v0.1.30
 * Hotfix: Update STS expiration check logic. Add isolated STS host override.
 
