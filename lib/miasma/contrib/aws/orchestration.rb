@@ -308,13 +308,13 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Array<Models::Orchestration::Stack::Resource>]
         def resource_all(stack)
-          results = all_result_pages(nil, :body, 'DescribeStackResourcesResponse', 'DescribeStackResourcesResult', 'StackResources', 'member') do |options|
+          results = all_result_pages(nil, :body, 'ListStackResourcesResponse', 'ListStackResourcesResult', 'StackResourceSummaries', 'member') do |options|
             request(
               :method => :post,
               :path => '/',
               :form => options.merge(
                 Smash.new(
-                  'Action' => 'DescribeStackResources',
+                  'Action' => 'ListStackResources',
                   'StackName' => stack.id
                 )
               )
@@ -328,8 +328,7 @@ module Miasma
               :type => res['ResourceType'],
               :state => res['ResourceStatus'].downcase.to_sym,
               :status => res['ResourceStatus'],
-              :status_reason => res['ResourceStatusReason'],
-              :updated => res['Timestamp']
+              :updated => res['LastUpdatedTimestamp']
             ).valid_state
           end
         end
@@ -339,8 +338,21 @@ module Miasma
         # @param resource [Models::Orchestration::Stack::Resource]
         # @return [Models::Orchestration::Resource]
         def resource_reload(resource)
-          resource.stack.resources.reload
-          resource.stack.resources.get(resource.id)
+          result = request(
+            :method => :post,
+            :path => '/',
+            :form => Smash.new(
+              'LogicalResourceId' => resource.logical_id,
+              'StackName' => resource.stack.name
+            )
+          ).get(:body, 'DescribeStackResourceResponse', 'DescribeStackResourceResult', 'StackResourceDetail')
+          resource.updated = result['LastUpdatedTimestamp']
+          resource.type = result['ResourceType']
+          resource.state = result['ResourceStatus'].downcase.to_sym
+          resource.status = result['ResourceStatus']
+          resource.status_reason = result['ResourceStatusReason']
+          resource.valid_state
+          resource
         end
 
         # Return all events for stack
