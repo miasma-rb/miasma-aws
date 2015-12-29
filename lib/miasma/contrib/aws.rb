@@ -594,7 +594,7 @@ module Miasma
 
         # @return [HTTP] connection for requests (forces headers)
         def connection
-          super.with_headers(
+          super.headers(
             'Host' => aws_host,
             'X-Amz-Date' => Contrib::AwsApiCore.time_iso8601
           )
