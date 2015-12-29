@@ -1,3 +1,6 @@
+# v0.1.34
+* Fix template check on update to use dirty? helper method
+
 # v0.1.32
 * Fix stack resource loading (properly load > 100 resources)
 * Remove deprecated method usage on the http library
