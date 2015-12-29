@@ -169,7 +169,7 @@ module Miasma
           if(stack.on_failure)
             params['OnFailure'] = stack.on_failure == 'nothing' ? 'DO_NOTHING' : stack.on_failure.upcase
           end
-          if(stack.data[:template].empty?)
+          if(!stack.dirty?(:template) && stack.persisted?)
             params['UsePreviousTemplate'] = true
           else
             params['TemplateBody'] = MultiJson.dump(stack.template)
