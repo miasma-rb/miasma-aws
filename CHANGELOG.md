@@ -1,3 +1,6 @@
+# v0.1.36
+* Fix access to default headers defined on connection
+
 # v0.1.34
 * Fix template check on update to use dirty? helper method
 
