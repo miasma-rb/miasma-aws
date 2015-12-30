@@ -615,7 +615,7 @@ module Miasma
           dest, options = request_args
           path = URI.parse(dest).path
           options = options ? options.to_smash : Smash.new
-          options[:headers] = Smash[connection.default_headers.to_a].merge(options.fetch(:headers, Smash.new))
+          options[:headers] = Smash[connection.default_options.headers.to_a].merge(options.fetch(:headers, Smash.new))
           if(self.class::API_VERSION)
             if(options[:form])
               options.set(:form, 'Version', self.class::API_VERSION)
