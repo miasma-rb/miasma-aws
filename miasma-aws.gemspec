@@ -11,10 +11,13 @@ Gem::Specification.new do |s|
   s.license = 'Apache 2.0'
   s.require_path = 'lib'
   s.add_development_dependency 'miasma', '>= 0.2.29'
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rubocop'
   s.add_development_dependency 'pry'
-  s.add_development_dependency 'minitest'
   s.add_development_dependency 'vcr'
+  s.add_development_dependency 'mocha'
   s.add_development_dependency 'webmock'
-  s.add_development_dependency 'psych', '>= 2.0.8'
+  s.add_development_dependency 'minitest'
+  s.add_development_dependency 'minitest-vcr'
   s.files = Dir['lib/**/*'] + %w(miasma-aws.gemspec README.md CHANGELOG.md LICENSE)
 end
