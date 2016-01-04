@@ -1,0 +1,394 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://cloudformation.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=CreateStack&StackName=miasma-test-stack-2&TemplateBody=%7B%22AWSTemplateFormatVersion%22%3A%222010-09-09%22%2C%22Description%22%3A%22Miasma+test+stack%22%2C%22Resources%22%3A%7B%22MiasmaTestHandle%22%3A%7B%22Type%22%3A%22AWS%3A%3ACloudFormation%3A%3AWaitConditionHandle%22%7D%7D%7D&Version=2010-05-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=34f7b54dea8059d5deb007dde2002672ef8be2b016a6fb95275e2a52464d05c2
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - cloudformation.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T202251Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '307'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - c6155433-b320-11e5-bf8d-952cf3a4747f
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '389'
+      Date:
+      - Mon, 04 Jan 2016 20:21:45 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <CreateStackResponse xmlns="http://cloudformation.amazonaws.com/doc/2010-05-15/">
+          <CreateStackResult>
+            <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack-2/c61ea290-b320-11e5-95b0-500c2171ae62</StackId>
+          </CreateStackResult>
+          <ResponseMetadata>
+            <RequestId>c6155433-b320-11e5-bf8d-952cf3a4747f</RequestId>
+          </ResponseMetadata>
+        </CreateStackResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 20:22:51 GMT
+- request:
+    method: post
+    uri: https://cloudformation.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeStacks&StackName=arn%3Aaws%3Acloudformation%3Aus-west-1%3A921689585014%3Astack%2Fmiasma-test-stack-2%2Fc61ea290-b320-11e5-95b0-500c2171ae62&Version=2010-05-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=6933f9ddb7ebc28ef9afabace710ad721ff98a6c7a032da46bbb3a9cca6062a8
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - cloudformation.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T202251Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '173'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - c6841b79-b320-11e5-8e90-53a06fc71130
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '838'
+      Date:
+      - Mon, 04 Jan 2016 20:21:45 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <DescribeStacksResponse xmlns="http://cloudformation.amazonaws.com/doc/2010-05-15/">
+          <DescribeStacksResult>
+            <Stacks>
+              <member>
+                <Tags/>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack-2/c61ea290-b320-11e5-95b0-500c2171ae62</StackId>
+                <StackStatus>CREATE_IN_PROGRESS</StackStatus>
+                <StackName>miasma-test-stack-2</StackName>
+                <StackStatusReason>User Initiated</StackStatusReason>
+                <Description>Miasma test stack</Description>
+                <NotificationARNs/>
+                <CreationTime>2016-01-04T20:21:44.898Z</CreationTime>
+                <DisableRollback>false</DisableRollback>
+              </member>
+            </Stacks>
+          </DescribeStacksResult>
+          <ResponseMetadata>
+            <RequestId>c6841b79-b320-11e5-8e90-53a06fc71130</RequestId>
+          </ResponseMetadata>
+        </DescribeStacksResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 20:22:52 GMT
+- request:
+    method: post
+    uri: https://cloudformation.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeStacks&StackName=arn%3Aaws%3Acloudformation%3Aus-west-1%3A921689585014%3Astack%2Fmiasma-test-stack-2%2Fc61ea290-b320-11e5-95b0-500c2171ae62&Version=2010-05-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=eb87058bdbff40dd285e2cc7c0a5c433e952f4b5a1f0fca96e0fa39e2dc1777a
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - cloudformation.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T202252Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '173'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - c6aed4c7-b320-11e5-90b3-c1ed0717fceb
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '838'
+      Date:
+      - Mon, 04 Jan 2016 20:21:45 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <DescribeStacksResponse xmlns="http://cloudformation.amazonaws.com/doc/2010-05-15/">
+          <DescribeStacksResult>
+            <Stacks>
+              <member>
+                <Tags/>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack-2/c61ea290-b320-11e5-95b0-500c2171ae62</StackId>
+                <StackStatus>CREATE_IN_PROGRESS</StackStatus>
+                <StackName>miasma-test-stack-2</StackName>
+                <StackStatusReason>User Initiated</StackStatusReason>
+                <Description>Miasma test stack</Description>
+                <NotificationARNs/>
+                <CreationTime>2016-01-04T20:21:44.898Z</CreationTime>
+                <DisableRollback>false</DisableRollback>
+              </member>
+            </Stacks>
+          </DescribeStacksResult>
+          <ResponseMetadata>
+            <RequestId>c6aed4c7-b320-11e5-90b3-c1ed0717fceb</RequestId>
+          </ResponseMetadata>
+        </DescribeStacksResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 20:22:52 GMT
+- request:
+    method: post
+    uri: https://cloudformation.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeStacks&StackName=arn%3Aaws%3Acloudformation%3Aus-west-1%3A921689585014%3Astack%2Fmiasma-test-stack-2%2Fc61ea290-b320-11e5-95b0-500c2171ae62&Version=2010-05-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=a7b3f8f032e4f059cbd85154a2252ba0f7f91ad2e785f7b3ae65b8a405701111
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - cloudformation.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T202312Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '173'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - d2c74cbb-b320-11e5-b9ff-55fea8b4bfbd
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '773'
+      Date:
+      - Mon, 04 Jan 2016 20:22:06 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <DescribeStacksResponse xmlns="http://cloudformation.amazonaws.com/doc/2010-05-15/">
+          <DescribeStacksResult>
+            <Stacks>
+              <member>
+                <Tags/>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack-2/c61ea290-b320-11e5-95b0-500c2171ae62</StackId>
+                <StackStatus>CREATE_COMPLETE</StackStatus>
+                <StackName>miasma-test-stack-2</StackName>
+                <Description>Miasma test stack</Description>
+                <NotificationARNs/>
+                <CreationTime>2016-01-04T20:21:44.898Z</CreationTime>
+                <DisableRollback>false</DisableRollback>
+              </member>
+            </Stacks>
+          </DescribeStacksResult>
+          <ResponseMetadata>
+            <RequestId>d2c74cbb-b320-11e5-b9ff-55fea8b4bfbd</RequestId>
+          </ResponseMetadata>
+        </DescribeStacksResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 20:23:12 GMT
+- request:
+    method: post
+    uri: https://cloudformation.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DeleteStack&StackName=arn%3Aaws%3Acloudformation%3Aus-west-1%3A921689585014%3Astack%2Fmiasma-test-stack-2%2Fc61ea290-b320-11e5-95b0-500c2171ae62&Version=2010-05-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=1c917100cbee2925057776e4c6072ec7ea3c11a1a0c2520a81be3db4f11e04ed
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - cloudformation.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T202312Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '170'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - d2f6e845-b320-11e5-9fd7-71cacbe23d3f
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '212'
+      Date:
+      - Mon, 04 Jan 2016 20:22:06 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <DeleteStackResponse xmlns="http://cloudformation.amazonaws.com/doc/2010-05-15/">
+          <ResponseMetadata>
+            <RequestId>d2f6e845-b320-11e5-9fd7-71cacbe23d3f</RequestId>
+          </ResponseMetadata>
+        </DeleteStackResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 20:23:13 GMT
+- request:
+    method: post
+    uri: https://cloudformation.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeStacks&StackName=arn%3Aaws%3Acloudformation%3Aus-west-1%3A921689585014%3Astack%2Fmiasma-test-stack-2%2Fc61ea290-b320-11e5-95b0-500c2171ae62&Version=2010-05-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=3f2042c70fcf3eaf772e4e7e5ca6ff98166271f092aa39ef36d6a85dfb1ed445
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - cloudformation.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T202313Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '173'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - d3385e17-b320-11e5-9fd7-71cacbe23d3f
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '838'
+      Date:
+      - Mon, 04 Jan 2016 20:22:06 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <DescribeStacksResponse xmlns="http://cloudformation.amazonaws.com/doc/2010-05-15/">
+          <DescribeStacksResult>
+            <Stacks>
+              <member>
+                <Tags/>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack-2/c61ea290-b320-11e5-95b0-500c2171ae62</StackId>
+                <StackStatus>DELETE_IN_PROGRESS</StackStatus>
+                <StackName>miasma-test-stack-2</StackName>
+                <StackStatusReason>User Initiated</StackStatusReason>
+                <Description>Miasma test stack</Description>
+                <NotificationARNs/>
+                <CreationTime>2016-01-04T20:21:44.898Z</CreationTime>
+                <DisableRollback>false</DisableRollback>
+              </member>
+            </Stacks>
+          </DescribeStacksResult>
+          <ResponseMetadata>
+            <RequestId>d3385e17-b320-11e5-9fd7-71cacbe23d3f</RequestId>
+          </ResponseMetadata>
+        </DescribeStacksResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 20:23:13 GMT
+- request:
+    method: post
+    uri: https://cloudformation.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeStacks&StackName=arn%3Aaws%3Acloudformation%3Aus-west-1%3A921689585014%3Astack%2Fmiasma-test-stack-2%2Fc61ea290-b320-11e5-95b0-500c2171ae62&Version=2010-05-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=042e504799d2ed12c9c69f95ba2335fecc1fed13fd151e0ef6853c199e860cfc
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - cloudformation.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T202333Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '173'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - df52d06d-b320-11e5-9fd7-71cacbe23d3f
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '773'
+      Date:
+      - Mon, 04 Jan 2016 20:22:27 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <DescribeStacksResponse xmlns="http://cloudformation.amazonaws.com/doc/2010-05-15/">
+          <DescribeStacksResult>
+            <Stacks>
+              <member>
+                <Tags/>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack-2/c61ea290-b320-11e5-95b0-500c2171ae62</StackId>
+                <StackStatus>DELETE_COMPLETE</StackStatus>
+                <StackName>miasma-test-stack-2</StackName>
+                <Description>Miasma test stack</Description>
+                <NotificationARNs/>
+                <CreationTime>2016-01-04T20:21:44.898Z</CreationTime>
+                <DisableRollback>false</DisableRollback>
+              </member>
+            </Stacks>
+          </DescribeStacksResult>
+          <ResponseMetadata>
+            <RequestId>df52d06d-b320-11e5-9fd7-71cacbe23d3f</RequestId>
+          </ResponseMetadata>
+        </DescribeStacksResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 20:23:33 GMT
+recorded_with: VCR 3.0.1

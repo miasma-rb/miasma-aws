@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://s3.amazonaws.com/?Version=2006-03-01
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-east-1/s3/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=69f84aa099a8042a618a86e1af6ab242fb374167863fb458ff22ce1f79e1c54f
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - s3.amazonaws.com
+      X-Amz-Date:
+      - 20160104T204244Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Connection:
+      - close
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amz-Id-2:
+      - h61dQAfV2ViBkpHXWjmS+DC0Ux7XUMxXvsNGCibLpWdAHvCRZY2KgOS5Iw6k20aR1zcvc2RY0CE=
+      X-Amz-Request-Id:
+      - BB53F2D2392E0E65
+      Date:
+      - Mon, 04 Jan 2016 20:41:39 GMT
+      Content-Type:
+      - application/xml
+      Transfer-Encoding:
+      - chunked
+      Server:
+      - AmazonS3
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>413592dcd47430a483c65bf9d5da73cd2e086212c2a8cd9aff537b2468e83de9</ID><DisplayName>aws</DisplayName></Owner><Buckets><Bucket><Name>assets.hw-ops.com</Name><CreationDate>2013-12-18T21:07:32.000Z</CreationDate></Bucket><Bucket><Name>cf-templates-235p3whz4gj8-us-west-2</Name><CreationDate>2013-06-19T21:46:48.000Z</CreationDate></Bucket><Bucket><Name>channels.mythtv.test</Name><CreationDate>2014-12-25T03:43:38.000Z</CreationDate></Bucket><Bucket><Name>chef-backup-test</Name><CreationDate>2014-02-25T18:43:28.000Z</CreationDate></Bucket><Bucket><Name>cloud-viz-playground</Name><CreationDate>2014-10-04T22:23:14.000Z</CreationDate></Bucket><Bucket><Name>cr-test-00</Name><CreationDate>2014-11-25T13:58:04.000Z</CreationDate></Bucket><Bucket><Name>demo-east</Name><CreationDate>2015-09-15T12:34:12.000Z</CreationDate></Bucket><Bucket><Name>demo-infra</Name><CreationDate>2015-02-13T14:02:47.000Z</CreationDate></Bucket><Bucket><Name>energysavvy-dump</Name><CreationDate>2014-05-14T21:35:10.000Z</CreationDate></Bucket><Bucket><Name>export-test-cfn</Name><CreationDate>2014-01-27T20:45:26.000Z</CreationDate></Bucket><Bucket><Name>fission-assets</Name><CreationDate>2014-03-06T02:31:52.000Z</CreationDate></Bucket><Bucket><Name>fission-assets-poc</Name><CreationDate>2014-12-12T20:48:23.000Z</CreationDate></Bucket><Bucket><Name>fission-assets-poc2</Name><CreationDate>2015-02-06T17:39:39.000Z</CreationDate></Bucket><Bucket><Name>fission-assets-testing</Name><CreationDate>2014-03-10T21:36:45.000Z</CreationDate></Bucket><Bucket><Name>fission-backup</Name><CreationDate>2014-12-12T23:39:27.000Z</CreationDate></Bucket><Bucket><Name>fission-cfn</Name><CreationDate>2014-12-18T13:37:40.000Z</CreationDate></Bucket><Bucket><Name>fission-cfn-east</Name><CreationDate>2014-12-23T18:13:34.000Z</CreationDate></Bucket><Bucket><Name>fission-infra</Name><CreationDate>2013-12-31T14:58:22.000Z</CreationDate></Bucket><Bucket><Name>fission-infrastructure</Name><CreationDate>2015-03-05T21:54:33.000Z</CreationDate></Bucket><Bucket><Name>fubar-test-bucket</Name><CreationDate>2014-05-19T19:11:31.000Z</CreationDate></Bucket><Bucket><Name>heavywater.pkgd.io</Name><CreationDate>2014-03-07T04:32:44.000Z</CreationDate></Bucket><Bucket><Name>hw-book-club</Name><CreationDate>2014-06-30T21:31:08.000Z</CreationDate></Bucket><Bucket><Name>hw-chef-summit</Name><CreationDate>2014-10-03T03:20:13.000Z</CreationDate></Bucket><Bucket><Name>hw-demo</Name><CreationDate>2015-02-12T01:16:59.000Z</CreationDate></Bucket><Bucket><Name>hw-packages</Name><CreationDate>2014-03-28T16:33:40.000Z</CreationDate></Bucket><Bucket><Name>hw-test-bucket</Name><CreationDate>2014-03-03T21:12:33.000Z</CreationDate></Bucket><Bucket><Name>hw-tmp-store</Name><CreationDate>2014-04-25T15:49:00.000Z</CreationDate></Bucket><Bucket><Name>hw-training-nesting-bucket</Name><CreationDate>2015-07-30T22:12:17.000Z</CreationDate></Bucket><Bucket><Name>hw-vagrant-baseboxes</Name><CreationDate>2014-03-25T17:05:06.000Z</CreationDate></Bucket><Bucket><Name>hw-vault-demo</Name><CreationDate>2015-10-26T01:34:31.000Z</CreationDate></Bucket><Bucket><Name>hw-xcode</Name><CreationDate>2014-03-18T16:36:23.000Z</CreationDate></Bucket><Bucket><Name>infra-demo</Name><CreationDate>2015-02-19T20:16:38.000Z</CreationDate></Bucket><Bucket><Name>infra_repo_portertech</Name><CreationDate>2015-05-25T22:40:06.000Z</CreationDate></Bucket><Bucket><Name>infra_repo_spox</Name><CreationDate>2015-04-02T18:57:51.000Z</CreationDate></Bucket><Bucket><Name>minecraft.hw-ops.com_backups</Name><CreationDate>2014-03-10T04:44:38.000Z</CreationDate></Bucket><Bucket><Name>portertech-nested-bucket</Name><CreationDate>2015-10-29T06:35:20.000Z</CreationDate></Bucket><Bucket><Name>s3hub-413592dcd47430a483c65bf9d5da73cd2e086212c2a8cd9aff537b246</Name><CreationDate>2014-05-14T21:41:23.000Z</CreationDate></Bucket><Bucket><Name>sensu-sparkle</Name><CreationDate>2014-10-17T19:11:39.000Z</CreationDate></Bucket><Bucket><Name>sensuapp.org</Name><CreationDate>2013-10-29T20:07:29.000Z</CreationDate></Bucket><Bucket><Name>short-order-assets</Name><CreationDate>2015-05-21T20:42:22.000Z</CreationDate></Bucket><Bucket><Name>tmp-stack-holder</Name><CreationDate>2014-05-20T19:12:48.000Z</CreationDate></Bucket><Bucket><Name>tmp.hw-ops.com</Name><CreationDate>2014-06-16T21:05:30.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 20:42:44 GMT
+recorded_with: VCR 3.0.1

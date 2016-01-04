@@ -1,0 +1,1930 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=RunInstances&ImageId=ami-c0e78ba0&InstanceType=m1.small&KeyName=default&MinCount=1&MaxCount=1&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=7cadb9f1bc8efc66083cbaaf0232a3a9f1db4c19d044a5db66def83890a99fc5
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182544Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '119'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:24:38 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <RunInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>19f9043f-4cc4-4e0a-8494-6b436c94cfc0</requestId>
+            <reservationId>r-55c22990</reservationId>
+            <ownerId>921689585014</ownerId>
+            <groupSet>
+                <item>
+                    <groupId>sg-b5ca24f1</groupId>
+                    <groupName>default</groupName>
+                </item>
+            </groupSet>
+            <instancesSet>
+                <item>
+                    <instanceId>i-ba003c08</instanceId>
+                    <imageId>ami-c0e78ba0</imageId>
+                    <instanceState>
+                        <code>0</code>
+                        <name>pending</name>
+                    </instanceState>
+                    <privateDnsName/>
+                    <dnsName/>
+                    <reason/>
+                    <keyName>default</keyName>
+                    <amiLaunchIndex>0</amiLaunchIndex>
+                    <productCodes/>
+                    <instanceType>m1.small</instanceType>
+                    <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                    <placement>
+                        <availabilityZone>us-west-1c</availabilityZone>
+                        <groupName/>
+                        <tenancy>default</tenancy>
+                    </placement>
+                    <kernelId>aki-880531cd</kernelId>
+                    <monitoring>
+                        <state>disabled</state>
+                    </monitoring>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <stateReason>
+                        <code>pending</code>
+                        <message>pending</message>
+                    </stateReason>
+                    <architecture>x86_64</architecture>
+                    <rootDeviceType>instance-store</rootDeviceType>
+                    <blockDeviceMapping/>
+                    <virtualizationType>paravirtual</virtualizationType>
+                    <clientToken/>
+                    <hypervisor>xen</hypervisor>
+                    <networkInterfaceSet/>
+                    <ebsOptimized>false</ebsOptimized>
+                </item>
+            </instancesSet>
+        </RunInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:25:45 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=CreateTags&ResourceId.1=i-ba003c08&Tag.1.Key=Name&Tag.1.Value=miasma-test-instance&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=3016c9a5d124200c5599a859ed87ee5997332b811ace6bae2231b876e1fd395f
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182545Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '108'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:24:39 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <CreateTagsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>78d6cfd8-dd31-4b86-84fc-a4fa29a21f90</requestId>
+            <return>true</return>
+        </CreateTagsResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:25:45 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=ccec00fed750b1da66e0add8abb49c386066e4ea1a4b048ccbada2ae87915c95
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182545Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:24:38 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>386871d4-e503-4080-9eda-42fe22ed94c5</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>0</code>
+                                <name>pending</name>
+                            </instanceState>
+                            <privateDnsName/>
+                            <dnsName/>
+                            <reason/>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:25:46 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=7266696442df66adffd09f3a32e8d21fa57f9bb71dc91259aeda9964e93a4e5e
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182546Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '43'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:24:40 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>8f5bfd2f-df67-47b7-abae-e30ca3f6de48</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-1ec229db</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-9c073b2e</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>16</code>
+                                <name>running</name>
+                            </instanceState>
+                            <privateDnsName>ip-10-197-77-145.us-west-1.compute.internal</privateDnsName>
+                            <dnsName>ec2-54-177-106-46.us-west-1.compute.amazonaws.com</dnsName>
+                            <reason/>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:23:52.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <privateIpAddress>10.197.77.145</privateIpAddress>
+                            <ipAddress>54.177.106.46</ipAddress>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+                <item>
+                    <reservationId>r-42cd2687</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-780a36ca</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>48</code>
+                                <name>terminated</name>
+                            </instanceState>
+                            <privateDnsName/>
+                            <dnsName/>
+                            <reason>User initiated (2016-01-04 18:05:12 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:04:27.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>0</code>
+                                <name>pending</name>
+                            </instanceState>
+                            <privateDnsName/>
+                            <dnsName/>
+                            <reason/>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+                <item>
+                    <reservationId>r-33f51ef6</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-7a172bc8</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>48</code>
+                                <name>terminated</name>
+                            </instanceState>
+                            <privateDnsName/>
+                            <dnsName/>
+                            <reason>User initiated (2016-01-04 17:26:08 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T17:25:23.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+                <item>
+                    <reservationId>r-d4f51e11</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-51172be3</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>48</code>
+                                <name>terminated</name>
+                            </instanceState>
+                            <privateDnsName/>
+                            <dnsName/>
+                            <reason>User initiated (2016-01-04 17:22:37 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T17:21:34.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+                <item>
+                    <reservationId>r-fdcd2638</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-b1093503</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>48</code>
+                                <name>terminated</name>
+                            </instanceState>
+                            <privateDnsName/>
+                            <dnsName/>
+                            <reason>User initiated (2016-01-04 18:03:45 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:03:02.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:25:46 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=c7497db52494d7bedaac9e3d4b2c36a7e8fda5f7ce706aa55d7b83701a52af18
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182606Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:25:01 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>a1d30db0-cd3a-45b9-a364-473a7c981c69</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>0</code>
+                                <name>pending</name>
+                            </instanceState>
+                            <privateDnsName>ip-10-229-26-71.us-west-1.compute.internal</privateDnsName>
+                            <dnsName>ec2-54-193-150-56.us-west-1.compute.amazonaws.com</dnsName>
+                            <reason/>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <privateIpAddress>10.229.26.71</privateIpAddress>
+                            <ipAddress>54.193.150.56</ipAddress>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:26:07 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=2752132daa5fb084d744c89bd84a0bbe304509694c1ec0c06544854f9a04b61b
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182627Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:25:21 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>821fce72-dbb6-4acb-99b1-e3c7afc0a2ad</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>16</code>
+                                <name>running</name>
+                            </instanceState>
+                            <privateDnsName>ip-10-229-26-71.us-west-1.compute.internal</privateDnsName>
+                            <dnsName>ec2-54-193-150-56.us-west-1.compute.amazonaws.com</dnsName>
+                            <reason/>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <privateIpAddress>10.229.26.71</privateIpAddress>
+                            <ipAddress>54.193.150.56</ipAddress>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:26:28 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=TerminateInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=82952534e0c3c0b7210b5715da81abc6ee19dd74c2c2cffde8f8a55f4c3e375a
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182628Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '68'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:25:21 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <TerminateInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>337453c8-691c-43bf-a0d1-a4498c1e93d9</requestId>
+            <instancesSet>
+                <item>
+                    <instanceId>i-ba003c08</instanceId>
+                    <currentState>
+                        <code>32</code>
+                        <name>shutting-down</name>
+                    </currentState>
+                    <previousState>
+                        <code>16</code>
+                        <name>running</name>
+                    </previousState>
+                </item>
+            </instancesSet>
+        </TerminateInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:26:28 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=a2d872f8220b9700865666585784356350a6621a179b0ac021b0288a6e4bf18c
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182628Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:25:21 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>d5ea8e4e-fc21-4276-84db-e95d2b2e4163</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>32</code>
+                                <name>shutting-down</name>
+                            </instanceState>
+                            <privateDnsName>ip-10-229-26-71.us-west-1.compute.internal</privateDnsName>
+                            <dnsName>ec2-54-193-150-56.us-west-1.compute.amazonaws.com</dnsName>
+                            <reason>User initiated (2016-01-04 18:25:22 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <privateIpAddress>10.229.26.71</privateIpAddress>
+                            <ipAddress>54.193.150.56</ipAddress>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:26:29 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=82fed5f39b951fbcc19597478706e52c319beef2ede461504803e97b1ce768da
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182649Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:25:43 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>e814e46e-4a26-4f16-be4a-41d927db313d</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>32</code>
+                                <name>shutting-down</name>
+                            </instanceState>
+                            <privateDnsName>ip-10-229-26-71.us-west-1.compute.internal</privateDnsName>
+                            <dnsName>ec2-54-193-150-56.us-west-1.compute.amazonaws.com</dnsName>
+                            <reason>User initiated (2016-01-04 18:25:22 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <privateIpAddress>10.229.26.71</privateIpAddress>
+                            <ipAddress>54.193.150.56</ipAddress>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:26:50 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=5139605e80e80b4fa1ec102bead8e45de9fdc03ecf26a517c8ba06bb4143a98a
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182710Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:26:04 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>a1b64af2-632b-45ad-8fc5-55bc14b38c17</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>32</code>
+                                <name>shutting-down</name>
+                            </instanceState>
+                            <privateDnsName>ip-10-229-26-71.us-west-1.compute.internal</privateDnsName>
+                            <dnsName>ec2-54-193-150-56.us-west-1.compute.amazonaws.com</dnsName>
+                            <reason>User initiated (2016-01-04 18:25:22 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <privateIpAddress>10.229.26.71</privateIpAddress>
+                            <ipAddress>54.193.150.56</ipAddress>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:27:11 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=345a89d82543ab526e17887be98e1705fca7d4565095687aa638fbe5d958bc31
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182731Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:26:24 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>5eed80bf-eb14-4e23-9c11-38d4eace728f</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>32</code>
+                                <name>shutting-down</name>
+                            </instanceState>
+                            <privateDnsName>ip-10-229-26-71.us-west-1.compute.internal</privateDnsName>
+                            <dnsName>ec2-54-193-150-56.us-west-1.compute.amazonaws.com</dnsName>
+                            <reason>User initiated (2016-01-04 18:25:22 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <privateIpAddress>10.229.26.71</privateIpAddress>
+                            <ipAddress>54.193.150.56</ipAddress>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:27:31 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=6181e1ba2c6e88cfc3ae7457332d8d2c8125ae9b87669f831e78922bf1976a40
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182751Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:26:45 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>065e1a93-2055-464e-959e-392ca1b5e5ba</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>32</code>
+                                <name>shutting-down</name>
+                            </instanceState>
+                            <privateDnsName>ip-10-229-26-71.us-west-1.compute.internal</privateDnsName>
+                            <dnsName>ec2-54-193-150-56.us-west-1.compute.amazonaws.com</dnsName>
+                            <reason>User initiated (2016-01-04 18:25:22 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <privateIpAddress>10.229.26.71</privateIpAddress>
+                            <ipAddress>54.193.150.56</ipAddress>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:27:52 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=f0b0fc43d72fa1241b55c029bd271e41819dc3ea7b021288564eefd517a61be8
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182812Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:27:05 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>b19bd891-b5ca-407a-a9fa-5ccc3a32b19c</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>32</code>
+                                <name>shutting-down</name>
+                            </instanceState>
+                            <privateDnsName>ip-10-229-26-71.us-west-1.compute.internal</privateDnsName>
+                            <dnsName>ec2-54-193-150-56.us-west-1.compute.amazonaws.com</dnsName>
+                            <reason>User initiated (2016-01-04 18:25:22 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <privateIpAddress>10.229.26.71</privateIpAddress>
+                            <ipAddress>54.193.150.56</ipAddress>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:28:12 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=349acb092acc08d82661eb081bf1d7a2ca1d58f5e81908b4bbdf1cb4aae06209
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182832Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:27:26 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>777df02e-6d3c-43c5-8707-7d5c90bea249</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>32</code>
+                                <name>shutting-down</name>
+                            </instanceState>
+                            <privateDnsName>ip-10-229-26-71.us-west-1.compute.internal</privateDnsName>
+                            <dnsName>ec2-54-193-150-56.us-west-1.compute.amazonaws.com</dnsName>
+                            <reason>User initiated (2016-01-04 18:25:22 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <privateIpAddress>10.229.26.71</privateIpAddress>
+                            <ipAddress>54.193.150.56</ipAddress>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:28:33 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=ad6ffce3200ba93bd226d2d8c8d928fbb0d21b7cddd73b8c771e07b2d4a4c224
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182853Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:27:46 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>b3486308-fcc0-453d-8b65-cf475a5ec490</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>32</code>
+                                <name>shutting-down</name>
+                            </instanceState>
+                            <privateDnsName/>
+                            <dnsName/>
+                            <reason>User initiated (2016-01-04 18:25:22 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:28:53 GMT
+- request:
+    method: post
+    uri: https://ec2.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeInstances&InstanceId.1=i-ba003c08&Version=2014-06-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/ec2/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=ff7ad88d29731b9947f873435082099abcf2e4cc5b3c4190804d79b0c3954e85
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - ec2.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T182913Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Mon, 04 Jan 2016 18:28:07 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            <requestId>fd1f269e-4c5e-476a-90bb-1a740a5700b5</requestId>
+            <reservationSet>
+                <item>
+                    <reservationId>r-55c22990</reservationId>
+                    <ownerId>921689585014</ownerId>
+                    <groupSet>
+                        <item>
+                            <groupId>sg-b5ca24f1</groupId>
+                            <groupName>default</groupName>
+                        </item>
+                    </groupSet>
+                    <instancesSet>
+                        <item>
+                            <instanceId>i-ba003c08</instanceId>
+                            <imageId>ami-c0e78ba0</imageId>
+                            <instanceState>
+                                <code>48</code>
+                                <name>terminated</name>
+                            </instanceState>
+                            <privateDnsName/>
+                            <dnsName/>
+                            <reason>User initiated (2016-01-04 18:25:22 GMT)</reason>
+                            <keyName>default</keyName>
+                            <amiLaunchIndex>0</amiLaunchIndex>
+                            <productCodes/>
+                            <instanceType>m1.small</instanceType>
+                            <launchTime>2016-01-04T18:24:38.000Z</launchTime>
+                            <placement>
+                                <availabilityZone>us-west-1c</availabilityZone>
+                                <groupName/>
+                                <tenancy>default</tenancy>
+                            </placement>
+                            <kernelId>aki-880531cd</kernelId>
+                            <monitoring>
+                                <state>disabled</state>
+                            </monitoring>
+                            <groupSet>
+                                <item>
+                                    <groupId>sg-b5ca24f1</groupId>
+                                    <groupName>default</groupName>
+                                </item>
+                            </groupSet>
+                            <stateReason>
+                                <code>Client.UserInitiatedShutdown</code>
+                                <message>Client.UserInitiatedShutdown: User initiated shutdown</message>
+                            </stateReason>
+                            <architecture>x86_64</architecture>
+                            <rootDeviceType>instance-store</rootDeviceType>
+                            <blockDeviceMapping/>
+                            <virtualizationType>paravirtual</virtualizationType>
+                            <clientToken/>
+                            <tagSet>
+                                <item>
+                                    <key>Name</key>
+                                    <value>miasma-test-instance</value>
+                                </item>
+                            </tagSet>
+                            <hypervisor>xen</hypervisor>
+                            <networkInterfaceSet/>
+                            <ebsOptimized>false</ebsOptimized>
+                        </item>
+                    </instancesSet>
+                </item>
+            </reservationSet>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 18:29:14 GMT
+recorded_with: VCR 3.0.1
