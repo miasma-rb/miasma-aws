@@ -1,3 +1,4 @@
+require_relative '../helper'
 require 'miasma/contrib/aws'
 
 describe Miasma::Models::Compute::Aws do
@@ -23,7 +24,6 @@ describe Miasma::Models::Compute::Aws do
       :key_name => 'default'
     )
   }
-  let(:cassette_prefix){ 'aws' }
 
   instance_exec(&MIASMA_COMPUTE_ABSTRACT)
 

@@ -1,3 +1,4 @@
+require_relative '../helper'
 require 'miasma/contrib/aws'
 
 describe Miasma::Models::Storage::Aws do
@@ -15,7 +16,6 @@ describe Miasma::Models::Storage::Aws do
   end
 
   let(:storage){ @storage }
-  let(:cassette_prefix){ 'aws' }
 
   instance_exec(&MIASMA_STORAGE_ABSTRACT)
 

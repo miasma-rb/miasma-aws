@@ -1,3 +1,4 @@
+require_relative '../helper'
 require 'miasma/contrib/aws'
 
 describe Miasma::Models::Orchestration::Aws do
@@ -31,7 +32,6 @@ describe Miasma::Models::Orchestration::Aws do
       }
     )
   }
-  let(:cassette_prefix){ 'aws' }
 
   instance_exec(&MIASMA_ORCHESTRATION_ABSTRACT)
 
