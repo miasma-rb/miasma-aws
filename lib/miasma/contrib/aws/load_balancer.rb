@@ -92,7 +92,17 @@ module Miasma
         # @return [Models::LoadBalancer::Balancer]
         def balancer_reload(balancer)
           if(balancer.persisted?)
-            load_balancer_data(balancer)
+            begin
+              load_balancer_data(balancer)
+            rescue Miasma::Error::ApiError::RequestError => e
+              if(e.response_error_msg.include?('LoadBalancerNotFound'))
+                balancer.state = :terminated
+                balancer.status = 'terminated'
+                balancer.valid_state
+              else
+                raise
+              end
+            end
           end
           balancer
         end
