@@ -1,3 +1,4 @@
+require_relative '../helper'
 require 'miasma/contrib/aws'
 
 describe Miasma::Models::LoadBalancer::Aws do
@@ -26,7 +27,6 @@ describe Miasma::Models::LoadBalancer::Aws do
       ]
     )
   }
-  let(:cassette_prefix){ 'aws_load_balancer' }
 
   instance_exec(&MIASMA_LOAD_BALANCER_ABSTRACT)
 

@@ -1,0 +1,143 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://elasticloadbalancing.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeLoadBalancers&LoadBalancerNames.member.1=miasma-test-load-balancer&Version=2012-06-01
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=617cd479e7f50fd47921e190790390d0234bf7ba9c6570f81ccf9b475776c87f
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - elasticloadbalancing.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T201056Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '100'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 1c686589-b31f-11e5-a524-e78a04c4f6d8
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '2019'
+      Date:
+      - Mon, 04 Jan 2016 20:09:49 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <DescribeLoadBalancersResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+          <DescribeLoadBalancersResult>
+            <LoadBalancerDescriptions>
+              <member>
+                <CanonicalHostedZoneNameID>Z1M58G0W56PQJA</CanonicalHostedZoneNameID>
+                <Scheme>internet-facing</Scheme>
+                <Instances/>
+                <Policies>
+                  <AppCookieStickinessPolicies/>
+                  <LBCookieStickinessPolicies/>
+                  <OtherPolicies/>
+                </Policies>
+                <AvailabilityZones>
+                  <member>us-west-1a</member>
+                  <member>us-west-1c</member>
+                </AvailabilityZones>
+                <DNSName>miasma-test-load-balancer-1681054238.us-west-1.elb.amazonaws.com</DNSName>
+                <BackendServerDescriptions/>
+                <SourceSecurityGroup>
+                  <OwnerAlias>amazon-elb</OwnerAlias>
+                  <GroupName>amazon-elb-sg</GroupName>
+                </SourceSecurityGroup>
+                <LoadBalancerName>miasma-test-load-balancer</LoadBalancerName>
+                <ListenerDescriptions>
+                  <member>
+                    <Listener>
+                      <InstancePort>80</InstancePort>
+                      <InstanceProtocol>HTTP</InstanceProtocol>
+                      <Protocol>HTTP</Protocol>
+                      <LoadBalancerPort>80</LoadBalancerPort>
+                    </Listener>
+                    <PolicyNames/>
+                  </member>
+                </ListenerDescriptions>
+                <HealthCheck>
+                  <UnhealthyThreshold>2</UnhealthyThreshold>
+                  <Interval>30</Interval>
+                  <HealthyThreshold>10</HealthyThreshold>
+                  <Timeout>5</Timeout>
+                  <Target>TCP:80</Target>
+                </HealthCheck>
+                <CreatedTime>2016-01-04T20:07:54.040Z</CreatedTime>
+                <Subnets/>
+                <SecurityGroups/>
+                <CanonicalHostedZoneName>miasma-test-load-balancer-1681054238.us-west-1.elb.amazonaws.com</CanonicalHostedZoneName>
+              </member>
+            </LoadBalancerDescriptions>
+          </DescribeLoadBalancersResult>
+          <ResponseMetadata>
+            <RequestId>1c686589-b31f-11e5-a524-e78a04c4f6d8</RequestId>
+          </ResponseMetadata>
+        </DescribeLoadBalancersResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 20:10:57 GMT
+- request:
+    method: post
+    uri: https://elasticloadbalancing.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: LoadBalancerName=miasma-test-load-balancer&Action=DescribeInstanceHealth&Version=2012-06-01
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=80b94577fa725558849bb26963a96186d0ea4e774fb77f821a44f194ad214d4b
+      User-Agent:
+      - miasma/v0.2.35
+      Host:
+      - elasticloadbalancing.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160104T201057Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '91'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 1c9087d0-b31f-11e5-ba43-6f04818abcd3
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '329'
+      Date:
+      - Mon, 04 Jan 2016 20:09:50 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <DescribeInstanceHealthResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+          <DescribeInstanceHealthResult>
+            <InstanceStates/>
+          </DescribeInstanceHealthResult>
+          <ResponseMetadata>
+            <RequestId>1c9087d0-b31f-11e5-ba43-6f04818abcd3</RequestId>
+          </ResponseMetadata>
+        </DescribeInstanceHealthResponse>
+    http_version: 
+  recorded_at: Mon, 04 Jan 2016 20:10:57 GMT
+recorded_with: VCR 3.0.1

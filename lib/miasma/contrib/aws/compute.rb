@@ -38,7 +38,7 @@ module Miasma
           srv = result.get(:body, 'DescribeInstancesResponse', 'reservationSet', 'item', 'instancesSet', 'item')
           server.load_data(
             :id => srv[:instanceId],
-            :name => srv.fetch(:tagSet, :item, []).map{|tag| tag[:value] if tag.is_a?(Hash) && tag[:key] == 'Name'}.compact.first,
+            :name => [srv.fetch(:tagSet, :item, [])].flatten.map{|tag| tag[:value] if tag.is_a?(Hash) && tag[:key] == 'Name'}.compact.first,
             :image_id => srv[:imageId],
             :flavor_id => srv[:instanceType],
             :state => SERVER_STATE_MAP.fetch(srv.get(:instanceState, :name), :pending),
@@ -81,6 +81,17 @@ module Miasma
               }
             )
             server.id = result.get(:body, 'RunInstancesResponse', 'instancesSet', 'item', 'instanceId')
+            server.valid_state
+            request(
+              :method => :post,
+              :path => '/',
+              :form => {
+                'Action' => 'CreateTags',
+                'ResourceId.1' => server.id,
+                'Tag.1.Key' => 'Name',
+                'Tag.1.Value' => server.name
+              }
+            )
           else
             raise 'WAT DO I DO!?'
           end
