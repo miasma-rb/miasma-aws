@@ -1,3 +1,8 @@
+# v0.2.0
+* [enhancement] Properly support miasma abstract specs
+* [fix] Properly handling compute instance naming
+* [fix] Set load balancer as terminated when destroyed
+
 # v0.1.36
 * Fix access to default headers defined on connection
 
