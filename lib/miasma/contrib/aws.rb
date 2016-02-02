@@ -640,10 +640,14 @@ module Miasma
         end
 
         # @return [TrueClass, FalseClass]
+        # @note update check only applied if assuming role
         def sts_update_required?(args={})
-          expiry = args.fetch(:aws_sts_token_expires, data[:aws_sts_token_expires])
-          expiry.nil? || expiry <= Time.now - 1
-          true
+          if(args.fetch(:aws_sts_role_arn, data[:aws_sts_role_arn]))
+            expiry = args.fetch(:aws_sts_token_expires, data[:aws_sts_token_expires])
+            expiry.nil? || expiry <= Time.now - 1
+          else
+            false
+          end
         end
 
         # Simple callback to allow request option adjustments prior to

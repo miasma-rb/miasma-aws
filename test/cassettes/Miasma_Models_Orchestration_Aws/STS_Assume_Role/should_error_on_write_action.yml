@@ -1,0 +1,108 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://sts.us-east-1.amazonaws.com/?Action=AssumeRole&RoleArn=AWS_STS_ROLE_ARN&RoleSessionName=49c68b6d54034f0581ffcfa208645152&Version=2011-06-15
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160203/us-east-1/sts/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=862d036e01f87645cc99154f17e5ba4f5feff0869d8b3d9d6dc6a2c57de6ce7d
+      User-Agent:
+      - miasma/v0.2.36
+      Host:
+      - sts.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20160203T002059Z
+      Connection:
+      - close
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 0034da6f-ca0c-11e5-bc82-61c33a86fd1b
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1468'
+      Date:
+      - Wed, 03 Feb 2016 00:20:59 GMT
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <AssumeRoleResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
+          <AssumeRoleResult>
+            <AssumedRoleUser>
+              <AssumedRoleId>AROAJIDS4QB5KFKZH36NW:49c68b6d54034f0581ffcfa208645152</AssumedRoleId>
+              <Arn>arn:aws:sts::921689585014:assumed-role/fubar/49c68b6d54034f0581ffcfa208645152</Arn>
+            </AssumedRoleUser>
+            <Credentials>
+              <SecretAccessKey>FDW7UX6vy65Q1M/67RlT5LMrYWya2PITq4DHv4HM</SecretAccessKey>
+              <AccessKeyId>ASIAJLRVPM3FYKM63AUA</AccessKeyId>
+              <SessionToken>AgoGb3JpZ2luEAQaCXVzLWVhc3QtMSKAAoqlx9pb4LgkJ/kMEd5Y39R7Q+toM+ahXaHkmi16LwrDrAFKv4+d/3pKBfp0zu0ZfWsQGZ3t5H9fnk/MRl6pJlR9xzw0gykn7DEG8wlmQrG4G82GmYsQEHx5tVsgqbb6p8ALTGpADh2dtjV5DL5R/6DFgLP/G1Si/N5yiy9hw3Hg4ZwOEL/KB1NLaPS+IJoiec27yGA/gWIJbshSEXsEMgsCDhMkq3Zp/49YGkhxsw3oJ4n5e312ofVsWwPlSFHP6zEO8XLde+DByYfQ5k+UtDN+4fzq46ZZC6Jx+EFXvshVeYRlhp/9i2JqjfqeCJ69WL88T7qbT7D5UktR7fvr2b4qgwIIORAAGgw5MjE2ODk1ODUwMTQiDDA+0UwPqlradse65irgATkVpkK4+tWFGXpYzwvsNbDe/GJtacW/9GUwcqz1OlR9cScWDNN9fSDktrULSB2dE8ej/UvVSdNyr2znMfJlszZNE2raloa2z9D32RZZaqS7plJiaLG4yA8LnSWotYJatU9VpBAtnUhtmauRd24BupQ3J/KiXqp9t3EmDG4NUFMeb62KrlXueS18Fc8l93fYO2U1ALWupWwq4Mg03dD6WYPvq3SJOpETi5rk4k9+sGR++8HFI8f/z2Q3D07q2CozPEJYTWBUfiHwuSONNR8EFgWimS5RFWJSoP4wkjFOVIb1MOuPxbUF</SessionToken>
+              <Expiration>2016-02-03T01:20:59Z</Expiration>
+            </Credentials>
+          </AssumeRoleResult>
+          <ResponseMetadata>
+            <RequestId>0034da6f-ca0c-11e5-bc82-61c33a86fd1b</RequestId>
+          </ResponseMetadata>
+        </AssumeRoleResponse>
+    http_version: 
+  recorded_at: Wed, 03 Feb 2016 00:20:59 GMT
+- request:
+    method: post
+    uri: https://cloudformation.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=CreateStack&StackName&TemplateBody=%7B%7D&Version=2010-05-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=ASIAJLRVPM3FYKM63AUA/20160203/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=ad0f5d2ac0de0976a76924615291ecc2a98817678dd4ff5abbfe7bc355f77e1f
+      User-Agent:
+      - miasma/v0.2.36
+      Host:
+      - cloudformation.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160203T002059Z
+      X-Amz-Security-Token:
+      - AgoGb3JpZ2luEAQaCXVzLWVhc3QtMSKAAoqlx9pb4LgkJ/kMEd5Y39R7Q+toM+ahXaHkmi16LwrDrAFKv4+d/3pKBfp0zu0ZfWsQGZ3t5H9fnk/MRl6pJlR9xzw0gykn7DEG8wlmQrG4G82GmYsQEHx5tVsgqbb6p8ALTGpADh2dtjV5DL5R/6DFgLP/G1Si/N5yiy9hw3Hg4ZwOEL/KB1NLaPS+IJoiec27yGA/gWIJbshSEXsEMgsCDhMkq3Zp/49YGkhxsw3oJ4n5e312ofVsWwPlSFHP6zEO8XLde+DByYfQ5k+UtDN+4fzq46ZZC6Jx+EFXvshVeYRlhp/9i2JqjfqeCJ69WL88T7qbT7D5UktR7fvr2b4qgwIIORAAGgw5MjE2ODk1ODUwMTQiDDA+0UwPqlradse65irgATkVpkK4+tWFGXpYzwvsNbDe/GJtacW/9GUwcqz1OlR9cScWDNN9fSDktrULSB2dE8ej/UvVSdNyr2znMfJlszZNE2raloa2z9D32RZZaqS7plJiaLG4yA8LnSWotYJatU9VpBAtnUhtmauRd24BupQ3J/KiXqp9t3EmDG4NUFMeb62KrlXueS18Fc8l93fYO2U1ALWupWwq4Mg03dD6WYPvq3SJOpETi5rk4k9+sGR++8HFI8f/z2Q3D07q2CozPEJYTWBUfiHwuSONNR8EFgWimS5RFWJSoP4wkjFOVIb1MOuPxbUF
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '67'
+  response:
+    status:
+      code: 403
+      message: Forbidden
+    headers:
+      X-Amzn-Requestid:
+      - 00686d13-ca0c-11e5-b8e2-e7221ff29f3d
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '394'
+      Date:
+      - Wed, 03 Feb 2016 00:20:59 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <ErrorResponse xmlns="http://cloudformation.amazonaws.com/doc/2010-05-15/">
+          <Error>
+            <Type>Sender</Type>
+            <Code>AccessDenied</Code>
+            <Message>User: arn:aws:sts::921689585014:assumed-role/fubar/49c68b6d54034f0581ffcfa208645152 is not authorized to perform: cloudformation:CreateStack</Message>
+          </Error>
+          <RequestId>00686d13-ca0c-11e5-b8e2-e7221ff29f3d</RequestId>
+        </ErrorResponse>
+    http_version: 
+  recorded_at: Wed, 03 Feb 2016 00:21:00 GMT
+recorded_with: VCR 3.0.1
