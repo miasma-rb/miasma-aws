@@ -1,3 +1,8 @@
+# v0.2.4
+* [enhancement] Add aws credential file mappings for token value (#31)
+* [fix] Support quoted values within aws credentials/configuration files (#31)
+* [fix] Update VCR setup and usage to allow specs to run without live env vars
+
 # v0.2.2
 * [fix] Fix expiry check for STS tokens for assumed role
 * [enhancement] Support direct usage of STS tokens
