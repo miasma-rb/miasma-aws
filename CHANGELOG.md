@@ -1,3 +1,7 @@
+# v0.2.2
+* [fix] Fix expiry check for STS tokens for assumed role
+* [enhancement] Support direct usage of STS tokens
+
 # v0.2.0
 * [enhancement] Properly support miasma abstract specs
 * [fix] Properly handling compute instance naming
