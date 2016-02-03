@@ -529,11 +529,11 @@ module Miasma
                       line_args.first, line_args.first
                     )
                   )
-                  if (line_args.last.start_with?('"'))
-                    unless (line_args.last.end_with?('"'))
+                  if(line_args.last.start_with?('"'))
+                    unless(line_args.last.end_with?('"'))
                       raise ArgumentError.new("Failed to parse aws file! (#{file_path} line #{idx + 1})")
                     end
-                    line_args.last.replace(line_args.last[1..-2]) #strip quoted values
+                    line_args.last.replace(line_args.last[1..-2]) # NOTE: strip quoted values
                   end
                   begin
                     creds[key].merge!(Smash[*line_args])
