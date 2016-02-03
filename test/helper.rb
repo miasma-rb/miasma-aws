@@ -14,7 +14,7 @@ VCR.configure do |c|
   c.default_cassette_options = {
     :match_requests_on => [:method, :body,
       VCR.request_matchers.uri_without_params(
-        'X-Amz-Date', 'X-Amz-Expires', 'X-Amz-Signature', 'X-Amz-Credential', 'RoleSessionName'
+        'X-Amz-Date', 'X-Amz-Expires', 'X-Amz-Signature', 'X-Amz-Credential', 'RoleSessionName', 'RoleArn'
       )
     ]
   }

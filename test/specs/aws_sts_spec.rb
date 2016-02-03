@@ -12,10 +12,10 @@ describe Miasma::Models::Orchestration::Aws do
         :type => :orchestration,
         :provider => :aws,
         :credentials => {
-          :aws_access_key_id => ENV['MIASMA_AWS_ACCESS_KEY_ID'],
-          :aws_secret_access_key => ENV['MIASMA_AWS_SECRET_ACCESS_KEY'],
-          :aws_region => ENV['MIASMA_AWS_REGION'],
-          :aws_sts_role_arn => ENV['MIASMA_AWS_STS_ROLE_ARN']
+          :aws_access_key_id => ENV.fetch('MIASMA_AWS_ACCESS_KEY_ID', 'test-key'),
+          :aws_secret_access_key => ENV.fetch('MIASMA_AWS_SECRET_ACCESS_KEY', 'test-secret'),
+          :aws_region => ENV.fetch('MIASMA_AWS_REGION', 'us-west-1'),
+          :aws_sts_role_arn => ENV.fetch('MIASMA_AWS_STS_ROLE_ARN', 'test-role-arn')
         }
       )
       VCR.use_cassette('Miasma_Models_Orchestration_Global/GLOBAL_sts_initialization') do
@@ -47,10 +47,10 @@ describe Miasma::Models::Orchestration::Aws do
         :type => :orchestration,
         :provider => :aws,
         :credentials => {
-          :aws_access_key_id => ENV['MIASMA_AWS_ACCESS_KEY_ID_STS'],
-          :aws_secret_access_key => ENV['MIASMA_AWS_SECRET_ACCESS_KEY_STS'],
-          :aws_region => ENV['MIASMA_AWS_REGION'],
-          :aws_sts_token => ENV['MIASMA_AWS_STS_TOKEN']
+          :aws_access_key_id => ENV.fetch('MIASMA_AWS_ACCESS_KEY_ID_STS', 'test-key-sts'),
+          :aws_secret_access_key => ENV.fetch('MIASMA_AWS_SECRET_ACCESS_KEY_STS', 'test-key-secret'),
+          :aws_region => ENV.fetch('MIASMA_AWS_REGION', 'us-west-1'),
+          :aws_sts_token => ENV.fetch('MIASMA_AWS_STS_TOKEN', 'test-role-token')
         }
       )
     end

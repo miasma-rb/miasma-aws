@@ -8,9 +8,9 @@ describe Miasma::Models::Storage::Aws do
       :type => :storage,
       :provider => :aws,
       :credentials => {
-        :aws_access_key_id => ENV['MIASMA_AWS_ACCESS_KEY_ID'],
-        :aws_secret_access_key => ENV['MIASMA_AWS_SECRET_ACCESS_KEY'],
-        :aws_region => ENV['MIASMA_AWS_REGION']
+        :aws_access_key_id => ENV.fetch('MIASMA_AWS_ACCESS_KEY_ID', 'test-key'),
+        :aws_secret_access_key => ENV.fetch('MIASMA_AWS_SECRET_ACCESS_KEY', 'test-secret'),
+        :aws_region => ENV.fetch('MIASMA_AWS_REGION', 'us-west-1')
       }
     )
   end
