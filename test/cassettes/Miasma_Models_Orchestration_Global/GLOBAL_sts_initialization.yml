@@ -1,0 +1,83 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://cloudformation.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=ListStacks&StackStatusFilter.member.1=CREATE_COMPLETE&StackStatusFilter.member.2=CREATE_FAILED&StackStatusFilter.member.3=CREATE_IN_PROGRESS&StackStatusFilter.member.4=DELETE_FAILED&StackStatusFilter.member.5=DELETE_IN_PROGRESS&StackStatusFilter.member.6=ROLLBACK_COMPLETE&StackStatusFilter.member.7=ROLLBACK_FAILED&StackStatusFilter.member.8=ROLLBACK_IN_PROGRESS&StackStatusFilter.member.9=UPDATE_COMPLETE&StackStatusFilter.member.10=UPDATE_COMPLETE_CLEANUP_IN_PROGRESS&StackStatusFilter.member.11=UPDATE_IN_PROGRESS&StackStatusFilter.member.12=UPDATE_ROLLBACK_COMPLETE&StackStatusFilter.member.13=UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS&StackStatusFilter.member.14=UPDATE_ROLLBACK_FAILED&StackStatusFilter.member.15=UPDATE_ROLLBACK_IN_PROGRESS&Version=2010-05-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=ASIAINBZK2YFTFZ64YQA/20160203/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=bd8c5555fdf55fe7e1265e30bec9be88508abf14d16793b63141d5bcad00421f
+      User-Agent:
+      - miasma/v0.2.36
+      Host:
+      - cloudformation.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160203T002058Z
+      X-Amz-Security-Token:
+      - AgoGb3JpZ2luEAQaCXVzLWVhc3QtMSKAAnvycuI/2LXJdcNtFp6sJowlYF2dfQN4+1kqlqOhFDi4JmPYlw59HxDMr/PunjVvdPfwhFYWJEh2UhPURifu2ibtYgKNo6fgsd841qwBduR64FJFG62MHf5/AMB04Pu7RHBg5s9GacoBpU3ug96f8CVkprM3ShjZv2Ca7cUQwCniPoVnmQYYkZTUSMzyjdUUtAYDNJk/deZUP82+EAW/mTMSzhu+814ZcTmD4g6UUevPasasLKPncAhwy/2ih8Eemb37JV4RCsmf/KZG7tLD8QZtLyeLYeJ/6iIPn3qFDhm5tzXGjTpYmXU0o7pYR1ZcjyH1LPT4EhpPKG2rIa0pzZcqgwIIORAAGgw5MjE2ODk1ODUwMTQiDF0GM9SOjS5WZfNmiSrgAWhF0ijIagoGzjNe8tkwdjb0kCBdn0lzg9XGfZkWxP36k1RBWaNYLvjXARC3BZmjIc4fSiVGXfia9D7TNsPdbomLGlhRMtBHKpMb119/AsgrINlFTkUsQgkjdKTUSmPpRhjo0tSVLLL3LHLD0tFfRLoImYwJZIcTDHJICAhxLQ6yliZodloNRLksKVnc+7MLYrNmXF6hcBVz0ywtXoo8Rf4I8v+I+J2/yJsIE+JApC8/38KfKlVlzb2sUAjSFk9XM3qDL92spZjiyPHngHPcs6wf969HxwhsCEcjoOImBmWyMOqPxbUF
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '776'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - ffe2742f-ca0b-11e5-8bfd-a5bdd6ee5359
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1973'
+      Date:
+      - Wed, 03 Feb 2016 00:20:59 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <ListStacksResponse xmlns="http://cloudformation.amazonaws.com/doc/2010-05-15/">
+          <ListStacksResult>
+            <StackSummaries>
+              <member>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/test-nest-NodeBase-91P6YU64NLCN/0fc6e920-c9f6-11e5-b54f-500cadc9fe36</StackId>
+                <StackStatus>UPDATE_COMPLETE</StackStatus>
+                <LastUpdatedTime>2016-02-02T21:50:45.236Z</LastUpdatedTime>
+                <StackName>test-nest-NodeBase-91P6YU64NLCN</StackName>
+                <CreationTime>2016-02-02T21:43:57.305Z</CreationTime>
+                <TemplateDescription>Single VPC enabled node</TemplateDescription>
+              </member>
+              <member>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/test-nest-VpcBase-1IS7A4DQKDGL6/e03d1c60-c9f5-11e5-ad4e-500cc1786436</StackId>
+                <StackStatus>CREATE_COMPLETE</StackStatus>
+                <StackName>test-nest-VpcBase-1IS7A4DQKDGL6</StackName>
+                <CreationTime>2016-02-02T21:42:37.613Z</CreationTime>
+                <TemplateDescription>Networking stack</TemplateDescription>
+              </member>
+              <member>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/test-nest/dc513c30-c9f5-11e5-a0af-50fae8e994f2</StackId>
+                <StackStatus>UPDATE_COMPLETE</StackStatus>
+                <LastUpdatedTime>2016-02-02T21:50:23.609Z</LastUpdatedTime>
+                <StackName>test-nest</StackName>
+                <CreationTime>2016-02-02T21:42:30.527Z</CreationTime>
+              </member>
+              <member>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/test-vpc/675bd100-c9f1-11e5-89d5-50fae8e99462</StackId>
+                <StackStatus>CREATE_COMPLETE</StackStatus>
+                <StackName>test-vpc</StackName>
+                <CreationTime>2016-02-02T21:10:36.324Z</CreationTime>
+                <TemplateDescription>Networking stack</TemplateDescription>
+              </member>
+            </StackSummaries>
+          </ListStacksResult>
+          <ResponseMetadata>
+            <RequestId>ffe2742f-ca0b-11e5-8bfd-a5bdd6ee5359</RequestId>
+          </ResponseMetadata>
+        </ListStacksResponse>
+    http_version: 
+  recorded_at: Wed, 03 Feb 2016 00:20:59 GMT
+recorded_with: VCR 3.0.1
