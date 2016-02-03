@@ -358,7 +358,9 @@ module Miasma
           klass.const_set(:CONFIG_FILE_REMAP,
             Smash.new(
               'region' => 'aws_region',
-              'role_arn' => 'aws_sts_role_arn'
+              'role_arn' => 'aws_sts_role_arn',
+              'aws_security_token' => 'aws_sts_token',
+              'aws_session_token' => 'aws_sts_token'
             )
           )
           klass.const_set(:INSTANCE_PROFILE_HOST, 'http://169.254.169.254')
@@ -527,6 +529,12 @@ module Miasma
                       line_args.first, line_args.first
                     )
                   )
+                  if (line_args.last.start_with?('"'))
+                    unless (line_args.last.end_with?('"'))
+                      raise ArgumentError.new("Failed to parse aws file! (#{file_path} line #{idx + 1})")
+                    end
+                    line_args.last.replace(line_args.last[1..-2]) #strip quoted values
+                  end
                   begin
                     creds[key].merge!(Smash[*line_args])
                   rescue => e

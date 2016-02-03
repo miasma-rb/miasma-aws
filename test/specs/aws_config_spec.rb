@@ -82,6 +82,39 @@ describe Miasma::Contrib::AwsApiCore::ApiCommon do
       args[:aws_secret_access_key].must_equal 'foobar'
     end
 
+    it 'should read quoted values and understand that the quotes are not part of the value' do
+      instance = klass.new
+      instance.aws_config_file = File.join(config_dir, 'creds.quoted')
+      args = instance.attributes.to_smash
+      instance.custom_setup(args)
+      args[:aws_secret_access_key].must_equal 'foo=bar'
+    end
+
+    it 'should read aws_security_token from the file as aws_sts_token' do
+      instance = klass.new
+      instance.aws_config_file = File.join(config_dir, 'creds.security.token')
+      args = instance.attributes.to_smash
+      instance.custom_setup(args)
+      args[:aws_sts_token].must_equal 'abcd=='
+    end
+
+    it 'should read aws_session_token from the file as aws_sts_token' do
+      instance = klass.new
+      instance.aws_config_file = File.join(config_dir, 'creds.session.token')
+      args = instance.attributes.to_smash
+      instance.custom_setup(args)
+      args[:aws_sts_token].must_equal 'abcd=='
+    end
+
+    it 'should provide useful error on malformed quotes file' do
+      instance = klass.new
+      instance.aws_config_file = File.join(config_dir, 'creds.malformed.quoted')
+      args = instance.attributes.to_smash
+      ->{ instance.custom_setup(args) }.must_raise ArgumentError
+    end
+
+
+
   end
 
 end
