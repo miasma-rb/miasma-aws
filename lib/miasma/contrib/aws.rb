@@ -361,7 +361,7 @@ module Miasma
               'region' => 'aws_region',
               'role_arn' => 'aws_sts_role_arn',
               'aws_security_token' => 'aws_sts_token',
-              'aws_session_token' => 'aws_sts_token'
+              'aws_session_token' => 'aws_sts_session_token'
             )
           )
           klass.const_set(:INSTANCE_PROFILE_HOST, 'http://169.254.169.254')
