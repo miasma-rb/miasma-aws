@@ -337,6 +337,7 @@ module Miasma
             attribute :aws_sts_role_session_name, String
             attribute :aws_sts_region, String
             attribute :aws_sts_host, String
+            attribute :aws_sts_session_token, String
             attribute :aws_credentials_file, String, :required => true, :default => File.join(Dir.home, '.aws/credentials')
             attribute :aws_config_file, String, :required => true, :default => File.join(Dir.home, '.aws/config')
             attribute :aws_access_key_id, String, :required => true
@@ -489,7 +490,8 @@ module Miasma
               :aws_credentials_file => creds.fetch(:aws_credentials_file, aws_credentials_file),
               :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
               :aws_profile_name => creds[:aws_profile_name],
-              :aws_host => creds[:aws_sts_host]
+              :aws_host => creds[:aws_sts_host],
+              :aws_sts_token => creds[:aws_sts_session_token]
             )
             role_info = sts.assume_role(
               creds[:aws_sts_role_arn],
@@ -640,6 +642,8 @@ module Miasma
           if(aws_sts_token)
             sts_assume_role!(attributes) if sts_update_required?
             options.set(:headers, 'X-Amz-Security-Token', aws_sts_token)
+          elsif(aws_sts_session_token)
+            options.set(:headers, 'X-Amz-Security-Token', aws_sts_session_token)
           end
           signature = signer.generate(http_method, path, options)
           update_request(connection, options)
