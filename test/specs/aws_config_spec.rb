@@ -103,7 +103,7 @@ describe Miasma::Contrib::AwsApiCore::ApiCommon do
       instance.aws_config_file = File.join(config_dir, 'creds.session.token')
       args = instance.attributes.to_smash
       instance.custom_setup(args)
-      args[:aws_sts_token].must_equal 'abcd=='
+      args[:aws_sts_session_token].must_equal 'abcd=='
     end
 
     it 'should provide useful error on malformed quotes file' do
