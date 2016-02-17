@@ -1,0 +1,211 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://iam.amazonaws.com/?Action=GetUser&Version=2010-05-08
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID_MFA/20160217/us-east-1/iam/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=2e662c298192899abb5ab8b923803f44962f9791a1d9a565a7760f2a49f3e82a
+      User-Agent:
+      - miasma/v0.2.36
+      Host:
+      - iam.amazonaws.com
+      X-Amz-Date:
+      - 20160217T225152Z
+      Connection:
+      - close
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 097ae5c7-d5c9-11e5-8535-9f36f2b4216c
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '479'
+      Date:
+      - Wed, 17 Feb 2016 22:51:52 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <GetUserResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <GetUserResult>
+            <User>
+              <Path>/</Path>
+              <UserName>miasma-test-mfa</UserName>
+              <Arn>arn:aws:iam::921689585014:user/miasma-test-mfa</Arn>
+              <UserId>AIDAJKDWAJLWQMKXFIXMY</UserId>
+              <CreateDate>2016-02-17T17:31:34Z</CreateDate>
+            </User>
+          </GetUserResult>
+          <ResponseMetadata>
+            <RequestId>097ae5c7-d5c9-11e5-8535-9f36f2b4216c</RequestId>
+          </ResponseMetadata>
+        </GetUserResponse>
+    http_version: 
+  recorded_at: Wed, 17 Feb 2016 22:51:52 GMT
+- request:
+    method: get
+    uri: https://sts.us-east-1.amazonaws.com/?Action=GetSessionToken&SerialNumber=arn:aws:iam::921689585014:mfa/miasma-test-mfa&TokenCode=AWS_STS_SESSION_TOKEN_CODE&Version=2011-06-15
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID_MFA/20160217/us-east-1/sts/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=5e489683b09c7fa0a0f5621d31bfa9af13d0830bfeefeb5918a6ce3a3da56e7b
+      User-Agent:
+      - miasma/v0.2.36
+      Host:
+      - sts.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20160217T225152Z
+      Connection:
+      - close
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 09e5dcfb-d5c9-11e5-866a-514df7bd3b53
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1204'
+      Date:
+      - Wed, 17 Feb 2016 22:51:53 GMT
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <GetSessionTokenResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
+          <GetSessionTokenResult>
+            <Credentials>
+              <AccessKeyId>ASIAIWCMUA4HQ5RZOKXA</AccessKeyId>
+              <SecretAccessKey>m1S90QikOIzxqzGsGbDzfJJcOSnZTdJUCe5orwkv</SecretAccessKey>
+              <SessionToken>AgoGb3JpZ2luEGsaCXVzLWVhc3QtMSKAAl7Fc3hB/j2ispIyAdQIWBWYWiGFkFi0dkwP1gGdTl3tMK3oq785gOvkX7f1hu+DsZV126xbtF9OpZn8kQDg40BHe+SEdlQ6dz6DR0wNSUTQpYZNJvVCJKxTXdSM3PxWPRwduI7LwIXlihKGioG/jMWO4X9d0KdYJjoRj9JzBCs9RXugFb/ZPZD6MSCQiVYAkrsSiScPtzb9lP/3tOZ1gt2Eajv3C3gayUsFL+jSey+xxd6M/z4CntEYwondwoPedS63SMk4Wl4eJ6GMSwI68BWc04rL71jJ3RGpj8JIxJN2LiFDSv5Cz/1ywLek0eWUHCnD7U6EcxXHe+WqQy+CJFoq3AEIsP//////////ARAAGgw5MjE2ODk1ODUwMTQiDPRl47YaP8Cz6n2M9iqwAey4JaVwkhLzK9MMUJwwOcAveiUROC5mJeiT0nwA9+z5ULSJ8IM8O19+I6b0qM0pgBGsZen6K1R1WpXuEiMKtrY6UDQBNymy+BQIQSqmYRD91vR8zZc4mV7BOahh1+UdMZOeJfKFzh5/r9fjUN2D0ohmjPDOcE6hSjAU9n62IGjpH/8S6kItIFBnmKhWgARnRP8Qu+nLci2Frvn8x3rgjsU+ObtRWKMuoAQ8+hoOBixAMInzk7YF</SessionToken>
+              <Expiration>2016-02-18T10:51:53Z</Expiration>
+            </Credentials>
+          </GetSessionTokenResult>
+          <ResponseMetadata>
+            <RequestId>09e5dcfb-d5c9-11e5-866a-514df7bd3b53</RequestId>
+          </ResponseMetadata>
+        </GetSessionTokenResponse>
+    http_version: 
+  recorded_at: Wed, 17 Feb 2016 22:51:53 GMT
+- request:
+    method: get
+    uri: https://sts.us-east-1.amazonaws.com/?Action=AssumeRole&RoleArn=AWS_STS_ROLE_ARN_MFA&RoleSessionName=df3d4c1a0df6461d88639f157fb0ed6a&Version=2011-06-15
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=ASIAIWCMUA4HQ5RZOKXA/20160217/us-east-1/sts/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=a4be20dfc60e78f0f9a8bdf7122906905c04c508e5baf7a54533f26296bd788d
+      User-Agent:
+      - miasma/v0.2.36
+      Host:
+      - sts.us-east-1.amazonaws.com
+      X-Amz-Date:
+      - 20160217T225153Z
+      X-Amz-Security-Token:
+      - AgoGb3JpZ2luEGsaCXVzLWVhc3QtMSKAAl7Fc3hB/j2ispIyAdQIWBWYWiGFkFi0dkwP1gGdTl3tMK3oq785gOvkX7f1hu+DsZV126xbtF9OpZn8kQDg40BHe+SEdlQ6dz6DR0wNSUTQpYZNJvVCJKxTXdSM3PxWPRwduI7LwIXlihKGioG/jMWO4X9d0KdYJjoRj9JzBCs9RXugFb/ZPZD6MSCQiVYAkrsSiScPtzb9lP/3tOZ1gt2Eajv3C3gayUsFL+jSey+xxd6M/z4CntEYwondwoPedS63SMk4Wl4eJ6GMSwI68BWc04rL71jJ3RGpj8JIxJN2LiFDSv5Cz/1ywLek0eWUHCnD7U6EcxXHe+WqQy+CJFoq3AEIsP//////////ARAAGgw5MjE2ODk1ODUwMTQiDPRl47YaP8Cz6n2M9iqwAey4JaVwkhLzK9MMUJwwOcAveiUROC5mJeiT0nwA9+z5ULSJ8IM8O19+I6b0qM0pgBGsZen6K1R1WpXuEiMKtrY6UDQBNymy+BQIQSqmYRD91vR8zZc4mV7BOahh1+UdMZOeJfKFzh5/r9fjUN2D0ohmjPDOcE6hSjAU9n62IGjpH/8S6kItIFBnmKhWgARnRP8Qu+nLci2Frvn8x3rgjsU+ObtRWKMuoAQ8+hoOBixAMInzk7YF
+      Connection:
+      - close
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 0a3b5000-d5c9-11e5-a843-839e9d82e5a2
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1492'
+      Date:
+      - Wed, 17 Feb 2016 22:51:54 GMT
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <AssumeRoleResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
+          <AssumeRoleResult>
+            <AssumedRoleUser>
+              <Arn>arn:aws:sts::921689585014:assumed-role/fubar-mfa/df3d4c1a0df6461d88639f157fb0ed6a</Arn>
+              <AssumedRoleId>AROAIRYBWN7ERFZV5UDOK:df3d4c1a0df6461d88639f157fb0ed6a</AssumedRoleId>
+            </AssumedRoleUser>
+            <Credentials>
+              <AccessKeyId>ASIAIGOMJF4MNOXHIDTA</AccessKeyId>
+              <SecretAccessKey>9Ntn45TxHodFZSck9PuY7YuaJl2pFxrm1W9Rkx3m</SecretAccessKey>
+              <SessionToken>AgoGb3JpZ2luEGsaCXVzLWVhc3QtMSKAAkcK0i9EWrZ/9hUiF1woLVZAnWoBI7kADS09Jjbo0bmXkhya2Zpr7M2xeKrqpjojR/11Sg6ON+L47cVV5MUfCFIi7b7hboG59gU6qV8qzAt8uVRUSIQXpmO+HQXEK9iHr7V1g0W0kCwlkDpEWcfKSpOMYqdVoVmD+XknLqKS3PGieQn64U0bStTBUZhMxUT0c40xGl2aAeGe4X53kxxPTEdwozCT8Tb5Lg6uDT4RhWAlZFvxgCumrrUSicV1aV98DxIE27d7hDkX8xrJcsn95ve6gZUYMUxhXWdJkMT6sJiIh/azQD6wgkPYxZM+jZclAg2oWl0zfGLfkE3eX52KxocqkAIIsP//////////ARAAGgw5MjE2ODk1ODUwMTQiDHd84H2v1rMthn64tCrkAa2UaZHEasKSCFO3765kHtFcXybeqVzd5bT0aUeySG+Qc6KKJHNGO4yBjYHfDz0hl5z2+sQgaIFGfI2KJrbg0K9QKPU4W9/YacNDMwGx1XQujbKvRTP3OuBs98orZn4d0RNjkfI0arH54/nkdoX7vJh7iGvDBRFuKDy+bXL2JrxsX+p3yL5tp01HukI17UCxywqbKXMTmoTvR5CydkzNs/ue0ldTQjcHkSSlj+/AUoxpyAzngVbCyjCl32ivsTUAOsb4k6CB6hELQC99DI2Jq8RwRihsaQ4VUvmuNmP/wEMyJChEmTCK85O2BQ==</SessionToken>
+              <Expiration>2016-02-17T23:51:54Z</Expiration>
+            </Credentials>
+          </AssumeRoleResult>
+          <ResponseMetadata>
+            <RequestId>0a3b5000-d5c9-11e5-a843-839e9d82e5a2</RequestId>
+          </ResponseMetadata>
+        </AssumeRoleResponse>
+    http_version: 
+  recorded_at: Wed, 17 Feb 2016 22:51:54 GMT
+- request:
+    method: post
+    uri: https://cloudformation.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=ListStacks&StackStatusFilter.member.1=CREATE_COMPLETE&StackStatusFilter.member.2=CREATE_FAILED&StackStatusFilter.member.3=CREATE_IN_PROGRESS&StackStatusFilter.member.4=DELETE_FAILED&StackStatusFilter.member.5=DELETE_IN_PROGRESS&StackStatusFilter.member.6=ROLLBACK_COMPLETE&StackStatusFilter.member.7=ROLLBACK_FAILED&StackStatusFilter.member.8=ROLLBACK_IN_PROGRESS&StackStatusFilter.member.9=UPDATE_COMPLETE&StackStatusFilter.member.10=UPDATE_COMPLETE_CLEANUP_IN_PROGRESS&StackStatusFilter.member.11=UPDATE_IN_PROGRESS&StackStatusFilter.member.12=UPDATE_ROLLBACK_COMPLETE&StackStatusFilter.member.13=UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS&StackStatusFilter.member.14=UPDATE_ROLLBACK_FAILED&StackStatusFilter.member.15=UPDATE_ROLLBACK_IN_PROGRESS&Version=2010-05-15
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=ASIAIGOMJF4MNOXHIDTA/20160217/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=d12091703e7d312b8f08313dfdbf9c74135968d091617e198a47f3aed598f7f4
+      User-Agent:
+      - miasma/v0.2.36
+      Host:
+      - cloudformation.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160217T225154Z
+      X-Amz-Security-Token:
+      - AgoGb3JpZ2luEGsaCXVzLWVhc3QtMSKAAkcK0i9EWrZ/9hUiF1woLVZAnWoBI7kADS09Jjbo0bmXkhya2Zpr7M2xeKrqpjojR/11Sg6ON+L47cVV5MUfCFIi7b7hboG59gU6qV8qzAt8uVRUSIQXpmO+HQXEK9iHr7V1g0W0kCwlkDpEWcfKSpOMYqdVoVmD+XknLqKS3PGieQn64U0bStTBUZhMxUT0c40xGl2aAeGe4X53kxxPTEdwozCT8Tb5Lg6uDT4RhWAlZFvxgCumrrUSicV1aV98DxIE27d7hDkX8xrJcsn95ve6gZUYMUxhXWdJkMT6sJiIh/azQD6wgkPYxZM+jZclAg2oWl0zfGLfkE3eX52KxocqkAIIsP//////////ARAAGgw5MjE2ODk1ODUwMTQiDHd84H2v1rMthn64tCrkAa2UaZHEasKSCFO3765kHtFcXybeqVzd5bT0aUeySG+Qc6KKJHNGO4yBjYHfDz0hl5z2+sQgaIFGfI2KJrbg0K9QKPU4W9/YacNDMwGx1XQujbKvRTP3OuBs98orZn4d0RNjkfI0arH54/nkdoX7vJh7iGvDBRFuKDy+bXL2JrxsX+p3yL5tp01HukI17UCxywqbKXMTmoTvR5CydkzNs/ue0ldTQjcHkSSlj+/AUoxpyAzngVbCyjCl32ivsTUAOsb4k6CB6hELQC99DI2Jq8RwRihsaQ4VUvmuNmP/wEMyJChEmTCK85O2BQ==
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '776'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 0a739e29-d5c9-11e5-bb8b-63e6ceabb023
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '275'
+      Date:
+      - Wed, 17 Feb 2016 22:51:54 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <ListStacksResponse xmlns="http://cloudformation.amazonaws.com/doc/2010-05-15/">
+          <ListStacksResult>
+            <StackSummaries/>
+          </ListStacksResult>
+          <ResponseMetadata>
+            <RequestId>0a739e29-d5c9-11e5-bb8b-63e6ceabb023</RequestId>
+          </ResponseMetadata>
+        </ListStacksResponse>
+    http_version: 
+  recorded_at: Wed, 17 Feb 2016 22:51:54 GMT
+recorded_with: VCR 3.0.1
