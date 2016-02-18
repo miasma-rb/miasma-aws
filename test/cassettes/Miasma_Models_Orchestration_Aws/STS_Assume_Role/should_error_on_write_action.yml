@@ -8,16 +8,16 @@ http_interactions:
       string: Action=CreateStack&StackName&TemplateBody=%7B%7D&Version=2010-05-15
     headers:
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=ASIAIEZI6QNBOLSEGSPQ/20160218/us-west-1/cloudformation/aws4_request,
-        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=68f6a32f379f32808cc49240dd5255189802f04dd339b8da5d01456cc5632c86
+      - AWS4-HMAC-SHA256 Credential=ASIAJ5Q6S52AMOIPOB3A/20160218/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=68889f6293ca746377e536d745a2bd63ae266f821f314080042837ee036c5920
       User-Agent:
-      - miasma/v0.2.39
+      - miasma/v0.3.0
       Host:
       - cloudformation.us-west-1.amazonaws.com
       X-Amz-Date:
-      - 20160218T173648Z
+      - 20160218T203915Z
       X-Amz-Security-Token:
-      - AgoGb3JpZ2luEH0aCXVzLWVhc3QtMSKAAgT5HomHjC/ubzW1wlh+Z9XvHNHgZDSaCwZHR0sS0uZbYxOzL+P/uZ4BYtXdS2QxPWp8robWMV51CIfkbd1ctKb2xy6TRWsOjqsiF+b58SIsG1POPgtFegURz0Hifihyku3np8QwCP8I5V/v+UHWL+6qfpBd2ik4CA8BucCwCmv4SoqT5LvIEtJu7WUYxi4t2C/dxk8epSeiPOw4KfJ7s2xPPrgTIoSXXlNlkpizHCMvdUciWO1JBkW7yTfY8J9WxFWiTg3f6IF+pGhqr8VvK5NNs37ZuJ3I7daTUb7UYanmBEAR+N9mu7ZJBv+cwOa1H82/jBFbFtW+39JGgs1MIOIqjAIIw///////////ARAAGgw5MjE2ODk1ODUwMTQiDK4RlkVLOpjffehmUirgAeqVPcd+8bfSBISLu8rHtDP8zVnjSI3rO+CiavZq0+RAdPUoHvXGsKhMSMlQj6ulJaK25f3Hc2YcGK4s8zmvpLXNLy+Pbi8DrE7BRhZJtA0Uw0LpO03v26vwwzM/Vdp5CwqP4lw9mEoLWHbf5uu6pax0jaSKWVsWCDOrObp8zAyNa7JNiTNI98+ryv/EyzhgIDh4lo1b2MZDtWPiKvCEpX1UAdSiIGl74sTzBs9hDwdjzNd/5ofSy9e4sYnqPgyEATRlWDc1tURMPt3ozX9WOKhQRUIdmKnW0g5o/SabJwoWMK+CmLYF
+      - AgoGb3JpZ2luEID//////////wEaCXVzLWVhc3QtMSKAAnLehHvCPnwJ8M3xARn/g4dKUn4rl3jcjVJj/G3EBdx7H3iA/YOVrAN8lDrqxazcHAoY0nNXZz5rWiil3IsxsalFd7i8sZ1jt4R+GuQ2d0aVb7CUuBDpjwgM9Pu3UilMZMyMg4dYqZ2NNegYhBuxnm+Hxu9yPKK3Q0OCWfWxWfI1PQeDkRcy1jvKqnrq+8cW88oP5Z8bRxWQ8yXoYQ+GZhhkVfPn6GWn44MNccCvhg8WtyrPKrAE56YZsAo45vnfFwqJouBQbE1DWCaUUYSXVerop0qmgSrltAHRE+x9wa2RdlNEtvPecmonyALjKcul3P+cjo3JhRQ9MBOEv1LsGYcqjAIIxv//////////ARAAGgw5MjE2ODk1ODUwMTQiDJRVy7Ks+HSBbqt9hyrgAewhuAXKx0q3SlVQqAIffkUCyHg4vKSsvPiod51VVL8kGVEEyOZHIwrLSTZUO4h8ArDPR+3wprpP2KMyRbh1666lG7yhN3ICmtmcUBO/MYDgEUZkfB2ZwayqK4pRCnSB/jcPAQF4xaH0xz6jAZ/uFFqaFbnTjJecRrtmU22GYzt1DOyIv7MgWL/SwRnrUxkRYyZxvzaBqV3vm6pYN8yennEwylwxw2hBX1oE/DQ8j45Z1emynCaJdZlkZm5witz8lpNfKB/xamy1erSXPpr0R2qy665UOVfR2W1Wed3vHP2WMPLXmLYF
       Connection:
       - close
       Content-Type:
@@ -30,13 +30,13 @@ http_interactions:
       message: Forbidden
     headers:
       X-Amzn-Requestid:
-      - 30405a0b-d666-11e5-8cd1-074e87337b62
+      - ad1a7191-d67f-11e5-aa36-092b24eaa192
       Content-Type:
       - text/xml
       Content-Length:
       - '394'
       Date:
-      - Thu, 18 Feb 2016 17:36:48 GMT
+      - Thu, 18 Feb 2016 20:39:15 GMT
     body:
       encoding: ASCII-8BIT
       string: |
@@ -44,10 +44,10 @@ http_interactions:
           <Error>
             <Type>Sender</Type>
             <Code>AccessDenied</Code>
-            <Message>User: arn:aws:sts::AWS_ACCOUNT_ID:assumed-role/fubar/03be8021151b48129dd47c44d67dd2e1 is not authorized to perform: cloudformation:CreateStack</Message>
+            <Message>User: arn:aws:sts::AWS_ACCOUNT_ID:assumed-role/fubar/3149ba11c3a5469ab77952765eff819d is not authorized to perform: cloudformation:CreateStack</Message>
           </Error>
-          <RequestId>30405a0b-d666-11e5-8cd1-074e87337b62</RequestId>
+          <RequestId>ad1a7191-d67f-11e5-aa36-092b24eaa192</RequestId>
         </ErrorResponse>
     http_version: 
-  recorded_at: Thu, 18 Feb 2016 17:36:48 GMT
+  recorded_at: Thu, 18 Feb 2016 20:39:15 GMT
 recorded_with: VCR 3.0.1

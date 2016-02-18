@@ -9,13 +9,13 @@ http_interactions:
     headers:
       Authorization:
       - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID_STS/20160218/us-west-1/cloudformation/aws4_request,
-        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=bd76d7355f3bf0f40f59988b83fd63a299f11625805f9d0aec43924701aa117f
+        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=e963bec571e0687dd229f765354b05832685942ca88a756202f28d6e15a01a97
       User-Agent:
-      - miasma/v0.2.39
+      - miasma/v0.3.0
       Host:
       - cloudformation.us-west-1.amazonaws.com
       X-Amz-Date:
-      - 20160218T173649Z
+      - 20160218T204056Z
       X-Amz-Security-Token:
       - AWS_STS_TOKEN
       Connection:
@@ -30,13 +30,13 @@ http_interactions:
       message: OK
     headers:
       X-Amzn-Requestid:
-      - 30ae8544-d666-11e5-a2a3-4b4c7619f9d4
+      - e918dec6-d67f-11e5-8b22-6f0197b92c97
       Content-Type:
       - text/xml
       Content-Length:
       - '275'
       Date:
-      - Thu, 18 Feb 2016 17:36:49 GMT
+      - Thu, 18 Feb 2016 20:40:55 GMT
     body:
       encoding: ASCII-8BIT
       string: |
@@ -45,9 +45,9 @@ http_interactions:
             <StackSummaries/>
           </ListStacksResult>
           <ResponseMetadata>
-            <RequestId>30ae8544-d666-11e5-a2a3-4b4c7619f9d4</RequestId>
+            <RequestId>e918dec6-d67f-11e5-8b22-6f0197b92c97</RequestId>
           </ResponseMetadata>
         </ListStacksResponse>
     http_version: 
-  recorded_at: Thu, 18 Feb 2016 17:36:49 GMT
+  recorded_at: Thu, 18 Feb 2016 20:40:56 GMT
 recorded_with: VCR 3.0.1

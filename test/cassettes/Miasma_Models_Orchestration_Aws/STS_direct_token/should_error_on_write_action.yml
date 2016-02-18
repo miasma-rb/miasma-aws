@@ -9,13 +9,13 @@ http_interactions:
     headers:
       Authorization:
       - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID_STS/20160218/us-west-1/cloudformation/aws4_request,
-        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=f8865bf622ebee29f44e836f8b6bae15913cf5938283017f67079c8d6aaf1606
+        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=14f9be2345438ca6907eafc8c48e82b675b27415f8b24d87b142cd36aa50b177
       User-Agent:
-      - miasma/v0.2.39
+      - miasma/v0.3.0
       Host:
       - cloudformation.us-west-1.amazonaws.com
       X-Amz-Date:
-      - 20160218T173648Z
+      - 20160218T204056Z
       X-Amz-Security-Token:
       - AWS_STS_TOKEN
       Connection:
@@ -30,13 +30,13 @@ http_interactions:
       message: Forbidden
     headers:
       X-Amzn-Requestid:
-      - 3071ca4c-d666-11e5-8cd1-074e87337b62
+      - e94b3974-d67f-11e5-a9bf-85ac4c5a30a1
       Content-Type:
       - text/xml
       Content-Length:
       - '394'
       Date:
-      - Thu, 18 Feb 2016 17:36:48 GMT
+      - Thu, 18 Feb 2016 20:40:56 GMT
     body:
       encoding: ASCII-8BIT
       string: |
@@ -44,10 +44,10 @@ http_interactions:
           <Error>
             <Type>Sender</Type>
             <Code>AccessDenied</Code>
-            <Message>User: arn:aws:sts::AWS_ACCOUNT_ID:assumed-role/fubar/4f4e4fbb78684dc9922085078307adf6 is not authorized to perform: cloudformation:CreateStack</Message>
+            <Message>User: arn:aws:sts::AWS_ACCOUNT_ID:assumed-role/fubar/3149ba11c3a5469ab77952765eff819d is not authorized to perform: cloudformation:CreateStack</Message>
           </Error>
-          <RequestId>3071ca4c-d666-11e5-8cd1-074e87337b62</RequestId>
+          <RequestId>e94b3974-d67f-11e5-a9bf-85ac4c5a30a1</RequestId>
         </ErrorResponse>
     http_version: 
-  recorded_at: Thu, 18 Feb 2016 17:36:49 GMT
+  recorded_at: Thu, 18 Feb 2016 20:40:56 GMT
 recorded_with: VCR 3.0.1
