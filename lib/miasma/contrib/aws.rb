@@ -338,7 +338,7 @@ module Miasma
             attribute :aws_sts_region, String
             attribute :aws_sts_host, String
             attribute :aws_sts_session_token, String
-            attribute :aws_sts_session_token_code, [String, Proc]
+            attribute :aws_sts_session_token_code, [String, Proc, Method]
             attribute :aws_sts_mfa_serial_number, [String]
             attribute :aws_credentials_file, String, :required => true, :default => File.join(Dir.home, '.aws/credentials')
             attribute :aws_config_file, String, :required => true, :default => File.join(Dir.home, '.aws/config')
@@ -675,11 +675,15 @@ module Miasma
             end
           end
           if(aws_sts_session_token || aws_sts_session_token_code)
-            sts_mfa_session!(attributes) if sts_mfa_session_update_required?
+            if(sts_mfa_session_update_required?)
+              sts_mfa_session!(data)
+            end
             options.set(:headers, 'X-Amz-Security-Token', aws_sts_session_token)
           end
           if(aws_sts_token || aws_sts_role_arn)
-            sts_assume_role!(attributes) if sts_assume_role_update_required?
+            if(sts_assume_role_update_required?)
+              sts_assume_role!(data)
+            end
             options.set(:headers, 'X-Amz-Security-Token', aws_sts_token)
           end
           signature = signer.generate(http_method, path, options)
