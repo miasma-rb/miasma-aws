@@ -8,14 +8,14 @@ http_interactions:
       string: Action=DescribeLoadBalancers&LoadBalancerNames.member.1=miasma-test-load-balancer&Version=2012-06-01
     headers:
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/elasticloadbalancing/aws4_request,
-        SignedHeaders=host;user-agent;x-amz-date, Signature=66646ad5d679330a41c71edfdba3ee56951dd61066ba46173159ae1fda4b9190
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160218/us-west-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=905fc4f7a732c104ae21e41a8cd1547bf0d1fea60f30268990980f1851b1c9de
       User-Agent:
-      - miasma/v0.2.35
+      - miasma/v0.2.39
       Host:
       - elasticloadbalancing.us-west-1.amazonaws.com
       X-Amz-Date:
-      - 20160104T201057Z
+      - 20160218T153144Z
       Connection:
       - close
       Content-Type:
@@ -28,13 +28,13 @@ http_interactions:
       message: OK
     headers:
       X-Amzn-Requestid:
-      - 1cb91da0-b31f-11e5-a524-e78a04c4f6d8
+      - b78d5da9-d654-11e5-8b18-2983437d4226
       Content-Type:
       - text/xml
       Content-Length:
-      - '2019'
+      - '2017'
       Date:
-      - Mon, 04 Jan 2016 20:09:50 GMT
+      - Thu, 18 Feb 2016 15:31:44 GMT
     body:
       encoding: ASCII-8BIT
       string: |
@@ -54,7 +54,7 @@ http_interactions:
                   <member>us-west-1a</member>
                   <member>us-west-1c</member>
                 </AvailabilityZones>
-                <DNSName>miasma-test-load-balancer-1681054238.us-west-1.elb.amazonaws.com</DNSName>
+                <DNSName>miasma-test-load-balancer-111895978.us-west-1.elb.amazonaws.com</DNSName>
                 <BackendServerDescriptions/>
                 <SourceSecurityGroup>
                   <OwnerAlias>amazon-elb</OwnerAlias>
@@ -79,19 +79,19 @@ http_interactions:
                   <Timeout>5</Timeout>
                   <Target>TCP:80</Target>
                 </HealthCheck>
-                <CreatedTime>2016-01-04T20:07:54.040Z</CreatedTime>
+                <CreatedTime>2016-02-18T15:31:43.240Z</CreatedTime>
                 <Subnets/>
                 <SecurityGroups/>
-                <CanonicalHostedZoneName>miasma-test-load-balancer-1681054238.us-west-1.elb.amazonaws.com</CanonicalHostedZoneName>
+                <CanonicalHostedZoneName>miasma-test-load-balancer-111895978.us-west-1.elb.amazonaws.com</CanonicalHostedZoneName>
               </member>
             </LoadBalancerDescriptions>
           </DescribeLoadBalancersResult>
           <ResponseMetadata>
-            <RequestId>1cb91da0-b31f-11e5-a524-e78a04c4f6d8</RequestId>
+            <RequestId>b78d5da9-d654-11e5-8b18-2983437d4226</RequestId>
           </ResponseMetadata>
         </DescribeLoadBalancersResponse>
     http_version: 
-  recorded_at: Mon, 04 Jan 2016 20:10:57 GMT
+  recorded_at: Thu, 18 Feb 2016 15:31:44 GMT
 - request:
     method: post
     uri: https://elasticloadbalancing.us-west-1.amazonaws.com/
@@ -100,14 +100,14 @@ http_interactions:
       string: LoadBalancerName=miasma-test-load-balancer&Action=DescribeInstanceHealth&Version=2012-06-01
     headers:
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/elasticloadbalancing/aws4_request,
-        SignedHeaders=host;user-agent;x-amz-date, Signature=80b94577fa725558849bb26963a96186d0ea4e774fb77f821a44f194ad214d4b
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160218/us-west-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=aad6e6992b8a6d59863844ece4317bd1a41d969b59b12fd88103fc2e2b111ea3
       User-Agent:
-      - miasma/v0.2.35
+      - miasma/v0.2.39
       Host:
       - elasticloadbalancing.us-west-1.amazonaws.com
       X-Amz-Date:
-      - 20160104T201057Z
+      - 20160218T153144Z
       Connection:
       - close
       Content-Type:
@@ -120,13 +120,13 @@ http_interactions:
       message: OK
     headers:
       X-Amzn-Requestid:
-      - 1ce9a419-b31f-11e5-bbc6-2932b3934381
+      - b7b9018d-d654-11e5-8b18-2983437d4226
       Content-Type:
       - text/xml
       Content-Length:
       - '329'
       Date:
-      - Mon, 04 Jan 2016 20:09:51 GMT
+      - Thu, 18 Feb 2016 15:31:44 GMT
     body:
       encoding: ASCII-8BIT
       string: |
@@ -135,9 +135,9 @@ http_interactions:
             <InstanceStates/>
           </DescribeInstanceHealthResult>
           <ResponseMetadata>
-            <RequestId>1ce9a419-b31f-11e5-bbc6-2932b3934381</RequestId>
+            <RequestId>b7b9018d-d654-11e5-8b18-2983437d4226</RequestId>
           </ResponseMetadata>
         </DescribeInstanceHealthResponse>
     http_version: 
-  recorded_at: Mon, 04 Jan 2016 20:10:58 GMT
+  recorded_at: Thu, 18 Feb 2016 15:31:45 GMT
 recorded_with: VCR 3.0.1

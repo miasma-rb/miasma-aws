@@ -1,0 +1,99 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://elasticloadbalancing.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DeleteLoadBalancer&LoadBalancerName=miasma-test-load-balancer&Version=2012-06-01
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160218/us-west-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=8d2caef9fa72c10760ae18ac0d77cfec883f89c3509ff0b4e74dd62c6e84e741
+      User-Agent:
+      - miasma/v0.2.39
+      Host:
+      - elasticloadbalancing.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160218T154518Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '87'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 9cb04fb9-d656-11e5-8b18-2983437d4226
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '262'
+      Date:
+      - Thu, 18 Feb 2016 15:45:18 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <DeleteLoadBalancerResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+          <DeleteLoadBalancerResult/>
+          <ResponseMetadata>
+            <RequestId>9cb04fb9-d656-11e5-8b18-2983437d4226</RequestId>
+          </ResponseMetadata>
+        </DeleteLoadBalancerResponse>
+    http_version: 
+  recorded_at: Thu, 18 Feb 2016 15:45:18 GMT
+- request:
+    method: post
+    uri: https://elasticloadbalancing.us-west-1.amazonaws.com/
+    body:
+      encoding: US-ASCII
+      string: Action=DescribeLoadBalancers&LoadBalancerNames.member.1=miasma-test-load-balancer&Version=2012-06-01
+    headers:
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160218/us-west-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=fd73bd29bce885e4747486d77d292d7acf5663e77aa0d0b181b9d7bc03f8b7cc
+      User-Agent:
+      - miasma/v0.2.39
+      Host:
+      - elasticloadbalancing.us-west-1.amazonaws.com
+      X-Amz-Date:
+      - 20160218T154518Z
+      Connection:
+      - close
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Content-Length:
+      - '100'
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      X-Amzn-Requestid:
+      - 9ce80154-d656-11e5-8878-51fd6ea87bab
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '319'
+      Date:
+      - Thu, 18 Feb 2016 15:45:19 GMT
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <ErrorResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+          <Error>
+            <Type>Sender</Type>
+            <Code>LoadBalancerNotFound</Code>
+            <Message>Cannot find Load Balancer miasma-test-load-balancer</Message>
+          </Error>
+          <RequestId>9ce80154-d656-11e5-8878-51fd6ea87bab</RequestId>
+        </ErrorResponse>
+    http_version: 
+  recorded_at: Thu, 18 Feb 2016 15:45:18 GMT
+recorded_with: VCR 3.0.1
