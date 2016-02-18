@@ -40,6 +40,8 @@ Miasma.api(
 * `aws_external_id` - Provide an external ID when assuming role
 * `aws_sts_role_session_name` - Provide custom session name when assuming role
 * `aws_sts_session_token` - MFA related session token
+* `aws_sts_session_token_code` - Six digit code from MFA device
+* `aws_sts_mfa_serial_number` - Serial number or ARN of MFA device
 
 ### S3 related attributes
 
