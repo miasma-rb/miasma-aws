@@ -1,3 +1,7 @@
+# v0.3.0
+* [feature] Add sts session token support (MFA #35)
+* [enhancement] Load single bucket directly (remove bucket list permission requirement #33)
+
 # v0.2.4
 * [enhancement] Add aws credential file mappings for token value (#31)
 * [fix] Support quoted values within aws credentials/configuration files (#31)
