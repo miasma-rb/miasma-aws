@@ -36,7 +36,7 @@ module Miasma
               :aws_sts_session_token => result['SessionToken'],
               :aws_sts_session_secret_access_key => result['SecretAccessKey'],
               :aws_sts_session_access_key_id => result['AccessKeyId'],
-              :aws_sts_session_token_expires => result['Expiration']
+              :aws_sts_session_token_expires => Time.parse(result['Expiration'])
             )
           end
 
