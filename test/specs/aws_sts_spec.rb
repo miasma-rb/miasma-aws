@@ -53,6 +53,9 @@ describe Miasma::Models::Orchestration::Aws do
           :aws_sts_token => ENV.fetch('MIASMA_AWS_STS_TOKEN', 'test-role-token')
         }
       )
+      VCR.use_cassette('Miasma_Models_Orchestration_Global/GLOBAL_sts_direct_initialization') do
+        @orchestration.stacks.all
+      end
     end
 
     it 'should successfully complete read action' do
