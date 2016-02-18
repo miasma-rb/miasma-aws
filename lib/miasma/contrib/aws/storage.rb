@@ -92,6 +92,27 @@ module Miasma
           bucket
         end
 
+        # Directly fetch bucket
+        #
+        # @param ident [String] identifier
+        # @return [Models::Storage::Bucket, NilClass]
+        def bucket_get(ident)
+          bucket = Bucket.new(self,
+            :id => ident,
+            :name => ident
+          )
+          begin
+            bucket.reload
+            bucket
+          rescue Error::ApiError::RequestError => e
+            if(e.response.status == 404)
+              nil
+            else
+              raise
+            end
+          end
+        end
+
         # Destroy bucket
         #
         # @param bucket [Models::Storage::Bucket]
