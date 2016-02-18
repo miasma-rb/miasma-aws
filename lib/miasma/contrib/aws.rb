@@ -405,12 +405,6 @@ module Miasma
               ).merge(creds)
             )
           end
-          if(creds[:aws_sts_session_token_code])
-            sts_mfa_session!(creds)
-          end
-          if(creds[:aws_sts_role_arn])
-            sts_assume_role!(creds)
-          end
           if(creds[:aws_iam_instance_profile])
             load_instance_credentials!(creds)
           end
@@ -680,12 +674,13 @@ module Miasma
               )
             end
           end
-          if(aws_sts_token)
-            sts_assume_role!(attributes) if sts_assume_role_update_required?
-            options.set(:headers, 'X-Amz-Security-Token', aws_sts_token)
-          elsif(aws_sts_session_token)
+          if(aws_sts_session_token || aws_sts_session_token_code)
             sts_mfa_session!(attributes) if sts_mfa_session_update_required?
             options.set(:headers, 'X-Amz-Security-Token', aws_sts_session_token)
+          end
+          if(aws_sts_token || aws_sts_role_arn)
+            sts_assume_role!(attributes) if sts_assume_role_update_required?
+            options.set(:headers, 'X-Amz-Security-Token', aws_sts_token)
           end
           signature = signer.generate(http_method, path, options)
           update_request(connection, options)
@@ -696,8 +691,8 @@ module Miasma
         # @return [TrueClass, FalseClass]
         # @note update check only applied if assuming role
         def sts_assume_role_update_required?(args={})
-          if(args.fetch(:aws_sts_role_arn, data[:aws_sts_role_arn]))
-            expiry = args.fetch(:aws_sts_token_expires, data[:aws_sts_token_expires])
+          if(args.fetch(:aws_sts_role_arn, attributes[:aws_sts_role_arn]))
+            expiry = args.fetch(:aws_sts_token_expires, attributes[:aws_sts_token_expires])
             expiry.nil? || expiry <= Time.now - 15
           else
             false
@@ -707,8 +702,8 @@ module Miasma
         # @return [TrueClass, FalseClass]
         # @note update check only applied if assuming role
         def sts_mfa_session_update_required?(args={})
-          if(args.fetch(:aws_sts_session_token_code, data[:aws_sts_session_token_code]))
-            expiry = args.fetch(:aws_sts_session_token_expires, data[:aws_sts_session_token_expires])
+          if(args.fetch(:aws_sts_session_token_code, attributes[:aws_sts_session_token_code]))
+            expiry = args.fetch(:aws_sts_session_token_expires, attributes[:aws_sts_session_token_expires])
             expiry.nil? || expiry <= Time.now - 15
           else
             false
