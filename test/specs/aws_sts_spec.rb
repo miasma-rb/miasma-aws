@@ -18,7 +18,7 @@ describe Miasma::Models::Orchestration::Aws do
           :aws_sts_role_arn => ENV.fetch('MIASMA_AWS_STS_ROLE_ARN', 'test-role-arn')
         }
       )
-      VCR.use_cassette('Miasma_Models_Orchestration_Global/GLOBAL_sts_initialization') do
+      VCR.use_cassette('Miasma_Models_Orchestration_Global/GLOBAL_sts_initialization', :erb => true) do
         @orchestration.stacks.all
       end
     end
