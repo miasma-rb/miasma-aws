@@ -337,6 +337,9 @@ module Miasma
             attribute :aws_sts_role_session_name, String
             attribute :aws_sts_region, String
             attribute :aws_sts_host, String
+            attribute :aws_sts_session_token, String
+            attribute :aws_sts_session_token_code, [String, Proc, Method]
+            attribute :aws_sts_mfa_serial_number, [String]
             attribute :aws_credentials_file, String, :required => true, :default => File.join(Dir.home, '.aws/credentials')
             attribute :aws_config_file, String, :required => true, :default => File.join(Dir.home, '.aws/config')
             attribute :aws_access_key_id, String, :required => true
@@ -349,9 +352,6 @@ module Miasma
             attribute :euca_compat, Symbol, :allowed_values => [:path, :dns], :coerce => lambda{|v| v.is_a?(String) ? v.to_sym : v}
             attribute :euca_dns_map, Smash, :coerce => lambda{|v| v.to_smash}, :default => Smash.new
             attribute :ssl_enabled, [TrueClass, FalseClass], :default => true
-
-            # @return [Contrib::AwsApiCore::SignatureV4]
-            attr_reader :signer
           end
 
           # AWS config file key remapping
@@ -360,7 +360,7 @@ module Miasma
               'region' => 'aws_region',
               'role_arn' => 'aws_sts_role_arn',
               'aws_security_token' => 'aws_sts_token',
-              'aws_session_token' => 'aws_sts_token'
+              'aws_session_token' => 'aws_sts_session_token'
             )
           )
           klass.const_set(:INSTANCE_PROFILE_HOST, 'http://169.254.169.254')
@@ -404,9 +404,6 @@ module Miasma
                 )
               ).merge(creds)
             )
-          end
-          if(creds[:aws_sts_role_arn])
-            sts_assume_role!(creds)
           end
           if(creds[:aws_iam_instance_profile])
             load_instance_credentials!(creds)
@@ -472,24 +469,42 @@ module Miasma
           true
         end
 
+        def sts_mfa_session!(creds)
+          if(sts_mfa_session_update_required?(creds))
+            sts = Miasma::Contrib::Aws::Api::Sts.new(
+              :aws_access_key_id => creds[:aws_access_key_id],
+              :aws_secret_access_key => creds[:aws_secret_access_key],
+              :aws_region => creds.fetch(:aws_sts_region, 'us-east-1'),
+              :aws_credentials_file => creds.fetch(:aws_credentials_file, aws_credentials_file),
+              :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
+              :aws_profile_name => creds[:aws_profile_name],
+              :aws_host => creds[:aws_sts_host],
+            )
+            creds.merge!(
+              sts.mfa_session(
+                creds[:aws_sts_session_token_code],
+                :mfa_serial => creds[:aws_sts_mfa_serial_number]
+              )
+            )
+          end
+          true
+        end
+
         # Assume requested role and replace key id and secret
         #
         # @param creds [Hash]
         # @return [TrueClass]
         def sts_assume_role!(creds)
-          unless(creds[:aws_access_key_id_original])
-            creds[:aws_access_key_id_original] = creds[:aws_access_key_id]
-            creds[:aws_secret_access_key_original] = creds[:aws_secret_access_key]
-          end
-          if(sts_update_required?(creds))
+          if(sts_assume_role_update_required?(creds))
             sts = Miasma::Contrib::Aws::Api::Sts.new(
-              :aws_access_key_id => creds[:aws_access_key_id_original],
-              :aws_secret_access_key => creds[:aws_secret_access_key_original],
+              :aws_access_key_id => get_credential(:access_key_id, creds),
+              :aws_secret_access_key => get_credential(:secret_access_key, creds),
               :aws_region => creds.fetch(:aws_sts_region, 'us-east-1'),
               :aws_credentials_file => creds.fetch(:aws_credentials_file, aws_credentials_file),
               :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
               :aws_profile_name => creds[:aws_profile_name],
-              :aws_host => creds[:aws_sts_host]
+              :aws_host => creds[:aws_sts_host],
+              :aws_sts_token => creds[:aws_sts_session_token]
             )
             role_info = sts.assume_role(
               creds[:aws_sts_role_arn],
@@ -590,9 +605,31 @@ module Miasma
               ].join('.')
             end
           end
-          @signer = Contrib::AwsApiCore::SignatureV4.new(
-            aws_access_key_id, aws_secret_access_key, aws_region, self.class::API_SERVICE
+        end
+
+        # @return [Contrib::AwsApiCore::SignatureV4]
+        def signer
+          Contrib::AwsApiCore::SignatureV4.new(
+            get_credential(:access_key_id),
+            get_credential(:secret_access_key),
+            aws_region,
+            self.class::API_SERVICE
           )
+        end
+
+        # Return correct credential value based on STS context
+        #
+        # @param key [String, Symbol] credential suffix
+        # @return [Object]
+        def get_credential(key, data_hash=nil)
+          data_hash = attributes if data_hash.nil?
+          if(data_hash[:aws_sts_token])
+            data_hash.fetch("aws_sts_#{key}", data_hash["aws_#{key}"])
+          elsif(data_hash[:aws_sts_session_token])
+            data_hash.fetch("aws_sts_session_#{key}", data_hash["aws_#{key}"])
+          else
+            data_hash["aws_#{key}"]
+          end
         end
 
         # @return [String] custom escape for aws compat
@@ -637,8 +674,16 @@ module Miasma
               )
             end
           end
-          if(aws_sts_token)
-            sts_assume_role!(attributes) if sts_update_required?
+          if(aws_sts_session_token || aws_sts_session_token_code)
+            if(sts_mfa_session_update_required?)
+              sts_mfa_session!(data)
+            end
+            options.set(:headers, 'X-Amz-Security-Token', aws_sts_session_token)
+          end
+          if(aws_sts_token || aws_sts_role_arn)
+            if(sts_assume_role_update_required?)
+              sts_assume_role!(data)
+            end
             options.set(:headers, 'X-Amz-Security-Token', aws_sts_token)
           end
           signature = signer.generate(http_method, path, options)
@@ -649,10 +694,21 @@ module Miasma
 
         # @return [TrueClass, FalseClass]
         # @note update check only applied if assuming role
-        def sts_update_required?(args={})
-          if(args.fetch(:aws_sts_role_arn, data[:aws_sts_role_arn]))
-            expiry = args.fetch(:aws_sts_token_expires, data[:aws_sts_token_expires])
-            expiry.nil? || expiry <= Time.now - 1
+        def sts_assume_role_update_required?(args={})
+          if(args.fetch(:aws_sts_role_arn, attributes[:aws_sts_role_arn]))
+            expiry = args.fetch(:aws_sts_token_expires, attributes[:aws_sts_token_expires])
+            expiry.nil? || expiry <= Time.now - 15
+          else
+            false
+          end
+        end
+
+        # @return [TrueClass, FalseClass]
+        # @note update check only applied if assuming role
+        def sts_mfa_session_update_required?(args={})
+          if(args.fetch(:aws_sts_session_token_code, attributes[:aws_sts_session_token_code]))
+            expiry = args.fetch(:aws_sts_session_token_expires, attributes[:aws_sts_session_token_expires])
+            expiry.nil? || expiry <= Time.now - 15
           else
             false
           end

@@ -5,17 +5,17 @@ http_interactions:
     uri: https://cloudformation.us-west-1.amazonaws.com/
     body:
       encoding: US-ASCII
-      string: Action=DescribeStacks&StackName=arn%3Aaws%3Acloudformation%3Aus-west-1%3A921689585014%3Astack%2Fmiasma-test-stack%2Fb5978680-b320-11e5-992b-500cc178649a&Version=2010-05-15
+      string: Action=DescribeStacks&StackName=arn%3Aaws%3Acloudformation%3Aus-west-1%3A921689585014%3Astack%2Fmiasma-test-stack%2F900f9520-d656-11e5-9dab-50fae8e9942a&Version=2010-05-15
     headers:
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/cloudformation/aws4_request,
-        SignedHeaders=host;user-agent;x-amz-date, Signature=8dfff2ccf69ef1c3a72def575eee7d3ff468c3eea6ccebf326925013019b1683
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160218/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=e06afb95ff0cccdd5e4046c472ece4fb12dafecc945d00bcb67bcf60b04a7c5c
       User-Agent:
-      - miasma/v0.2.35
+      - miasma/v0.2.39
       Host:
       - cloudformation.us-west-1.amazonaws.com
       X-Amz-Date:
-      - 20160104T202245Z
+      - 20160218T154514Z
       Connection:
       - close
       Content-Type:
@@ -28,13 +28,13 @@ http_interactions:
       message: OK
     headers:
       X-Amzn-Requestid:
-      - c3eafa6e-b320-11e5-8f96-0597ec6212b8
+      - 9aba733c-d656-11e5-a2a3-4b4c7619f9d4
       Content-Type:
       - text/xml
       Content-Length:
       - '769'
       Date:
-      - Mon, 04 Jan 2016 20:21:41 GMT
+      - Thu, 18 Feb 2016 15:45:15 GMT
     body:
       encoding: ASCII-8BIT
       string: |
@@ -43,22 +43,22 @@ http_interactions:
             <Stacks>
               <member>
                 <Tags/>
-                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack/b5978680-b320-11e5-992b-500cc178649a</StackId>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack/900f9520-d656-11e5-9dab-50fae8e9942a</StackId>
                 <StackStatus>CREATE_COMPLETE</StackStatus>
                 <StackName>miasma-test-stack</StackName>
                 <Description>Miasma test stack</Description>
                 <NotificationARNs/>
-                <CreationTime>2016-01-04T20:21:17.169Z</CreationTime>
+                <CreationTime>2016-02-18T15:44:57.726Z</CreationTime>
                 <DisableRollback>false</DisableRollback>
               </member>
             </Stacks>
           </DescribeStacksResult>
           <ResponseMetadata>
-            <RequestId>c3eafa6e-b320-11e5-8f96-0597ec6212b8</RequestId>
+            <RequestId>9aba733c-d656-11e5-a2a3-4b4c7619f9d4</RequestId>
           </ResponseMetadata>
         </DescribeStacksResponse>
     http_version: 
-  recorded_at: Mon, 04 Jan 2016 20:22:47 GMT
+  recorded_at: Thu, 18 Feb 2016 15:45:15 GMT
 - request:
     method: post
     uri: https://cloudformation.us-west-1.amazonaws.com/
@@ -67,14 +67,14 @@ http_interactions:
       string: Action=ListStacks&StackStatusFilter.member.1=CREATE_COMPLETE&StackStatusFilter.member.2=CREATE_FAILED&StackStatusFilter.member.3=CREATE_IN_PROGRESS&StackStatusFilter.member.4=DELETE_FAILED&StackStatusFilter.member.5=DELETE_IN_PROGRESS&StackStatusFilter.member.6=ROLLBACK_COMPLETE&StackStatusFilter.member.7=ROLLBACK_FAILED&StackStatusFilter.member.8=ROLLBACK_IN_PROGRESS&StackStatusFilter.member.9=UPDATE_COMPLETE&StackStatusFilter.member.10=UPDATE_COMPLETE_CLEANUP_IN_PROGRESS&StackStatusFilter.member.11=UPDATE_IN_PROGRESS&StackStatusFilter.member.12=UPDATE_ROLLBACK_COMPLETE&StackStatusFilter.member.13=UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS&StackStatusFilter.member.14=UPDATE_ROLLBACK_FAILED&StackStatusFilter.member.15=UPDATE_ROLLBACK_IN_PROGRESS&Version=2010-05-15
     headers:
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/cloudformation/aws4_request,
-        SignedHeaders=host;user-agent;x-amz-date, Signature=a83b0a6ae6ba7089a35aa293dda59cd59e7f925c0b370e9253dc3f6edb4b556d
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160218/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=457a5245cea0fb0402e9442ebf784380b0a0bb2b82c57b8645f1327567a5cb4f
       User-Agent:
-      - miasma/v0.2.35
+      - miasma/v0.2.39
       Host:
       - cloudformation.us-west-1.amazonaws.com
       X-Amz-Date:
-      - 20160104T202247Z
+      - 20160218T154515Z
       Connection:
       - close
       Content-Type:
@@ -87,13 +87,13 @@ http_interactions:
       message: OK
     headers:
       X-Amzn-Requestid:
-      - c42320f3-b320-11e5-8e90-53a06fc71130
+      - 9af05063-d656-11e5-b923-8f495d62c9ac
       Content-Type:
       - text/xml
       Content-Length:
       - '692'
       Date:
-      - Mon, 04 Jan 2016 20:21:41 GMT
+      - Thu, 18 Feb 2016 15:45:15 GMT
     body:
       encoding: ASCII-8BIT
       string: |
@@ -101,36 +101,36 @@ http_interactions:
           <ListStacksResult>
             <StackSummaries>
               <member>
-                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack/b5978680-b320-11e5-992b-500cc178649a</StackId>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack/900f9520-d656-11e5-9dab-50fae8e9942a</StackId>
                 <StackStatus>CREATE_COMPLETE</StackStatus>
                 <StackName>miasma-test-stack</StackName>
-                <CreationTime>2016-01-04T20:21:17.169Z</CreationTime>
+                <CreationTime>2016-02-18T15:44:57.726Z</CreationTime>
                 <TemplateDescription>Miasma test stack</TemplateDescription>
               </member>
             </StackSummaries>
           </ListStacksResult>
           <ResponseMetadata>
-            <RequestId>c42320f3-b320-11e5-8e90-53a06fc71130</RequestId>
+            <RequestId>9af05063-d656-11e5-b923-8f495d62c9ac</RequestId>
           </ResponseMetadata>
         </ListStacksResponse>
     http_version: 
-  recorded_at: Mon, 04 Jan 2016 20:22:48 GMT
+  recorded_at: Thu, 18 Feb 2016 15:45:15 GMT
 - request:
     method: post
     uri: https://cloudformation.us-west-1.amazonaws.com/
     body:
       encoding: US-ASCII
-      string: Action=DescribeStacks&StackName=arn%3Aaws%3Acloudformation%3Aus-west-1%3A921689585014%3Astack%2Fmiasma-test-stack%2Fb5978680-b320-11e5-992b-500cc178649a&Version=2010-05-15
+      string: Action=DescribeStacks&StackName=arn%3Aaws%3Acloudformation%3Aus-west-1%3A921689585014%3Astack%2Fmiasma-test-stack%2F900f9520-d656-11e5-9dab-50fae8e9942a&Version=2010-05-15
     headers:
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160104/us-west-1/cloudformation/aws4_request,
-        SignedHeaders=host;user-agent;x-amz-date, Signature=65ce704addce62991ffcc9838ee598f3eb8f8b524f4db290f6288a7b1d1b3aac
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID/20160218/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date, Signature=64177a147beff736f38ac408110c68a7d09beb6f2e4e120ffa025ff3a7f2e8aa
       User-Agent:
-      - miasma/v0.2.35
+      - miasma/v0.2.39
       Host:
       - cloudformation.us-west-1.amazonaws.com
       X-Amz-Date:
-      - 20160104T202248Z
+      - 20160218T154515Z
       Connection:
       - close
       Content-Type:
@@ -143,13 +143,13 @@ http_interactions:
       message: OK
     headers:
       X-Amzn-Requestid:
-      - c458fe05-b320-11e5-8e90-53a06fc71130
+      - 9b26c93b-d656-11e5-b0a1-a7db4f0ed1dc
       Content-Type:
       - text/xml
       Content-Length:
       - '769'
       Date:
-      - Mon, 04 Jan 2016 20:21:41 GMT
+      - Thu, 18 Feb 2016 15:45:16 GMT
     body:
       encoding: ASCII-8BIT
       string: |
@@ -158,20 +158,20 @@ http_interactions:
             <Stacks>
               <member>
                 <Tags/>
-                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack/b5978680-b320-11e5-992b-500cc178649a</StackId>
+                <StackId>arn:aws:cloudformation:us-west-1:921689585014:stack/miasma-test-stack/900f9520-d656-11e5-9dab-50fae8e9942a</StackId>
                 <StackStatus>CREATE_COMPLETE</StackStatus>
                 <StackName>miasma-test-stack</StackName>
                 <Description>Miasma test stack</Description>
                 <NotificationARNs/>
-                <CreationTime>2016-01-04T20:21:17.169Z</CreationTime>
+                <CreationTime>2016-02-18T15:44:57.726Z</CreationTime>
                 <DisableRollback>false</DisableRollback>
               </member>
             </Stacks>
           </DescribeStacksResult>
           <ResponseMetadata>
-            <RequestId>c458fe05-b320-11e5-8e90-53a06fc71130</RequestId>
+            <RequestId>9b26c93b-d656-11e5-b0a1-a7db4f0ed1dc</RequestId>
           </ResponseMetadata>
         </DescribeStacksResponse>
     http_version: 
-  recorded_at: Mon, 04 Jan 2016 20:22:48 GMT
+  recorded_at: Thu, 18 Feb 2016 15:45:16 GMT
 recorded_with: VCR 3.0.1

@@ -24,6 +24,11 @@ VCR.configure do |c|
   c.filter_sensitive_data('AWS_STS_TOKEN'){ ENV['MIASMA_AWS_STS_TOKEN'] }
   c.filter_sensitive_data('AWS_ACCESS_KEY_ID_STS'){ ENV['MIASMA_AWS_ACCESS_KEY_ID_STS'] }
   c.filter_sensitive_data('AWS_SECRET_ACCESS_KEY_STS'){ ENV['MIASMA_AWS_SECRET_ACCESS_KEY_STS'] }
+  c.filter_sensitive_data('AWS_STS_ROLE_ARN_MFA'){ ENV['MIASMA_AWS_STS_ROLE_ARN_MFA'] }
+  c.filter_sensitive_data('AWS_ACCESS_KEY_ID_MFA'){ ENV['MIASMA_AWS_ACCESS_KEY_ID_MFA'] }
+  c.filter_sensitive_data('AWS_SECRET_ACCESS_KEY_MFA'){ ENV['MIASMA_AWS_SECRET_ACCESS_KEY_MFA'] }
+  c.filter_sensitive_data('AWS_STS_SESSION_TOKEN_CODE'){ ENV['MIASMA_AWS_STS_SESSION_TOKEN_CODE'] }
+  c.filter_sensitive_data('AWS_ACCOUNT_ID'){ ENV['MIASMA_AWS_ACCOUNT_ID'] }
 
 end
 

@@ -8,14 +8,14 @@ http_interactions:
       string: Action=CreateStack&StackName&TemplateBody=%7B%7D&Version=2010-05-15
     headers:
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID_STS/20160203/us-west-1/cloudformation/aws4_request,
-        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=d192819dc90fe4688be34bce410669806a0ec5341d2b244df94085f0e450503c
+      - AWS4-HMAC-SHA256 Credential=AWS_ACCESS_KEY_ID_STS/20160218/us-west-1/cloudformation/aws4_request,
+        SignedHeaders=host;user-agent;x-amz-date;x-amz-security-token, Signature=f8865bf622ebee29f44e836f8b6bae15913cf5938283017f67079c8d6aaf1606
       User-Agent:
-      - miasma/v0.2.36
+      - miasma/v0.2.39
       Host:
       - cloudformation.us-west-1.amazonaws.com
       X-Amz-Date:
-      - 20160203T002215Z
+      - 20160218T173648Z
       X-Amz-Security-Token:
       - AWS_STS_TOKEN
       Connection:
@@ -30,13 +30,13 @@ http_interactions:
       message: Forbidden
     headers:
       X-Amzn-Requestid:
-      - 2da982b3-ca0c-11e5-bf8d-952cf3a4747f
+      - 3071ca4c-d666-11e5-8cd1-074e87337b62
       Content-Type:
       - text/xml
       Content-Length:
       - '394'
       Date:
-      - Wed, 03 Feb 2016 00:22:14 GMT
+      - Thu, 18 Feb 2016 17:36:48 GMT
     body:
       encoding: ASCII-8BIT
       string: |
@@ -44,10 +44,10 @@ http_interactions:
           <Error>
             <Type>Sender</Type>
             <Code>AccessDenied</Code>
-            <Message>User: arn:aws:sts::921689585014:assumed-role/fubar/962266d8a95e40cb976eb085076f6032 is not authorized to perform: cloudformation:CreateStack</Message>
+            <Message>User: arn:aws:sts::AWS_ACCOUNT_ID:assumed-role/fubar/4f4e4fbb78684dc9922085078307adf6 is not authorized to perform: cloudformation:CreateStack</Message>
           </Error>
-          <RequestId>2da982b3-ca0c-11e5-bf8d-952cf3a4747f</RequestId>
+          <RequestId>3071ca4c-d666-11e5-8cd1-074e87337b62</RequestId>
         </ErrorResponse>
     http_version: 
-  recorded_at: Wed, 03 Feb 2016 00:22:15 GMT
+  recorded_at: Thu, 18 Feb 2016 17:36:49 GMT
 recorded_with: VCR 3.0.1
