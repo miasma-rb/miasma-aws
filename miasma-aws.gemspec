@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.description = 'Smoggy AWS API'
   s.license = 'Apache 2.0'
   s.require_path = 'lib'
-  s.add_runtime_dependency 'miasma', '>= 0.2.39', '< 0.5'
+  s.add_runtime_dependency 'miasma', '>= 0.3.1', '< 0.5'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rubocop'
   s.add_development_dependency 'pry'
