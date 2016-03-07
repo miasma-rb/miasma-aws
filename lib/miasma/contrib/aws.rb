@@ -502,7 +502,6 @@ module Miasma
               :aws_region => creds.fetch(:aws_sts_region, 'us-east-1'),
               :aws_credentials_file => creds.fetch(:aws_credentials_file, aws_credentials_file),
               :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
-              :aws_profile_name => creds[:aws_profile_name],
               :aws_host => creds[:aws_sts_host],
               :aws_sts_token => creds[:aws_sts_session_token]
             )
