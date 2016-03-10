@@ -385,7 +385,7 @@ module Miasma
           end
           if(evt_id)
             idx = events.index{|d| d.id == evt_id}
-            idx = idx ? idx + 1 : 0
+            idx ? idx + 1 : 0
             events.slice(0, idx)
           else
             events
