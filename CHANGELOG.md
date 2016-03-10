@@ -1,3 +1,7 @@
+# v0.3.2
+* [fix] Do not pass configuration file settings to STS (#37)
+* [fix] Properly fetch new events (#38)
+
 # v0.3.0
 * [feature] Add sts session token support (MFA #35)
 * [enhancement] Load single bucket directly (remove bucket list permission requirement #33)
