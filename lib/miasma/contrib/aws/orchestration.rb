@@ -169,10 +169,14 @@ module Miasma
           if(stack.on_failure)
             params['OnFailure'] = stack.on_failure == 'nothing' ? 'DO_NOTHING' : stack.on_failure.upcase
           end
-          if(!stack.dirty?(:template) && stack.persisted?)
-            params['UsePreviousTemplate'] = true
+          if(stack.template_url)
+            params['TemplateURL'] = stack.template_url
           else
-            params['TemplateBody'] = MultiJson.dump(stack.template)
+            if(!stack.dirty?(:template) && stack.persisted?)
+              params['UsePreviousTemplate'] = true
+            else
+              params['TemplateBody'] = MultiJson.dump(stack.template)
+            end
           end
           if(stack.persisted?)
             result = request(
