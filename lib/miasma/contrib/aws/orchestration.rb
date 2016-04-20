@@ -142,6 +142,37 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Models::Orchestration::Stack]
         def stack_save(stack)
+          params = generate_stack_params(stack)
+          if(stack.persisted?)
+            result = request(
+              :path => '/',
+              :method => :post,
+              :form => Smash.new(
+                'Action' => 'UpdateStack'
+              ).merge(params)
+            )
+            stack
+          else
+            if(stack.timeout_in_minutes)
+              params['TimeoutInMinutes'] = stack.timeout_in_minutes
+            end
+            result = request(
+              :path => '/',
+              :method => :post,
+              :form => Smash.new(
+                'Action' => 'CreateStack'
+              ).merge(params)
+            )
+            stack.id = result.get(:body, 'CreateStackResponse', 'CreateStackResult', 'StackId')
+            stack.valid_state
+          end
+        end
+
+        # Generate required request parameters for stack create/update/plan
+        #
+        # @param stack [Models::Orchestration::Stack]
+        # @return [Hash]
+        def generate_stack_params(stack)
           params = Smash.new('StackName' => stack.name)
           (stack.parameters || {}).each_with_index do |pair, idx|
             params["Parameters.member.#{idx + 1}.ParameterKey"] = pair.first
@@ -174,29 +205,7 @@ module Miasma
           else
             params['TemplateBody'] = MultiJson.dump(stack.template)
           end
-          if(stack.persisted?)
-            result = request(
-              :path => '/',
-              :method => :post,
-              :form => Smash.new(
-                'Action' => 'UpdateStack'
-              ).merge(params)
-            )
-            stack
-          else
-            if(stack.timeout_in_minutes)
-              params['TimeoutInMinutes'] = stack.timeout_in_minutes
-            end
-            result = request(
-              :path => '/',
-              :method => :post,
-              :form => Smash.new(
-                'Action' => 'CreateStack'
-              ).merge(params)
-            )
-            stack.id = result.get(:body, 'CreateStackResponse', 'CreateStackResult', 'StackId')
-            stack.valid_state
-          end
+          params
         end
 
         # Reload the stack data from the API
@@ -301,6 +310,31 @@ module Miasma
         # @todo check if we need any mappings on state set
         def stack_all
           load_stack_data
+        end
+
+        # Generate update plan for given stack
+        #
+        # @param stack [Models::Orchestration::Stack]
+        # @return [Models::Orchestration::Stack::Plan]
+        def stack_plan(stack)
+          unless(stack.persisted?)
+            raise 'Stack does not currently exist'
+          end
+          can_plan = [:parameters, :tags, :template].any? do |key|
+            stack.dirty?(key)
+          end
+          unless(can_plan)
+            raise 'This stack has no modifications to plan'
+          end
+          result = request(
+            :method => :post,
+            :path => '/',
+            :form => Smash.new(
+              'Action' => 'CreateChangeSet',
+              'ChangeSetName' => "miasma-changeset-#{rand(20)}",
+              'Description' => "Miasma changeset - #{Time.not.utc.xmlschema}"
+            ).merge(generate_stack_params(stack))
+          )
         end
 
         # Return all resources for stack
