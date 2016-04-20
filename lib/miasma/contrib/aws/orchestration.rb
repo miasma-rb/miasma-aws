@@ -271,12 +271,16 @@ module Miasma
         # @return [NilClass, String] nil if valid, string error message if invalid
         def stack_template_validate(stack)
           begin
+            if(stack.template_url)
+              params = Smash.new('TemplateURL' => stack.template_url)
+            else
+              params = Smash.new('TemplateBody' => MultiJson.dump(stack.template))
+            end
             result = request(
               :method => :post,
               :path => '/',
-              :form => Smash.new(
-                'Action' => 'ValidateTemplate',
-                'TemplateBody' => MultiJson.dump(stack.template)
+              :form => params.merge(
+                'Action' => 'ValidateTemplate'
               )
             )
             nil
