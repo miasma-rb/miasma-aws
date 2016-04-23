@@ -1,3 +1,6 @@
+# v0.3.4
+* [fix] Support template url for stack models (#39)
+
 # v0.3.2
 * [fix] Do not pass configuration file settings to STS (#37)
 * [fix] Properly fetch new events (#38)
