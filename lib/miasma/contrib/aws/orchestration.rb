@@ -169,10 +169,14 @@ module Miasma
           if(stack.on_failure)
             params['OnFailure'] = stack.on_failure == 'nothing' ? 'DO_NOTHING' : stack.on_failure.upcase
           end
-          if(!stack.dirty?(:template) && stack.persisted?)
-            params['UsePreviousTemplate'] = true
+          if(stack.template_url)
+            params['TemplateURL'] = stack.template_url
           else
-            params['TemplateBody'] = MultiJson.dump(stack.template)
+            if(!stack.dirty?(:template) && stack.persisted?)
+              params['UsePreviousTemplate'] = true
+            else
+              params['TemplateBody'] = MultiJson.dump(stack.template)
+            end
           end
           if(stack.persisted?)
             result = request(
@@ -267,12 +271,16 @@ module Miasma
         # @return [NilClass, String] nil if valid, string error message if invalid
         def stack_template_validate(stack)
           begin
+            if(stack.template_url)
+              params = Smash.new('TemplateURL' => stack.template_url)
+            else
+              params = Smash.new('TemplateBody' => MultiJson.dump(stack.template))
+            end
             result = request(
               :method => :post,
               :path => '/',
-              :form => Smash.new(
-                'Action' => 'ValidateTemplate',
-                'TemplateBody' => MultiJson.dump(stack.template)
+              :form => params.merge(
+                'Action' => 'ValidateTemplate'
               )
             )
             nil
