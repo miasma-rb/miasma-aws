@@ -368,7 +368,7 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Array<Models::Orchestration::Stack::Event>]
         def event_all(stack, evt_id=nil)
-          results = all_result_pages(nil, :body, 'DescribeStackEventsResponse', 'DescribeStackEventsResult', 'StackEvents', 'member') do |options|
+          results = all_result_pages(evt_id ? stack.custom[:last_event_token] : nil, :body, 'DescribeStackEventsResponse', 'DescribeStackEventsResult', 'StackEvents', 'member') do |options|
             request(
               :method => :post,
               :path => '/',
@@ -379,6 +379,7 @@ module Miasma
             )
           end
           events = results.map do |event|
+            stack.custom[:last_event_token] = event['NextToken'] if event['NextToken']
             Stack::Event.new(
               stack,
               :id => event['EventId'],
