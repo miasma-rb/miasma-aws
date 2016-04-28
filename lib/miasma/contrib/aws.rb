@@ -34,6 +34,11 @@ module Miasma
           end
           set = result.get(*result_key.slice(0, 3))
           if(set.is_a?(Hash) && set['NextToken'])
+            [content].flatten.compact.each do |item|
+              if(item.is_a?(Hash))
+                item['NextToken'] = set['NextToken']
+              end
+            end
             list += all_result_pages(set['NextToken'], *result_key, &block)
           end
           list.compact
