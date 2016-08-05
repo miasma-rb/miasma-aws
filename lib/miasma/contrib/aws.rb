@@ -345,6 +345,7 @@ module Miasma
             attribute :aws_access_key_id, String, :required => true
             attribute :aws_secret_access_key, String, :required => true
             attribute :aws_iam_instance_profile, [TrueClass, FalseClass], :default => false
+            attribute :aws_ecs_task_profile, [TrueClass, FalseClass], :default => false
             attribute :aws_region, String, :required => true
             attribute :aws_host, String
             attribute :aws_bucket_region, String
@@ -366,6 +367,8 @@ module Miasma
           klass.const_set(:INSTANCE_PROFILE_HOST, 'http://169.254.169.254')
           klass.const_set(:INSTANCE_PROFILE_PATH, 'latest/meta-data/iam/security-credentials')
           klass.const_set(:INSTANCE_PROFILE_AZ_PATH, 'latest/meta-data/placement/availability-zone')
+          klass.const_set(:ECS_TASK_PROFILE_HOST, 'http://169.254.170.2')
+          klass.const_set(:ECS_TASK_PROFILE_PATH, ENV['AWS_CONTAINER_CREDENTIALS_RELATIVE_URI'])
         end
 
         # Build new API for specified type using current provider / creds
@@ -405,8 +408,8 @@ module Miasma
               ).merge(creds)
             )
           end
-          if(creds[:aws_iam_instance_profile])
-            load_instance_credentials!(creds)
+          if (creds[:aws_iam_instance_profile])
+            self.class.const_get(:ECS_TASK_PROFILE_PATH).nil? ? load_instance_credentials!(creds) : load_ecs_credentials(creds)
           end
           true
         end
@@ -452,21 +455,64 @@ module Miasma
               data = {}
             end
           end
-          creds[:aws_access_key_id] = data['AccessKeyId']
-          creds[:aws_secret_access_key] = data['SecretAccessKey']
-          creds[:aws_sts_token] = data['Token']
-          creds[:aws_sts_token_expires] = Time.xmlschema(data['Expiration'])
+          creds.merge(extract_creds(data))
           unless(creds[:aws_region])
-            az = HTTP.get(
-              [
-                self.class.const_get(:INSTANCE_PROFILE_HOST),
-                self.class.const_get(:INSTANCE_PROFILE_AZ_PATH)
-              ].join('/')
-            ).body.to_s.strip
-            az.sub!(/[a-zA-Z]+$/, '')
-            creds[:aws_region] = az
+            creds[:aws_region] = get_region
           end
           true
+        end
+
+        # Attempt to load credentials from instance metadata
+        #
+        # @param creds [Hash]
+        # @return [TrueClass]
+        def load_ecs_credentials!(creds)
+          data = HTTP.get(
+            [
+              self.class.const_get(:ECS_TASK_PROFILE_HOST),
+              self.class.const_get(:ECS_TASK_PROFILE_PATH)
+            ].join('/')
+          ).body
+          unless(data.is_a?(Hash))
+            begin
+              data = MultiJson.load(data.to_s)
+            rescue MultiJson::ParseError
+              data = {}
+            end
+          end
+          creds.merge(extract_creds(data))
+          unless(creds[:aws_region])
+            creds[:aws_region] = get_region
+          end
+          true
+        end
+
+        # Return hash with needed information to assume role
+        #
+        # @param data [Hash]
+        # @return [Hash]
+        def extract_creds(data)
+          c = {}
+          c[:aws_access_key_id] = data['AccessKeyId']
+          c[:aws_secret_access_key] = data['SecretAccessKey']
+          c[:aws_sts_token] = data['Token']
+          c[:aws_sts_token_expires] = Time.xmlschema(data['Expiration'])
+          c[:aws_sts_role_arn] = data['RoleArn']  # used in ECS Role but not instance role
+          c
+        end
+
+        # Return region from meta-data service
+        #
+        # @return [String]
+        def get_region
+          az = HTTP.get(
+            [
+              self.class.const_get(:INSTANCE_PROFILE_HOST),
+              self.class.const_get(:INSTANCE_PROFILE_AZ_PATH)
+            ].join('/')
+          ).body.to_s.strip
+          az.sub!(/[a-zA-Z]+$/, '')
+          az
         end
 
         def sts_mfa_session!(creds)
