@@ -472,11 +472,14 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def load_ecs_credentials!(creds)
+          # As per docs ECS_TASK_PROFILE_PATH is defined as
+          # /credential_provider_version/credentials?id=task_UUID 
+          # where AWS fills in the version and UUID.
           data = HTTP.get(
             [
               self.class.const_get(:ECS_TASK_PROFILE_HOST),
               self.class.const_get(:ECS_TASK_PROFILE_PATH)
-            ].join('/')
+            ].join('')
           ).body
           unless(data.is_a?(Hash))
             begin
