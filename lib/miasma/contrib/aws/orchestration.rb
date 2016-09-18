@@ -143,9 +143,18 @@ module Miasma
         # @return [Models::Orchestration::Stack]
         def stack_save(stack)
           params = Smash.new('StackName' => stack.name)
+          if(stack.dirty?(:parameters))
+            initial_parameters = stack.data[:parameters]
+          else
+            initial_parameters = {}
+          end
           (stack.parameters || {}).each_with_index do |pair, idx|
             params["Parameters.member.#{idx + 1}.ParameterKey"] = pair.first
-            params["Parameters.member.#{idx + 1}.ParameterValue"] = pair.last
+            if(initial_parameters[pair.first] == pair.last)
+              params["Parameters.member.#{idx + 1}.UsePreviousValue"] = true
+            else
+              params["Parameters.member.#{idx + 1}.ParameterValue"] = pair.last
+            end
           end
           (stack.capabilities || []).each_with_index do |cap, idx|
             params["Capabilities.member.#{idx + 1}"] = cap
