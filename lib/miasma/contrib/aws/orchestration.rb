@@ -144,7 +144,7 @@ module Miasma
         def stack_save(stack)
           params = Smash.new('StackName' => stack.name)
           if(stack.dirty?(:parameters))
-            initial_parameters = stack.data[:parameters]
+            initial_parameters = stack.data[:parameters] || {}
           else
             initial_parameters = {}
           end
