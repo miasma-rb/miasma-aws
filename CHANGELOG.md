@@ -1,3 +1,7 @@
+# v0.3.6
+* [enhancement] Support previous parameter reuse on stack update (#41)
+* [feature] Add support for ECS task profile (#40)
+
 # v0.3.4
 * [fix] Support template url for stack models (#39)
 
