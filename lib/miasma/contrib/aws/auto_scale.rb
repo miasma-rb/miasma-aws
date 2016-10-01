@@ -3,12 +3,13 @@ require 'miasma'
 module Miasma
   module Models
     class AutoScale
+      # AWS autoscaling API
       class Aws < AutoScale
 
         # Service name of the API
-        API_SERVICE = 'autoscaling'
+        API_SERVICE = 'autoscaling'.freeze
         # Supported version of the AutoScaling API
-        API_VERSION = '2011-01-01'
+        API_VERSION = '2011-01-01'.freeze
 
         include Contrib::AwsApiCore::ApiCommon
         include Contrib::AwsApiCore::RequestUtils
@@ -49,7 +50,10 @@ module Miasma
           if(group)
             params.merge('AutoScalingGroupNames.member.1' => group.id || group.name)
           end
-          result = all_result_pages(nil, :body, 'DescribeAutoScalingGroupsResponse', 'DescribeAutoScalingGroupsResult', 'AutoScalingGroups', 'member') do |options|
+          result = all_result_pages(nil, :body,
+            'DescribeAutoScalingGroupsResponse', 'DescribeAutoScalingGroupsResult',
+            'AutoScalingGroups', 'member'
+          ) do |options|
             request(
               :method => :post,
               :path => '/',
@@ -65,13 +69,14 @@ module Miasma
               :minimum_size => grp['MinSize'],
               :maximum_size => grp['MaxSize'],
               :status => grp['Status'],
-              :load_balancers => [grp.get('LoadBalancerNames', 'member')].flatten(1).compact.map{|i|
+              :load_balancers => [
+                grp.get('LoadBalancerNames', 'member')
+              ].flatten(1).compact.map{|i|
                 Group::Balancer.new(self, :id => i, :name => i)
               }
             ).valid_state
           end
         end
-
 
         # Return all auto scale groups
         #

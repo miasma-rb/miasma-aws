@@ -3,6 +3,7 @@ require 'miasma'
 module Miasma
   module Models
     class Orchestration
+      # AWS Orchestration API
       class Aws < Orchestration
 
         # Extended stack model to provide AWS specific stack options
@@ -12,20 +13,20 @@ module Miasma
         end
 
         # Service name of the API
-        API_SERVICE = 'cloudformation'
+        API_SERVICE = 'cloudformation'.freeze
         # Service name of the eucalyptus API
-        EUCA_API_SERVICE = 'CloudFormation'
+        EUCA_API_SERVICE = 'CloudFormation'.freeze
         # Supported version of the AutoScaling API
-        API_VERSION = '2010-05-15'
+        API_VERSION = '2010-05-15'.freeze
 
         # Valid stack lookup states
         STACK_STATES = [
-          "CREATE_COMPLETE", "CREATE_FAILED", "CREATE_IN_PROGRESS", "DELETE_FAILED",
-          "DELETE_IN_PROGRESS", "ROLLBACK_COMPLETE", "ROLLBACK_FAILED", "ROLLBACK_IN_PROGRESS",
-          "UPDATE_COMPLETE", "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS", "UPDATE_IN_PROGRESS",
-          "UPDATE_ROLLBACK_COMPLETE", "UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS", "UPDATE_ROLLBACK_FAILED",
-          "UPDATE_ROLLBACK_IN_PROGRESS"
-        ]
+          'CREATE_COMPLETE', 'CREATE_FAILED', 'CREATE_IN_PROGRESS', 'DELETE_FAILED',
+          'DELETE_IN_PROGRESS', 'ROLLBACK_COMPLETE', 'ROLLBACK_FAILED', 'ROLLBACK_IN_PROGRESS',
+          'UPDATE_COMPLETE', 'UPDATE_COMPLETE_CLEANUP_IN_PROGRESS', 'UPDATE_IN_PROGRESS',
+          'UPDATE_ROLLBACK_COMPLETE', 'UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS', 'UPDATE_ROLLBACK_FAILED',
+          'UPDATE_ROLLBACK_IN_PROGRESS'
+        ].map(&:freeze).freeze
 
         include Contrib::AwsApiCore::ApiCommon
         include Contrib::AwsApiCore::RequestUtils
@@ -48,7 +49,7 @@ module Miasma
             :api => :orchestration,
             :collection => :stacks
           )
-        )
+        ).to_smash(:freeze)
 
         # Fetch stacks or update provided stack data
         #
@@ -62,7 +63,10 @@ module Miasma
           end
           if(stack)
             d_params['StackName'] = stack.id
-            descriptions = all_result_pages(nil, :body, 'DescribeStacksResponse', 'DescribeStacksResult', 'Stacks', 'member') do |options|
+            descriptions = all_result_pages(nil, :body,
+              'DescribeStacksResponse', 'DescribeStacksResult',
+              'Stacks', 'member'
+            ) do |options|
               request(
                 :method => :post,
                 :path => '/',
@@ -70,7 +74,10 @@ module Miasma
               )
             end
           else
-            lists = all_result_pages(nil, :body, 'ListStacksResponse', 'ListStacksResult', 'StackSummaries', 'member') do |options|
+            lists = all_result_pages(nil, :body,
+              'ListStacksResponse', 'ListStacksResult',
+              'StackSummaries', 'member'
+            ) do |options|
               request(
                 :method => :post,
                 :path => '/',
@@ -180,12 +187,10 @@ module Miasma
           end
           if(stack.template_url)
             params['TemplateURL'] = stack.template_url
+          elsif(!stack.dirty?(:template) && stack.persisted?)
+            params['UsePreviousTemplate'] = true
           else
-            if(!stack.dirty?(:template) && stack.persisted?)
-              params['UsePreviousTemplate'] = true
-            else
-              params['TemplateBody'] = MultiJson.dump(stack.template)
-            end
+            params['TemplateBody'] = MultiJson.dump(stack.template)
           end
           if(stack.persisted?)
             result = request(
@@ -325,7 +330,10 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Array<Models::Orchestration::Stack::Resource>]
         def resource_all(stack)
-          results = all_result_pages(nil, :body, 'ListStackResourcesResponse', 'ListStackResourcesResult', 'StackResourceSummaries', 'member') do |options|
+          results = all_result_pages(nil, :body,
+            'ListStackResourcesResponse', 'ListStackResourcesResult',
+            'StackResourceSummaries', 'member'
+          ) do |options|
             request(
               :method => :post,
               :path => '/',
@@ -362,7 +370,10 @@ module Miasma
               'LogicalResourceId' => resource.logical_id,
               'StackName' => resource.stack.name
             )
-          ).get(:body, 'DescribeStackResourceResponse', 'DescribeStackResourceResult', 'StackResourceDetail')
+          ).get(:body,
+            'DescribeStackResourceResponse', 'DescribeStackResourceResult',
+            'StackResourceDetail'
+          )
           resource.updated = result['LastUpdatedTimestamp']
           resource.type = result['ResourceType']
           resource.state = result['ResourceStatus'].downcase.to_sym
@@ -378,7 +389,10 @@ module Miasma
         # @return [Array<Models::Orchestration::Stack::Event>]
         def event_all(stack, evt_id=nil)
           evt_id = stack.custom[:last_event_token] if evt_id == true
-          results = all_result_pages(evt_id, :body, 'DescribeStackEventsResponse', 'DescribeStackEventsResult', 'StackEvents', 'member') do |options|
+          results = all_result_pages(evt_id, :body,
+            'DescribeStackEventsResponse', 'DescribeStackEventsResult',
+            'StackEvents', 'member'
+          ) do |options|
             request(
               :method => :post,
               :path => '/',

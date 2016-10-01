@@ -4,12 +4,13 @@ module Miasma
   module Contrib
     module Aws
       module Api
+        # IAM helper class
         class Iam < Miasma::Types::Api
 
           # Service name of the API
-          API_SERVICE = 'iam'
+          API_SERVICE = 'iam'.freeze
           # Supported version of the IAM API
-          API_VERSION = '2010-05-08'
+          API_VERSION = '2010-05-08'.freeze
 
           include Contrib::AwsApiCore::ApiCommon
           include Contrib::AwsApiCore::RequestUtils

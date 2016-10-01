@@ -4,12 +4,13 @@ module Miasma
   module Contrib
     module Aws
       module Api
+        # STS helper class
         class Sts < Miasma::Types::Api
 
           # Service name of the API
-          API_SERVICE = 'sts'
+          API_SERVICE = 'sts'.freeze
           # Supported version of the STS API
-          API_VERSION = '2011-06-15'
+          API_VERSION = '2011-06-15'.freeze
 
           include Contrib::AwsApiCore::ApiCommon
           include Contrib::AwsApiCore::RequestUtils

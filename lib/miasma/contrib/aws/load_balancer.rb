@@ -3,15 +3,16 @@ require 'miasma'
 module Miasma
   module Models
     class LoadBalancer
+      # AWS load balancer API
       class Aws < LoadBalancer
 
         include Contrib::AwsApiCore::ApiCommon
         include Contrib::AwsApiCore::RequestUtils
 
         # Service name of API
-        API_SERVICE = 'elasticloadbalancing'
+        API_SERVICE = 'elasticloadbalancing'.freeze
         # Supported version of the ELB API
-        API_VERSION = '2012-06-01'
+        API_VERSION = '2012-06-01'.freeze
 
         # Save load balancer
         #
@@ -23,7 +24,7 @@ module Miasma
               'LoadBalancerName' => balancer.name
             )
             availability_zones.each_with_index do |az, i|
-              params["AvailabilityZones.member.#{i+1}"] = az
+              params["AvailabilityZones.member.#{i + 1}"] = az
             end
             if(balancer.listeners)
               balancer.listeners.each_with_index do |listener, i|
@@ -47,7 +48,9 @@ module Miasma
               )
             )
             balancer.public_addresses = [
-              :address => result.get(:body, 'CreateLoadBalancerResponse', 'CreateLoadBalancerResult', 'DNSName')
+              :address => result.get(:body,
+                'CreateLoadBalancerResponse', 'CreateLoadBalancerResult', 'DNSName'
+              )
             ]
             balancer.load_data(:id => balancer.name).valid_state
             if(balancer.health_check)
@@ -114,9 +117,12 @@ module Miasma
         def load_balancer_data(balancer=nil)
           params = Smash.new('Action' => 'DescribeLoadBalancers')
           if(balancer)
-            params.merge!('LoadBalancerNames.member.1' => balancer.id || balancer.name)
+            params['LoadBalancerNames.member.1'] = balancer.id || balancer.name
           end
-          result = all_result_pages(nil, :body, 'DescribeLoadBalancersResponse', 'DescribeLoadBalancersResult', 'LoadBalancerDescriptions', 'member') do |options|
+          result = all_result_pages(nil, :body,
+            'DescribeLoadBalancersResponse', 'DescribeLoadBalancersResult',
+            'LoadBalancerDescriptions', 'member'
+          ) do |options|
             request(
               :method => :post,
               :path => '/',
@@ -124,7 +130,10 @@ module Miasma
             )
           end
           if(balancer)
-            health_result = all_result_pages(nil, :body, 'DescribeInstanceHealthResponse', 'DescribeInstanceHealthResult', 'InstanceStates', 'member') do |options|
+            health_result = all_result_pages(nil, :body,
+              'DescribeInstanceHealthResponse', 'DescribeInstanceHealthResult',
+              'InstanceStates', 'member'
+            ) do |options|
               request(
                 :method => :post,
                 :path => '/',
@@ -156,7 +165,13 @@ module Miasma
               ).merge(
                 health_result.nil? ? {} : Smash.new(
                   :server_states => health_result.nil? ? nil : health_result.map{|i|
-                    Balancer::ServerState.new(self.api_for(:compute), :id => i['InstanceId'], :status => i['State'], :reason => i['ReasonCode'], :state => i['State'] == 'InService' ? :up : :down)
+                    Balancer::ServerState.new(
+                      self.api_for(:compute),
+                      :id => i['InstanceId'],
+                      :status => i['State'],
+                      :reason => i['ReasonCode'],
+                      :state => i['State'] == 'InService' ? :up : :down
+                    )
                   }
                 )
               )
@@ -206,7 +221,9 @@ module Miasma
               :form => Smash.new(
                 'Action' => 'DescribeAvailabilityZones'
               )
-            ).fetch(:body, 'DescribeAvailabilityZonesResponse', 'availabilityZoneInfo', 'item', [])
+            ).fetch(:body,
+              'DescribeAvailabilityZonesResponse', 'availabilityZoneInfo', 'item', []
+            )
             [res].flatten.compact.map do |item|
               if(item['zoneState'] == 'available')
                 item['zoneName']

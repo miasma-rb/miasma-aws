@@ -5,14 +5,15 @@ require 'miasma'
 module Miasma
   module Models
     class Storage
+      # AWS storage API
       class Aws < Storage
 
         # Service name of the API
-        API_SERVICE = 's3'
+        API_SERVICE = 's3'.freeze
         # Service name of the API in eucalyptus
-        EUCA_API_SERVICE = 'objectstorage'
+        EUCA_API_SERVICE = 'objectstorage'.freeze
         # Supported version of the Storage API
-        API_VERSION = '2006-03-01'
+        API_VERSION = '2006-03-01'.freeze
 
         include Contrib::AwsApiCore::ApiCommon
         include Contrib::AwsApiCore::RequestUtils
@@ -39,7 +40,9 @@ module Miasma
           end
           set = result.get(*result_key.slice(0, 2))
           if(set.is_a?(Hash) && set['IsTruncated'] && set['Contents'])
-            content_key = (set['Contents'].respond_to?(:last) ? set['Contents'].last : set['Contents'])['Key']
+            content_key = (
+              set['Contents'].respond_to?(:last) ? set['Contents'].last : set['Contents']
+            )['Key']
             list += all_result_pages(content_key, *result_key, &block)
           end
           list.compact
@@ -256,7 +259,8 @@ module Miasma
             unless(headers.empty?)
               args[:headers] = headers
             end
-            if(file.attributes[:body].respond_to?(:read) && file.attributes[:body].size >= Storage::MAX_BODY_SIZE_FOR_STRINGIFY)
+            if(file.attributes[:body].respond_to?(:read) &&
+              file.attributes[:body].size >= Storage::MAX_BODY_SIZE_FOR_STRINGIFY)
               upload_id = request(
                 args.merge(
                   Smash.new(

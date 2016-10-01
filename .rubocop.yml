@@ -59,6 +59,26 @@ Style/MultilineBlockChain:
   Enabled: false
 Style/MultilineOperationIndentation:
   Enabled: false
+Style/MultilineMethodCallIndentation:
+  Enabled: false
+Style/ConditionalAssignment:
+  Enabled: false
+Performance/RedundantBlockCall:
+  Enabled: false
+Style/RedundantBegin:
+  Enabled: false
+Style/Lambda:
+  Enabled: false
+Style/NestedTernaryOperator:
+  Enabled: false
+Style/RedundantSelf:
+  Enabled: false
+Style/AlignHash:
+  Enabled: false
+Style/MultilineTernaryOperator:
+  Enabled: false
+Style/FileName:
+  Enabled: false
 
 Style/AlignParameters:
   EnforcedStyle: with_fixed_indentation
@@ -92,4 +112,4 @@ Metrics/ModuleLength:
 Metrics/LineLength:
   Max: 120
 Metrics/MethodLength:
-  Max: 80
+  Max: 120
