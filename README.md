@@ -33,6 +33,10 @@ Miasma.api(
 
 * `aws_iam_instance_profile` - Extract and use instance IAM credentials
 
+### ECS task related attributes
+
+* `aws_ecs_task_profile` - Extract and use ECS task IAM credentials
+
 ### Secure Token Service related:
 
 * `aws_sts_token` - Set STS token to use with current key ID and secret
