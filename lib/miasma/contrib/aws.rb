@@ -413,8 +413,10 @@ module Miasma
               ).merge(creds)
             )
           end
-          if (creds[:aws_iam_instance_profile])
-            self.class.const_get(:ECS_TASK_PROFILE_PATH).nil? ? load_instance_credentials!(creds) : load_ecs_credentials(creds)
+          if(creds[:aws_iam_instance_profile])
+            self.class.const_get(:ECS_TASK_PROFILE_PATH).nil? ?
+              load_instance_credentials!(creds) :
+              load_ecs_credentials(creds)
           end
           true
         end
@@ -460,7 +462,7 @@ module Miasma
               data = {}
             end
           end
-          creds.merge(extract_creds(data))
+          creds.merge!(extract_creds(data))
           unless(creds[:aws_region])
             creds[:aws_region] = get_region
           end
@@ -473,13 +475,14 @@ module Miasma
         # @return [TrueClass]
         def load_ecs_credentials!(creds)
           # As per docs ECS_TASK_PROFILE_PATH is defined as
-          # /credential_provider_version/credentials?id=task_UUID 
+          # /credential_provider_version/credentials?id=task_UUID
           # where AWS fills in the version and UUID.
+          # @see https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html
           data = HTTP.get(
             [
               self.class.const_get(:ECS_TASK_PROFILE_HOST),
               self.class.const_get(:ECS_TASK_PROFILE_PATH)
-            ].join('')
+            ].join
           ).body
           unless(data.is_a?(Hash))
             begin
@@ -488,7 +491,7 @@ module Miasma
               data = {}
             end
           end
-          creds.merge(extract_creds(data))
+          creds.merge!(extract_creds(data))
           unless(creds[:aws_region])
             creds[:aws_region] = get_region
           end
@@ -500,7 +503,7 @@ module Miasma
         # @param data [Hash]
         # @return [Hash]
         def extract_creds(data)
-          c = {}
+          c = Smash.new
           c[:aws_access_key_id] = data['AccessKeyId']
           c[:aws_secret_access_key] = data['SecretAccessKey']
           c[:aws_sts_token] = data['Token']
