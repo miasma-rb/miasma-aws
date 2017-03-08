@@ -436,7 +436,7 @@ module Miasma
           if(creds[:aws_iam_instance_profile])
             self.class.const_get(:ECS_TASK_PROFILE_PATH).nil? ?
               load_instance_credentials!(creds) :
-              load_ecs_credentials(creds)
+              load_ecs_credentials!(creds)
           end
           true
         end
