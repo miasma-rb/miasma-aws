@@ -10,6 +10,7 @@ module Miasma
         class Stack < Orchestration::Stack
           attribute :stack_policy_body, Hash, :coerce => lambda{|v| MultiJson.load(v).to_smash}
           attribute :stack_policy_url, String
+          attribute :last_event_token, String
         end
 
         # Service name of the API
@@ -330,7 +331,7 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Array<Models::Orchestration::Stack::Resource>]
         def resource_all(stack)
-          results = all_result_pages(nil, :body,
+          all_result_pages(nil, :body,
             'ListStackResourcesResponse', 'ListStackResourcesResult',
             'StackResourceSummaries', 'member'
           ) do |options|
@@ -388,7 +389,7 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Array<Models::Orchestration::Stack::Event>]
         def event_all(stack, evt_id=nil)
-          evt_id = stack.custom[:last_event_token] if evt_id == true
+          evt_id = stack.last_event_token if evt_id
           results = all_result_pages(evt_id, :body,
             'DescribeStackEventsResponse', 'DescribeStackEventsResult',
             'StackEvents', 'member'
@@ -403,7 +404,7 @@ module Miasma
             )
           end
           events = results.map do |event|
-            stack.custom[:last_event_token] = event['NextToken'] if event['NextToken']
+            stack.last_event_token = event['NextToken'] if event['NextToken']
             Stack::Event.new(
               stack,
               :id => event['EventId'],
