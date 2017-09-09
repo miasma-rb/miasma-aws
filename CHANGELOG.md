@@ -1,3 +1,6 @@
+# v0.3.10
+* [fix] Use custom attribute to store last stack event ID (#45)
+
 # v0.3.8
 * [fix] Fix ECS credential loading (#42)
 
