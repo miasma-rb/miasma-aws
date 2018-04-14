@@ -1,2 +1,2 @@
-require 'miasma'
-require 'miasma-aws/version'
+require "miasma"
+require "miasma-aws/version"

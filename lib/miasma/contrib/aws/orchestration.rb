@@ -1,4 +1,4 @@
-require 'miasma'
+require "miasma"
 
 module Miasma
   module Models
@@ -8,25 +8,25 @@ module Miasma
 
         # Extended stack model to provide AWS specific stack options
         class Stack < Orchestration::Stack
-          attribute :stack_policy_body, Hash, :coerce => lambda{|v| MultiJson.load(v).to_smash}
+          attribute :stack_policy_body, Hash, :coerce => lambda { |v| MultiJson.load(v).to_smash }
           attribute :stack_policy_url, String
           attribute :last_event_token, String
         end
 
         # Service name of the API
-        API_SERVICE = 'cloudformation'.freeze
+        API_SERVICE = "cloudformation".freeze
         # Service name of the eucalyptus API
-        EUCA_API_SERVICE = 'CloudFormation'.freeze
+        EUCA_API_SERVICE = "CloudFormation".freeze
         # Supported version of the AutoScaling API
-        API_VERSION = '2010-05-15'.freeze
+        API_VERSION = "2010-05-15".freeze
 
         # Valid stack lookup states
         STACK_STATES = [
-          'CREATE_COMPLETE', 'CREATE_FAILED', 'CREATE_IN_PROGRESS', 'DELETE_FAILED',
-          'DELETE_IN_PROGRESS', 'ROLLBACK_COMPLETE', 'ROLLBACK_FAILED', 'ROLLBACK_IN_PROGRESS',
-          'UPDATE_COMPLETE', 'UPDATE_COMPLETE_CLEANUP_IN_PROGRESS', 'UPDATE_IN_PROGRESS',
-          'UPDATE_ROLLBACK_COMPLETE', 'UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS', 'UPDATE_ROLLBACK_FAILED',
-          'UPDATE_ROLLBACK_IN_PROGRESS'
+          "CREATE_COMPLETE", "CREATE_FAILED", "CREATE_IN_PROGRESS", "DELETE_FAILED",
+          "DELETE_IN_PROGRESS", "ROLLBACK_COMPLETE", "ROLLBACK_FAILED", "ROLLBACK_IN_PROGRESS",
+          "UPDATE_COMPLETE", "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS", "UPDATE_IN_PROGRESS",
+          "UPDATE_ROLLBACK_COMPLETE", "UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS", "UPDATE_ROLLBACK_FAILED",
+          "UPDATE_ROLLBACK_IN_PROGRESS",
         ].map(&:freeze).freeze
 
         include Contrib::AwsApiCore::ApiCommon
@@ -34,113 +34,111 @@ module Miasma
 
         # @return [Smash] external to internal resource mapping
         RESOURCE_MAPPING = Smash.new(
-          'AWS::EC2::Instance' => Smash.new(
+          "AWS::EC2::Instance" => Smash.new(
             :api => :compute,
-            :collection => :servers
+            :collection => :servers,
           ),
-          'AWS::ElasticLoadBalancing::LoadBalancer' => Smash.new(
+          "AWS::ElasticLoadBalancing::LoadBalancer" => Smash.new(
             :api => :load_balancer,
-            :collection => :balancers
+            :collection => :balancers,
           ),
-          'AWS::AutoScaling::AutoScalingGroup' => Smash.new(
+          "AWS::AutoScaling::AutoScalingGroup" => Smash.new(
             :api => :auto_scale,
-            :collection => :groups
+            :collection => :groups,
           ),
-          'AWS::CloudFormation::Stack' => Smash.new(
+          "AWS::CloudFormation::Stack" => Smash.new(
             :api => :orchestration,
-            :collection => :stacks
-          )
+            :collection => :stacks,
+          ),
         ).to_smash(:freeze)
 
         # Fetch stacks or update provided stack data
         #
         # @param stack [Models::Orchestration::Stack]
         # @return [Array<Models::Orchestration::Stack>]
-        def load_stack_data(stack=nil)
-          d_params = Smash.new('Action' => 'DescribeStacks')
-          l_params = Smash.new('Action' => 'ListStacks')
+        def load_stack_data(stack = nil)
+          d_params = Smash.new("Action" => "DescribeStacks")
+          l_params = Smash.new("Action" => "ListStacks")
           STACK_STATES.each_with_index do |state, idx|
             l_params["StackStatusFilter.member.#{idx + 1}"] = state.to_s.upcase
           end
-          if(stack)
-            d_params['StackName'] = stack.id
+          if stack
+            d_params["StackName"] = stack.id
             descriptions = all_result_pages(nil, :body,
-              'DescribeStacksResponse', 'DescribeStacksResult',
-              'Stacks', 'member'
-            ) do |options|
+                                            "DescribeStacksResponse", "DescribeStacksResult",
+                                            "Stacks", "member") do |options|
               request(
                 :method => :post,
-                :path => '/',
-                :form => options.merge(d_params)
+                :path => "/",
+                :form => options.merge(d_params),
               )
             end
           else
             lists = all_result_pages(nil, :body,
-              'ListStacksResponse', 'ListStacksResult',
-              'StackSummaries', 'member'
-            ) do |options|
+                                     "ListStacksResponse", "ListStacksResult",
+                                     "StackSummaries", "member") do |options|
               request(
                 :method => :post,
-                :path => '/',
-                :form => options.merge(l_params)
+                :path => "/",
+                :form => options.merge(l_params),
               )
             end
             descriptions = []
           end
           (lists || descriptions).map do |stk|
-            if(lists)
+            if lists
               desc = descriptions.detect do |d_stk|
-                d_stk['StackId'] == stk['StackId']
+                d_stk["StackId"] == stk["StackId"]
               end || Smash.new
               stk.merge!(desc)
             end
-            if(stack)
-              next if stack.id != stk['StackId'] && stk['StackId'].split('/')[1] != stack.id
+            if stack
+              next if stack.id != stk["StackId"] && stk["StackId"].split("/")[1] != stack.id
             end
-            state = stk['StackStatus'].downcase.to_sym
-            unless(Miasma::Models::Orchestration::VALID_RESOURCE_STATES.include?(state))
-              parts = state.to_s.split('_')
-              state = [parts.first, *parts.slice(-2, parts.size)].join('_').to_sym
-              unless(Miasma::Models::Orchestration::VALID_RESOURCE_STATES.include?(parts))
+            state = stk["StackStatus"].downcase.to_sym
+            unless Miasma::Models::Orchestration::VALID_RESOURCE_STATES.include?(state)
+              parts = state.to_s.split("_")
+              state = [parts.first, *parts.slice(-2, parts.size)].join("_").to_sym
+              unless Miasma::Models::Orchestration::VALID_RESOURCE_STATES.include?(parts)
                 state = :unknown
               end
             end
             new_stack = stack || Stack.new(self)
             new_stack.load_data(
-              :id => stk['StackId'],
-              :name => stk['StackName'],
-              :capabilities => [stk.get('Capabilities', 'member')].flatten(1).compact,
-              :description => stk['Description'],
-              :created => stk['CreationTime'],
-              :updated => stk['LastUpdatedTime'],
-              :notification_topics => [stk.get('NotificationARNs', 'member')].flatten(1).compact,
-              :timeout_in_minutes => stk['TimeoutInMinutes'] ? stk['TimeoutInMinutes'].to_i : nil,
-              :status => stk['StackStatus'],
-              :status_reason => stk['StackStatusReason'],
+              :id => stk["StackId"],
+              :name => stk["StackName"],
+              :capabilities => [stk.get("Capabilities", "member")].flatten(1).compact,
+              :description => stk["Description"],
+              :created => stk["CreationTime"],
+              :updated => stk["LastUpdatedTime"],
+              :notification_topics => [stk.get("NotificationARNs", "member")].flatten(1).compact,
+              :timeout_in_minutes => stk["TimeoutInMinutes"] ? stk["TimeoutInMinutes"].to_i : nil,
+              :status => stk["StackStatus"],
+              :status_reason => stk["StackStatusReason"],
               :state => state,
-              :template_description => stk['TemplateDescription'],
-              :disable_rollback => !!stk['DisableRollback'],
-              :outputs => [stk.get('Outputs', 'member')].flatten(1).compact.map{|o|
+              :template_description => stk["TemplateDescription"],
+              :disable_rollback => !!stk["DisableRollback"],
+              :outputs => [stk.get("Outputs", "member")].flatten(1).compact.map { |o|
                 Smash.new(
-                  :key => o['OutputKey'],
-                  :value => o['OutputValue'],
-                  :description => o['Description']
+                  :key => o["OutputKey"],
+                  :value => o["OutputValue"],
+                  :description => o["Description"],
                 )
               },
               :tags => Smash[
-                [stk.fetch('Tags', 'member', [])].flatten(1).map{|param|
-                  [param['Key'], param['Value']]
+                [stk.fetch("Tags", "member", [])].flatten(1).map { |param|
+                  [param["Key"], param["Value"]]
                 }
               ],
               :parameters => Smash[
-                [stk.fetch('Parameters', 'member', [])].flatten(1).map{|param|
-                  [param['ParameterKey'], param['ParameterValue']]
+                [stk.fetch("Parameters", "member", [])].flatten(1).map { |param|
+                  [param["ParameterKey"], param["ParameterValue"]]
                 }
               ],
               :custom => Smash.new(
-                :stack_policy => stk['StackPolicyBody'],
-                :stack_policy_url => stk['StackPolicyURL']
-              )
+                :stack_policy => stk["StackPolicyBody"],
+                :stack_policy_url => stk["StackPolicyURL"],
+              ),
             ).valid_state
           end
         end
@@ -150,15 +148,15 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Models::Orchestration::Stack]
         def stack_save(stack)
-          params = Smash.new('StackName' => stack.name)
-          if(stack.dirty?(:parameters))
+          params = Smash.new("StackName" => stack.name)
+          if stack.dirty?(:parameters)
             initial_parameters = stack.data[:parameters] || {}
           else
             initial_parameters = {}
           end
           (stack.parameters || {}).each_with_index do |pair, idx|
             params["Parameters.member.#{idx + 1}.ParameterKey"] = pair.first
-            if(initial_parameters[pair.first] == pair.last)
+            if initial_parameters[pair.first] == pair.last
               params["Parameters.member.#{idx + 1}.UsePreviousValue"] = true
             else
               params["Parameters.member.#{idx + 1}.ParameterValue"] = pair.last
@@ -174,46 +172,46 @@ module Miasma
             params["Tags.member.#{idx + 1}.Key"] = tag.first
             params["Tags.member.#{idx + 1}.Value"] = tag.last
           end
-          if(stack.custom[:stack_policy_body])
-            params['StackPolicyBody'] = MultiJson.dump(stack.custom[:stack_policy_body])
+          if stack.custom[:stack_policy_body]
+            params["StackPolicyBody"] = MultiJson.dump(stack.custom[:stack_policy_body])
           end
-          if(stack.custom[:stack_policy_url])
-            params['StackPolicyURL'] = stack.custom[:stack_policy_url]
+          if stack.custom[:stack_policy_url]
+            params["StackPolicyURL"] = stack.custom[:stack_policy_url]
           end
-          unless(stack.disable_rollback.nil?)
-            params['OnFailure'] = stack.disable_rollback ? 'DO_NOTHING' : 'ROLLBACK'
+          unless stack.disable_rollback.nil?
+            params["OnFailure"] = stack.disable_rollback ? "DO_NOTHING" : "ROLLBACK"
           end
-          if(stack.on_failure)
-            params['OnFailure'] = stack.on_failure == 'nothing' ? 'DO_NOTHING' : stack.on_failure.upcase
+          if stack.on_failure
+            params["OnFailure"] = stack.on_failure == "nothing" ? "DO_NOTHING" : stack.on_failure.upcase
           end
-          if(stack.template_url)
-            params['TemplateURL'] = stack.template_url
-          elsif(!stack.dirty?(:template) && stack.persisted?)
-            params['UsePreviousTemplate'] = true
+          if stack.template_url
+            params["TemplateURL"] = stack.template_url
+          elsif !stack.dirty?(:template) && stack.persisted?
+            params["UsePreviousTemplate"] = true
           else
-            params['TemplateBody'] = MultiJson.dump(stack.template)
+            params["TemplateBody"] = MultiJson.dump(stack.template)
           end
-          if(stack.persisted?)
+          if stack.persisted?
             result = request(
-              :path => '/',
+              :path => "/",
               :method => :post,
               :form => Smash.new(
-                'Action' => 'UpdateStack'
-              ).merge(params)
+                "Action" => "UpdateStack",
+              ).merge(params),
             )
             stack
           else
-            if(stack.timeout_in_minutes)
-              params['TimeoutInMinutes'] = stack.timeout_in_minutes
+            if stack.timeout_in_minutes
+              params["TimeoutInMinutes"] = stack.timeout_in_minutes
             end
             result = request(
-              :path => '/',
+              :path => "/",
               :method => :post,
               :form => Smash.new(
-                'Action' => 'CreateStack'
-              ).merge(params)
+                "Action" => "CreateStack",
+              ).merge(params),
             )
-            stack.id = result.get(:body, 'CreateStackResponse', 'CreateStackResult', 'StackId')
+            stack.id = result.get(:body, "CreateStackResponse", "CreateStackResult", "StackId")
             stack.valid_state
           end
         end
@@ -223,14 +221,14 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Models::Orchestration::Stack]
         def stack_reload(stack)
-          if(stack.persisted?)
+          if stack.persisted?
             ustack = Stack.new(self)
             ustack.id = stack.id
             load_stack_data(ustack)
-            if(ustack.data[:name])
+            if ustack.data[:name]
               stack.load_data(ustack.attributes).valid_state
             else
-              stack.status = 'DELETE_COMPLETE'
+              stack.status = "DELETE_COMPLETE"
               stack.state = :delete_complete
               stack.valid_state
             end
@@ -243,14 +241,14 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [TrueClass, FalseClass]
         def stack_destroy(stack)
-          if(stack.persisted?)
+          if stack.persisted?
             request(
               :method => :post,
-              :path => '/',
+              :path => "/",
               :form => Smash.new(
-                'Action' => 'DeleteStack',
-                'StackName' => stack.id
-              )
+                "Action" => "DeleteStack",
+                "StackName" => stack.id,
+              ),
             )
             true
           else
@@ -263,17 +261,17 @@ module Miasma
         # @param stack [Stack]
         # @return [Smash] stack template
         def stack_template_load(stack)
-          if(stack.persisted?)
+          if stack.persisted?
             result = request(
               :method => :post,
-              :path => '/',
+              :path => "/",
               :form => Smash.new(
-                'Action' => 'GetTemplate',
-                'StackName' => stack.id
-              )
+                "Action" => "GetTemplate",
+                "StackName" => stack.id,
+              ),
             )
             MultiJson.load(
-              result.get(:body, 'GetTemplateResponse', 'GetTemplateResult', 'TemplateBody')
+              result.get(:body, "GetTemplateResponse", "GetTemplateResult", "TemplateBody")
             ).to_smash
           else
             Smash.new
@@ -286,22 +284,22 @@ module Miasma
         # @return [NilClass, String] nil if valid, string error message if invalid
         def stack_template_validate(stack)
           begin
-            if(stack.template_url)
-              params = Smash.new('TemplateURL' => stack.template_url)
+            if stack.template_url
+              params = Smash.new("TemplateURL" => stack.template_url)
             else
-              params = Smash.new('TemplateBody' => MultiJson.dump(stack.template))
+              params = Smash.new("TemplateBody" => MultiJson.dump(stack.template))
             end
             result = request(
               :method => :post,
-              :path => '/',
+              :path => "/",
               :form => params.merge(
-                'Action' => 'ValidateTemplate'
-              )
+                "Action" => "ValidateTemplate",
+              ),
             )
             nil
           rescue Error::ApiError::RequestError => e
             MultiXml.parse(e.response.body.to_s).to_smash.get(
-              'ErrorResponse', 'Error', 'Message'
+              "ErrorResponse", "Error", "Message"
             )
           end
         end
@@ -332,29 +330,28 @@ module Miasma
         # @return [Array<Models::Orchestration::Stack::Resource>]
         def resource_all(stack)
           all_result_pages(nil, :body,
-            'ListStackResourcesResponse', 'ListStackResourcesResult',
-            'StackResourceSummaries', 'member'
-          ) do |options|
+                           "ListStackResourcesResponse", "ListStackResourcesResult",
+                           "StackResourceSummaries", "member") do |options|
             request(
               :method => :post,
-              :path => '/',
+              :path => "/",
               :form => options.merge(
                 Smash.new(
-                  'Action' => 'ListStackResources',
-                  'StackName' => stack.id
+                  "Action" => "ListStackResources",
+                  "StackName" => stack.id,
                 )
-              )
+              ),
             )
           end.map do |res|
             Stack::Resource.new(
               stack,
-              :id => res['PhysicalResourceId'],
-              :name => res['LogicalResourceId'],
-              :logical_id => res['LogicalResourceId'],
-              :type => res['ResourceType'],
-              :state => res['ResourceStatus'].downcase.to_sym,
-              :status => res['ResourceStatus'],
-              :updated => res['LastUpdatedTimestamp']
+              :id => res["PhysicalResourceId"],
+              :name => res["LogicalResourceId"],
+              :logical_id => res["LogicalResourceId"],
+              :type => res["ResourceType"],
+              :state => res["ResourceStatus"].downcase.to_sym,
+              :status => res["ResourceStatus"],
+              :updated => res["LastUpdatedTimestamp"],
             ).valid_state
           end
         end
@@ -366,20 +363,19 @@ module Miasma
         def resource_reload(resource)
           result = request(
             :method => :post,
-            :path => '/',
+            :path => "/",
             :form => Smash.new(
-              'LogicalResourceId' => resource.logical_id,
-              'StackName' => resource.stack.name
-            )
+              "LogicalResourceId" => resource.logical_id,
+              "StackName" => resource.stack.name,
+            ),
           ).get(:body,
-            'DescribeStackResourceResponse', 'DescribeStackResourceResult',
-            'StackResourceDetail'
-          )
-          resource.updated = result['LastUpdatedTimestamp']
-          resource.type = result['ResourceType']
-          resource.state = result['ResourceStatus'].downcase.to_sym
-          resource.status = result['ResourceStatus']
-          resource.status_reason = result['ResourceStatusReason']
+                "DescribeStackResourceResponse", "DescribeStackResourceResult",
+                "StackResourceDetail")
+          resource.updated = result["LastUpdatedTimestamp"]
+          resource.type = result["ResourceType"]
+          resource.state = result["ResourceStatus"].downcase.to_sym
+          resource.status = result["ResourceStatus"]
+          resource.status_reason = result["ResourceStatusReason"]
           resource.valid_state
           resource
         end
@@ -388,37 +384,36 @@ module Miasma
         #
         # @param stack [Models::Orchestration::Stack]
         # @return [Array<Models::Orchestration::Stack::Event>]
-        def event_all(stack, evt_id=nil)
+        def event_all(stack, evt_id = nil)
           evt_id = stack.last_event_token if evt_id
           results = all_result_pages(evt_id, :body,
-            'DescribeStackEventsResponse', 'DescribeStackEventsResult',
-            'StackEvents', 'member'
-          ) do |options|
+                                     "DescribeStackEventsResponse", "DescribeStackEventsResult",
+                                     "StackEvents", "member") do |options|
             request(
               :method => :post,
-              :path => '/',
+              :path => "/",
               :form => options.merge(
-                'Action' => 'DescribeStackEvents',
-                'StackName' => stack.id
-              )
+                "Action" => "DescribeStackEvents",
+                "StackName" => stack.id,
+              ),
             )
           end
           events = results.map do |event|
-            stack.last_event_token = event['NextToken'] if event['NextToken']
+            stack.last_event_token = event["NextToken"] if event["NextToken"]
             Stack::Event.new(
               stack,
-              :id => event['EventId'],
-              :resource_id => event['PhysicalResourceId'],
-              :resource_name => event['LogicalResourceId'],
-              :resource_logical_id => event['LogicalResourceId'],
-              :resource_state => event['ResourceStatus'].downcase.to_sym,
-              :resource_status => event['ResourceStatus'],
-              :resource_status_reason => event['ResourceStatusReason'],
-              :time => Time.parse(event['Timestamp'])
+              :id => event["EventId"],
+              :resource_id => event["PhysicalResourceId"],
+              :resource_name => event["LogicalResourceId"],
+              :resource_logical_id => event["LogicalResourceId"],
+              :resource_state => event["ResourceStatus"].downcase.to_sym,
+              :resource_status => event["ResourceStatus"],
+              :resource_status_reason => event["ResourceStatusReason"],
+              :time => Time.parse(event["Timestamp"]),
             ).valid_state
           end
-          if(evt_id)
-            idx = events.index{|d| d.id == evt_id}
+          if evt_id
+            idx = events.index { |d| d.id == evt_id }
             idx ? events.slice(0, idx) : events
           else
             events
@@ -441,7 +436,6 @@ module Miasma
           event.stack.events.reload
           event.stack.events.get(event.id)
         end
-
       end
     end
   end

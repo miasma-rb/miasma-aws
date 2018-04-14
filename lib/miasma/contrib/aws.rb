@@ -1,16 +1,17 @@
-require 'miasma'
-require 'miasma/utils/smash'
+require "miasma"
+require "miasma/utils/smash"
 
-require 'time'
-require 'openssl'
+require "time"
+require "openssl"
 
 # Miasma
 module Miasma
   module Contrib
     # AWS API implementations
     module Aws
-      autoload :Api, 'miasma-aws/api'
+      autoload :Api, "miasma-aws/api"
     end
+
     # Core API for AWS access
     class AwsApiCore
 
@@ -27,31 +28,30 @@ module Miasma
         # @return [Array]
         def all_result_pages(next_token, *result_key, &block)
           list = []
-          options = next_token ? Smash.new('NextToken' => next_token) : Smash.new
+          options = next_token ? Smash.new("NextToken" => next_token) : Smash.new
           result = block.call(options)
           content = result.get(*result_key.dup)
-          if(content.is_a?(Array))
+          if content.is_a?(Array)
             list += content
           else
             list << content
           end
           set = result.get(*result_key.slice(0, 3))
-          if(set.is_a?(Hash) && set['NextToken'])
+          if set.is_a?(Hash) && set["NextToken"]
             [content].flatten.compact.each do |item|
-              if(item.is_a?(Hash))
-                item['NextToken'] = set['NextToken']
+              if item.is_a?(Hash)
+                item["NextToken"] = set["NextToken"]
               end
             end
-            list += all_result_pages(set['NextToken'], *result_key, &block)
+            list += all_result_pages(set["NextToken"], *result_key, &block)
           end
           list.compact
         end
-
       end
 
       # @return [String] current time ISO8601 format
       def self.time_iso8601
-        Time.now.utc.strftime('%Y%m%dT%H%M%SZ')
+        Time.now.utc.strftime("%Y%m%dT%H%M%SZ")
       end
 
       # HMAC helper class
@@ -93,7 +93,7 @@ module Miasma
         # @param data [String]
         # @param key_override [Object]
         # @return [Object] signature
-        def sign(data, key_override=nil)
+        def sign(data, key_override = nil)
           result = OpenSSL::HMAC.digest(digest, key_override || key, data)
           digest.reset
           result
@@ -104,12 +104,11 @@ module Miasma
         # @param data [String]
         # @param key_override [Object]
         # @return [String] hex encoded signature
-        def hex_sign(data, key_override=nil)
+        def hex_sign(data, key_override = nil)
           result = OpenSSL::HMAC.hexdigest(digest, key_override || key, data)
           digest.reset
           result
         end
-
       end
 
       # Base signature class
@@ -117,7 +116,7 @@ module Miasma
 
         # Create new instance
         def initialize(*args)
-          raise NotImplementedError.new 'This class should not be used directly!'
+          raise NotImplementedError.new "This class should not be used directly!"
         end
 
         # Generate the signature
@@ -126,7 +125,7 @@ module Miasma
         # @param path [String] request path
         # @param opts [Hash] request options
         # @return [String] signature
-        def generate(http_method, path, opts={})
+        def generate(http_method, path, opts = {})
           raise NotImplementedError
         end
 
@@ -136,10 +135,9 @@ module Miasma
         # @return [String] escaped string
         def safe_escape(string)
           string.to_s.gsub(/([^a-zA-Z0-9_.\-~])/) do |match|
-            '%' << match.unpack('H2' * match.bytesize).join('%').upcase
+            "%" << match.unpack("H2" * match.bytesize).join("%").upcase
           end
         end
-
       end
 
       # AWS signature version 4
@@ -162,7 +160,7 @@ module Miasma
         # @param service [String]
         # @return [self]
         def initialize(access_key, secret_key, region, service)
-          @hmac = Hmac.new('sha256', secret_key)
+          @hmac = Hmac.new("sha256", secret_key)
           @access_key = access_key
           @region = region
           @service = service
@@ -177,7 +175,7 @@ module Miasma
         def generate(http_method, path, opts)
           signature = generate_signature(http_method, path, opts)
           "#{algorithm} Credential=#{access_key}/#{credential_scope}, " \
-            "SignedHeaders=#{signed_headers(opts[:headers])}, Signature=#{signature}"
+          "SignedHeaders=#{signed_headers(opts[:headers])}, Signature=#{signature}"
         end
 
         # Generate URL with signed params
@@ -189,17 +187,17 @@ module Miasma
         def generate_url(http_method, path, opts)
           opts[:params].merge!(
             Smash.new(
-              'X-Amz-SignedHeaders' => signed_headers(opts[:headers]),
-              'X-Amz-Algorithm' => algorithm,
-              'X-Amz-Credential' => "#{access_key}/#{credential_scope}"
+              "X-Amz-SignedHeaders" => signed_headers(opts[:headers]),
+              "X-Amz-Algorithm" => algorithm,
+              "X-Amz-Credential" => "#{access_key}/#{credential_scope}",
             )
           )
           signature = generate_signature(
             http_method, path,
-            opts.merge(:body => 'UNSIGNED-PAYLOAD')
+            opts.merge(:body => "UNSIGNED-PAYLOAD")
           )
-          params = opts[:params].merge('X-Amz-Signature' => signature)
-          "https://#{opts[:headers]['Host']}/#{path}?#{canonical_query(params)}"
+          params = opts[:params].merge("X-Amz-Signature" => signature)
+          "https://#{opts[:headers]["Host"]}/#{path}?#{canonical_query(params)}"
         end
 
         # Generate the signature
@@ -211,11 +209,11 @@ module Miasma
         def generate_signature(http_method, path, opts)
           to_sign = [
             algorithm,
-            opts.to_smash.fetch(:headers, 'X-Amz-Date', AwsApiCore.time_iso8601),
+            opts.to_smash.fetch(:headers, "X-Amz-Date", AwsApiCore.time_iso8601),
             credential_scope,
             hashed_canonical_request(
               can_req = build_canonical_request(http_method, path, opts)
-            )
+            ),
           ].join("\n")
           signature = sign_request(to_sign)
         end
@@ -226,13 +224,13 @@ module Miasma
         # @return [String] signature
         def sign_request(request)
           key = hmac.sign(
-            'aws4_request',
+            "aws4_request",
             hmac.sign(
               service,
               hmac.sign(
                 region,
                 hmac.sign(
-                  Time.now.utc.strftime('%Y%m%d'),
+                  Time.now.utc.strftime("%Y%m%d"),
                   "AWS4#{hmac.key}"
                 )
               )
@@ -243,17 +241,17 @@ module Miasma
 
         # @return [String] signature algorithm
         def algorithm
-          'AWS4-HMAC-SHA256'
+          "AWS4-HMAC-SHA256"
         end
 
         # @return [String] credential scope for request
         def credential_scope
           [
-            Time.now.utc.strftime('%Y%m%d'),
+            Time.now.utc.strftime("%Y%m%d"),
             region,
             service,
-            'aws4_request'
-          ].join('/')
+            "aws4_request",
+          ].join("/")
         end
 
         # Generate the hash of the canonical request
@@ -271,7 +269,7 @@ module Miasma
         # @param opts [Hash] request options
         # @return [String] canonical request string
         def build_canonical_request(http_method, path, opts)
-          unless(path.start_with?('/'))
+          unless path.start_with?("/")
             path = "/#{path}"
           end
           [
@@ -280,7 +278,7 @@ module Miasma
             canonical_query(opts[:params]),
             canonical_headers(opts[:headers]),
             signed_headers(opts[:headers]),
-            canonical_payload(opts)
+            canonical_payload(opts),
           ].join("\n")
         end
 
@@ -293,7 +291,7 @@ module Miasma
           params = Hash[params.sort_by(&:first)]
           query = params.map do |key, value|
             "#{safe_escape(key)}=#{safe_escape(value)}"
-          end.join('&')
+          end.join("&")
         end
 
         # Build the canonical header string used for signing
@@ -304,7 +302,7 @@ module Miasma
           headers ||= {}
           headers = Hash[headers.sort_by(&:first)]
           headers.map do |key, value|
-            [key.downcase, value.chomp].join(':')
+            [key.downcase, value.chomp].join(":")
           end.join("\n") << "\n"
         end
 
@@ -315,7 +313,7 @@ module Miasma
         def signed_headers(headers)
           headers ||= {}
           headers.sort_by(&:first).map(&:first).
-            map(&:downcase).join(';')
+            map(&:downcase).join(";")
         end
 
         # Build the canonical payload string used for signing
@@ -323,27 +321,25 @@ module Miasma
         # @param options [Hash] request options
         # @return [String] body checksum
         def canonical_payload(options)
-          body = options.fetch(:body, '')
-          if(options[:json])
+          body = options.fetch(:body, "")
+          if options[:json]
             body = MultiJson.dump(options[:json])
-          elsif(options[:form])
+          elsif options[:form]
             body = URI.encode_www_form(options[:form])
           end
-          if(body == 'UNSIGNED-PAYLOAD')
+          if body == "UNSIGNED-PAYLOAD"
             body
           else
             hmac.hexdigest_of(body)
           end
         end
-
       end
 
       # Common API setup
       module ApiCommon
-
         def self.included(klass)
           klass.class_eval do
-            attribute :aws_profile_name, [FalseClass, String], :default => 'default'
+            attribute :aws_profile_name, [FalseClass, String], :default => "default"
             attribute :aws_sts_token, String
             attribute :aws_sts_role_arn, String
             attribute :aws_sts_external_id, String
@@ -354,9 +350,9 @@ module Miasma
             attribute :aws_sts_session_token_code, [String, Proc, Method]
             attribute :aws_sts_mfa_serial_number, [String]
             attribute :aws_credentials_file, String, :required => true,
-              :default => File.join(Dir.home, '.aws/credentials')
+                                                     :default => File.join(Dir.home, ".aws/credentials")
             attribute :aws_config_file, String, :required => true,
-              :default => File.join(Dir.home, '.aws/config')
+                                                :default => File.join(Dir.home, ".aws/config")
             attribute :aws_access_key_id, String, :required => true
             attribute :aws_secret_access_key, String, :required => true
             attribute :aws_iam_instance_profile, [TrueClass, FalseClass], :default => false
@@ -364,35 +360,34 @@ module Miasma
             attribute :aws_region, String, :required => true
             attribute :aws_host, String
             attribute :aws_bucket_region, String
-            attribute :api_endpoint, String, :required => true, :default => 'amazonaws.com'
+            attribute :api_endpoint, String, :required => true, :default => "amazonaws.com"
             attribute :euca_compat, Symbol, :allowed_values => [:path, :dns],
-              :coerce => lambda{|v| v.is_a?(String) ? v.to_sym : v}
-            attribute :euca_dns_map, Smash, :coerce => lambda{|v| v.to_smash},
-              :default => Smash.new
+                                            :coerce => lambda { |v| v.is_a?(String) ? v.to_sym : v }
+            attribute :euca_dns_map, Smash, :coerce => lambda { |v| v.to_smash },
+                                            :default => Smash.new
             attribute :ssl_enabled, [TrueClass, FalseClass], :default => true
           end
 
           # AWS config file key remapping
           klass.const_set(:CONFIG_FILE_REMAP,
-            Smash.new(
-              'region' => 'aws_region',
-              'role_arn' => 'aws_sts_role_arn',
-              'aws_security_token' => 'aws_sts_token',
-              'aws_session_token' => 'aws_sts_session_token'
-            ).to_smash.freeze
-          )
-          klass.const_set(:INSTANCE_PROFILE_HOST, 'http://169.254.169.254'.freeze)
+                          Smash.new(
+            "region" => "aws_region",
+            "role_arn" => "aws_sts_role_arn",
+            "aws_security_token" => "aws_sts_token",
+            "aws_session_token" => "aws_sts_session_token",
+          ).to_smash.freeze)
+          klass.const_set(:INSTANCE_PROFILE_HOST, "http://169.254.169.254".freeze)
           klass.const_set(
             :INSTANCE_PROFILE_PATH,
-            'latest/meta-data/iam/security-credentials'.freeze
+            "latest/meta-data/iam/security-credentials".freeze
           )
           klass.const_set(
             :INSTANCE_PROFILE_AZ_PATH,
-            'latest/meta-data/placement/availability-zone'.freeze
+            "latest/meta-data/placement/availability-zone".freeze
           )
-          klass.const_set(:ECS_TASK_PROFILE_HOST, 'http://169.254.170.2'.freeze)
+          klass.const_set(:ECS_TASK_PROFILE_HOST, "http://169.254.170.2".freeze)
           klass.const_set(
-            :ECS_TASK_PROFILE_PATH, ENV['AWS_CONTAINER_CREDENTIALS_RELATIVE_URI']
+            :ECS_TASK_PROFILE_PATH, ENV["AWS_CONTAINER_CREDENTIALS_RELATIVE_URI"]
           )
         end
 
@@ -408,7 +403,7 @@ module Miasma
               Smash.new(
                 :type => type,
                 :provider => provider,
-                :credentials => creds
+                :credentials => creds,
               )
             )
           end
@@ -420,7 +415,7 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def custom_setup(creds)
-          if(creds[:aws_profile_name])
+          if creds[:aws_profile_name]
             creds.replace(
               load_aws_file(
                 aws_config_file,
@@ -433,7 +428,7 @@ module Miasma
               ).merge(creds)
             )
           end
-          if(creds[:aws_iam_instance_profile])
+          if creds[:aws_iam_instance_profile]
             self.class.const_get(:ECS_TASK_PROFILE_PATH).nil? ?
               load_instance_credentials!(creds) :
               load_ecs_credentials!(creds)
@@ -450,7 +445,7 @@ module Miasma
           skip = self.class.attributes.keys.map(&:to_s)
           creds.each do |k, v|
             k = k.to_s
-            if(k.start_with?('aws_') && !skip.include?(k))
+            if k.start_with?("aws_") && !skip.include?(k)
               data[k] = v
             end
           end
@@ -465,17 +460,17 @@ module Miasma
             [
               self.class.const_get(:INSTANCE_PROFILE_HOST),
               self.class.const_get(:INSTANCE_PROFILE_PATH),
-              ''
-            ].join('/')
+              "",
+            ].join("/")
           ).body.to_s.strip
           data = HTTP.get(
             [
               self.class.const_get(:INSTANCE_PROFILE_HOST),
               self.class.const_get(:INSTANCE_PROFILE_PATH),
-              role
-            ].join('/')
+              role,
+            ].join("/")
           ).body
-          unless(data.is_a?(Hash))
+          unless data.is_a?(Hash)
             begin
               data = MultiJson.load(data.to_s)
             rescue MultiJson::ParseError
@@ -483,7 +478,7 @@ module Miasma
             end
           end
           creds.merge!(extract_creds(data))
-          unless(creds[:aws_region])
+          unless creds[:aws_region]
             creds[:aws_region] = get_region
           end
           true
@@ -501,10 +496,10 @@ module Miasma
           data = HTTP.get(
             [
               self.class.const_get(:ECS_TASK_PROFILE_HOST),
-              self.class.const_get(:ECS_TASK_PROFILE_PATH)
+              self.class.const_get(:ECS_TASK_PROFILE_PATH),
             ].join
           ).body
-          unless(data.is_a?(Hash))
+          unless data.is_a?(Hash)
             begin
               data = MultiJson.load(data.to_s)
             rescue MultiJson::ParseError
@@ -512,7 +507,7 @@ module Miasma
             end
           end
           creds.merge!(extract_creds(data))
-          unless(creds[:aws_region])
+          unless creds[:aws_region]
             creds[:aws_region] = get_region
           end
           true
@@ -524,11 +519,11 @@ module Miasma
         # @return [Hash]
         def extract_creds(data)
           c = Smash.new
-          c[:aws_access_key_id] = data['AccessKeyId']
-          c[:aws_secret_access_key] = data['SecretAccessKey']
-          c[:aws_sts_token] = data['Token']
-          c[:aws_sts_token_expires] = Time.xmlschema(data['Expiration'])
-          c[:aws_sts_role_arn] = data['RoleArn'] # used in ECS Role but not instance role
+          c[:aws_access_key_id] = data["AccessKeyId"]
+          c[:aws_secret_access_key] = data["SecretAccessKey"]
+          c[:aws_sts_token] = data["Token"]
+          c[:aws_sts_token_expires] = Time.xmlschema(data["Expiration"])
+          c[:aws_sts_role_arn] = data["RoleArn"] # used in ECS Role but not instance role
           c
         end
 
@@ -539,30 +534,30 @@ module Miasma
           az = HTTP.get(
             [
               self.class.const_get(:INSTANCE_PROFILE_HOST),
-              self.class.const_get(:INSTANCE_PROFILE_AZ_PATH)
-            ].join('/')
+              self.class.const_get(:INSTANCE_PROFILE_AZ_PATH),
+            ].join("/")
           ).body.to_s.strip
-          az.sub!(/[a-zA-Z]+$/, '')
+          az.sub!(/[a-zA-Z]+$/, "")
           az
         end
 
         def sts_mfa_session!(creds)
-          if(sts_mfa_session_update_required?(creds))
+          if sts_mfa_session_update_required?(creds)
             sts = Miasma::Contrib::Aws::Api::Sts.new(
               :aws_access_key_id => creds[:aws_access_key_id],
               :aws_secret_access_key => creds[:aws_secret_access_key],
-              :aws_region => creds.fetch(:aws_sts_region, 'us-east-1'),
+              :aws_region => creds.fetch(:aws_sts_region, "us-east-1"),
               :aws_credentials_file => creds.fetch(
                 :aws_credentials_file, aws_credentials_file
               ),
               :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
               :aws_profile_name => creds[:aws_profile_name],
-              :aws_host => creds[:aws_sts_host]
+              :aws_host => creds[:aws_sts_host],
             )
             creds.merge!(
               sts.mfa_session(
                 creds[:aws_sts_session_token_code],
-                :mfa_serial => creds[:aws_sts_mfa_serial_number]
+                :mfa_serial => creds[:aws_sts_mfa_serial_number],
               )
             )
           end
@@ -574,22 +569,22 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def sts_assume_role!(creds)
-          if(sts_assume_role_update_required?(creds))
+          if sts_assume_role_update_required?(creds)
             sts = Miasma::Contrib::Aws::Api::Sts.new(
               :aws_access_key_id => get_credential(:access_key_id, creds),
               :aws_secret_access_key => get_credential(:secret_access_key, creds),
-              :aws_region => creds.fetch(:aws_sts_region, 'us-east-1'),
+              :aws_region => creds.fetch(:aws_sts_region, "us-east-1"),
               :aws_credentials_file => creds.fetch(
                 :aws_credentials_file, aws_credentials_file
               ),
               :aws_config_file => creds.fetch(:aws_config_file, aws_config_file),
               :aws_host => creds[:aws_sts_host],
-              :aws_sts_token => creds[:aws_sts_session_token]
+              :aws_sts_token => creds[:aws_sts_session_token],
             )
             role_info = sts.assume_role(
               creds[:aws_sts_role_arn],
               :session_name => creds[:aws_sts_role_session_name],
-              :external_id => creds[:aws_sts_external_id]
+              :external_id => creds[:aws_sts_external_id],
             )
             creds.merge!(role_info)
           end
@@ -602,35 +597,35 @@ module Miasma
         # @param profile [String] name of profile to load
         # @return [Smash]
         def load_aws_file(file_path, profile)
-          if(File.exist?(file_path))
+          if File.exist?(file_path)
             l_config = Smash.new.tap do |creds|
               key = nil
               File.readlines(file_path).each_with_index do |line, idx|
                 line.strip!
-                next if line.empty? || line.start_with?('#')
-                if(line.start_with?('['))
-                  unless(line.end_with?(']'))
+                next if line.empty? || line.start_with?("#")
+                if line.start_with?("[")
+                  unless line.end_with?("]")
                     raise ArgumentError.new(
                       "Failed to parse aws file! (#{file_path} line #{idx + 1})"
                     )
                   end
-                  key = line.tr('[]', '').strip.sub(/^profile /, '')
+                  key = line.tr("[]", "").strip.sub(/^profile /, "")
                   creds[key] = Smash.new
                 else
-                  unless(key)
+                  unless key
                     raise ArgumentError.new(
                       "Failed to parse aws file! (#{file_path} line #{idx + 1}) " \
-                        '- No section defined!'
+                      "- No section defined!"
                     )
                   end
-                  line_args = line.split('=', 2).map(&:strip)
+                  line_args = line.split("=", 2).map(&:strip)
                   line_args.first.replace(
                     self.class.const_get(:CONFIG_FILE_REMAP).fetch(
                       line_args.first, line_args.first
                     )
                   )
-                  if(line_args.last.start_with?('"'))
-                    unless(line_args.last.end_with?('"'))
+                  if line_args.last.start_with?('"')
+                    unless line_args.last.end_with?('"')
                       raise ArgumentError.new(
                         "Failed to parse aws file! (#{file_path} line #{idx + 1})"
                       )
@@ -665,33 +660,31 @@ module Miasma
 
         # Setup for API connections
         def connect
-          unless(aws_host)
-            if(euca_compat)
-              service_name = (
-                self.class.const_defined?(:EUCA_API_SERVICE) ?
+          unless aws_host
+            if euca_compat
+              service_name = (self.class.const_defined?(:EUCA_API_SERVICE) ?
                 self.class::EUCA_API_SERVICE :
-                self.class::API_SERVICE
-              )
+                self.class::API_SERVICE)
             else
               service_name = self.class::API_SERVICE.downcase
             end
-            if(euca_compat == :path)
+            if euca_compat == :path
               self.aws_host = [
                 api_endpoint,
-                'services',
-                service_name
-              ].join('/')
-            elsif(euca_compat == :dns && euca_dns_map[service_name])
+                "services",
+                service_name,
+              ].join("/")
+            elsif euca_compat == :dns && euca_dns_map[service_name]
               self.aws_host = [
                 euca_dns_map[service_name],
-                api_endpoint
-              ].join('.')
+                api_endpoint,
+              ].join(".")
             else
               self.aws_host = [
                 service_name,
                 aws_region,
-                api_endpoint
-              ].join('.')
+                api_endpoint,
+              ].join(".")
             end
           end
         end
@@ -710,11 +703,11 @@ module Miasma
         #
         # @param key [String, Symbol] credential suffix
         # @return [Object]
-        def get_credential(key, data_hash=nil)
+        def get_credential(key, data_hash = nil)
           data_hash = attributes if data_hash.nil?
-          if(data_hash[:aws_sts_token])
+          if data_hash[:aws_sts_token]
             data_hash.fetch("aws_sts_#{key}", data_hash["aws_#{key}"])
-          elsif(data_hash[:aws_sts_session_token])
+          elsif data_hash[:aws_sts_session_token]
             data_hash.fetch("aws_sts_session_#{key}", data_hash["aws_#{key}"])
           else
             data_hash["aws_#{key}"]
@@ -729,14 +722,14 @@ module Miasma
         # @return [HTTP] connection for requests (forces headers)
         def connection
           super.headers(
-            'Host' => aws_host,
-            'X-Amz-Date' => Contrib::AwsApiCore.time_iso8601
+            "Host" => aws_host,
+            "X-Amz-Date" => Contrib::AwsApiCore.time_iso8601,
           )
         end
 
         # @return [String] endpoint for request
         def endpoint
-          "http#{'s' if ssl_enabled}://#{aws_host}"
+          "http#{"s" if ssl_enabled}://#{aws_host}"
         end
 
         # Override to inject signature
@@ -751,41 +744,41 @@ module Miasma
           options = options ? options.to_smash : Smash.new
           options[:headers] = Smash[connection.default_options.headers.to_a].
             merge(options.fetch(:headers, Smash.new))
-          if(self.class::API_VERSION)
-            if(options[:form])
-              options.set(:form, 'Version', self.class::API_VERSION)
+          if self.class::API_VERSION
+            if options[:form]
+              options.set(:form, "Version", self.class::API_VERSION)
             else
               options[:params] = options.fetch(
                 :params, Smash.new
               ).to_smash.deep_merge(
                 Smash.new(
-                  'Version' => self.class::API_VERSION
+                  "Version" => self.class::API_VERSION,
                 )
               )
             end
           end
-          if(aws_sts_session_token || aws_sts_session_token_code)
-            if(sts_mfa_session_update_required?)
+          if aws_sts_session_token || aws_sts_session_token_code
+            if sts_mfa_session_update_required?
               sts_mfa_session!(data)
             end
-            options.set(:headers, 'X-Amz-Security-Token', aws_sts_session_token)
+            options.set(:headers, "X-Amz-Security-Token", aws_sts_session_token)
           end
-          if(aws_sts_token || aws_sts_role_arn)
-            if(sts_assume_role_update_required?)
+          if aws_sts_token || aws_sts_role_arn
+            if sts_assume_role_update_required?
               sts_assume_role!(data)
             end
-            options.set(:headers, 'X-Amz-Security-Token', aws_sts_token)
+            options.set(:headers, "X-Amz-Security-Token", aws_sts_token)
           end
           signature = signer.generate(http_method, path, options)
           update_request(connection, options)
-          options = Hash[options.map{|k, v| [k.to_sym, v] }]
+          options = Hash[options.map { |k, v| [k.to_sym, v] }]
           connection.auth(signature).send(http_method, dest, options)
         end
 
         # @return [TrueClass, FalseClass]
         # @note update check only applied if assuming role
-        def sts_assume_role_update_required?(args={})
-          if(args.fetch(:aws_sts_role_arn, attributes[:aws_sts_role_arn]))
+        def sts_assume_role_update_required?(args = {})
+          if args.fetch(:aws_sts_role_arn, attributes[:aws_sts_role_arn])
             expiry = args.fetch(:aws_sts_token_expires, attributes[:aws_sts_token_expires])
             expiry.nil? || expiry <= Time.now - 15
           else
@@ -795,9 +788,9 @@ module Miasma
 
         # @return [TrueClass, FalseClass]
         # @note update check only applied if assuming role
-        def sts_mfa_session_update_required?(args={})
-          if(args.fetch(:aws_sts_session_token_code,
-            attributes[:aws_sts_session_token_code]))
+        def sts_mfa_session_update_required?(args = {})
+          if (args.fetch(:aws_sts_session_token_code,
+                         attributes[:aws_sts_session_token_code]))
             expiry = args.fetch(
               :aws_sts_session_token_expires,
               attributes[:aws_sts_session_token_expires]
@@ -822,10 +815,10 @@ module Miasma
         # @param exception [Exception]
         # @return [TrueClass, FalseClass]
         def perform_request_retry(exception)
-          if(exception.is_a?(Miasma::Error::ApiError))
-            if([400, 500, 503].include?(exception.response.code))
-              if(exception.response.code == 400)
-                exception.response.body.to_s.downcase.include?('throttl')
+          if exception.is_a?(Miasma::Error::ApiError)
+            if [400, 500, 503].include?(exception.response.code)
+              if exception.response.code == 400
+                exception.response.body.to_s.downcase.include?("throttl")
               else
                 true
               end
@@ -841,15 +834,13 @@ module Miasma
         def retryable_allowed?(*_)
           true
         end
-
       end
-
     end
   end
 
-  Models::Compute.autoload :Aws, 'miasma/contrib/aws/compute'
-  Models::LoadBalancer.autoload :Aws, 'miasma/contrib/aws/load_balancer'
-  Models::AutoScale.autoload :Aws, 'miasma/contrib/aws/auto_scale'
-  Models::Orchestration.autoload :Aws, 'miasma/contrib/aws/orchestration'
-  Models::Storage.autoload :Aws, 'miasma/contrib/aws/storage'
+  Models::Compute.autoload :Aws, "miasma/contrib/aws/compute"
+  Models::LoadBalancer.autoload :Aws, "miasma/contrib/aws/load_balancer"
+  Models::AutoScale.autoload :Aws, "miasma/contrib/aws/auto_scale"
+  Models::Orchestration.autoload :Aws, "miasma/contrib/aws/orchestration"
+  Models::Storage.autoload :Aws, "miasma/contrib/aws/storage"
 end

@@ -1,4 +1,4 @@
-require 'miasma'
+require "miasma"
 
 module Miasma
   module Models
@@ -7,9 +7,9 @@ module Miasma
       class Aws < AutoScale
 
         # Service name of the API
-        API_SERVICE = 'autoscaling'.freeze
+        API_SERVICE = "autoscaling".freeze
         # Supported version of the AutoScaling API
-        API_VERSION = '2011-01-01'.freeze
+        API_VERSION = "2011-01-01".freeze
 
         include Contrib::AwsApiCore::ApiCommon
         include Contrib::AwsApiCore::RequestUtils
@@ -27,7 +27,7 @@ module Miasma
         # @param group [Models::AutoScale::Group]
         # @return [Models::AutoScale::Group]
         def group_reload(group)
-          if(group.id || group.name)
+          if group.id || group.name
             load_group_data(group)
           end
           group
@@ -45,35 +45,34 @@ module Miasma
         #
         # @param group [Models::AutoScale::Group]
         # @return [Array<Models::AutoScale::Group>]
-        def load_group_data(group=nil)
-          params = Smash.new('Action' => 'DescribeAutoScalingGroups')
-          if(group)
-            params.merge('AutoScalingGroupNames.member.1' => group.id || group.name)
+        def load_group_data(group = nil)
+          params = Smash.new("Action" => "DescribeAutoScalingGroups")
+          if group
+            params.merge("AutoScalingGroupNames.member.1" => group.id || group.name)
           end
           result = all_result_pages(nil, :body,
-            'DescribeAutoScalingGroupsResponse', 'DescribeAutoScalingGroupsResult',
-            'AutoScalingGroups', 'member'
-          ) do |options|
+                                    "DescribeAutoScalingGroupsResponse", "DescribeAutoScalingGroupsResult",
+                                    "AutoScalingGroups", "member") do |options|
             request(
               :method => :post,
-              :path => '/',
-              :form => options.merge(params)
+              :path => "/",
+              :form => options.merge(params),
             )
           end.map do |grp|
             (group || Group.new(self)).load_data(
-              :id => grp['AutoScalingGroupName'],
-              :name => grp['AutoScalingGroupName'],
-              :servers => [grp.get('Instances', 'member')].flatten(1).compact.map{|i|
-                Group::Server.new(self, :id => i['InstanceId'])
+              :id => grp["AutoScalingGroupName"],
+              :name => grp["AutoScalingGroupName"],
+              :servers => [grp.get("Instances", "member")].flatten(1).compact.map { |i|
+                Group::Server.new(self, :id => i["InstanceId"])
               },
-              :minimum_size => grp['MinSize'],
-              :maximum_size => grp['MaxSize'],
-              :status => grp['Status'],
+              :minimum_size => grp["MinSize"],
+              :maximum_size => grp["MaxSize"],
+              :status => grp["Status"],
               :load_balancers => [
-                grp.get('LoadBalancerNames', 'member')
-              ].flatten(1).compact.map{|i|
+                grp.get("LoadBalancerNames", "member"),
+              ].flatten(1).compact.map { |i|
                 Group::Balancer.new(self, :id => i, :name => i)
-              }
+              },
             ).valid_state
           end
         end
@@ -82,10 +81,9 @@ module Miasma
         #
         # @param options [Hash] filter
         # @return [Array<Models::AutoScale::Group>]
-        def group_all(options={})
+        def group_all(options = {})
           load_group_data
         end
-
       end
     end
   end

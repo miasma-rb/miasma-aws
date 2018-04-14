@@ -1,6 +1,6 @@
-require 'stringio'
-require 'xmlsimple'
-require 'miasma'
+require "stringio"
+require "xmlsimple"
+require "miasma"
 
 module Miasma
   module Models
@@ -9,11 +9,11 @@ module Miasma
       class Aws < Storage
 
         # Service name of the API
-        API_SERVICE = 's3'.freeze
+        API_SERVICE = "s3".freeze
         # Service name of the API in eucalyptus
-        EUCA_API_SERVICE = 'objectstorage'.freeze
+        EUCA_API_SERVICE = "objectstorage".freeze
         # Supported version of the Storage API
-        API_VERSION = '2006-03-01'.freeze
+        API_VERSION = "2006-03-01".freeze
 
         include Contrib::AwsApiCore::ApiCommon
         include Contrib::AwsApiCore::RequestUtils
@@ -30,19 +30,17 @@ module Miasma
         #   different than the usual token based fetching
         def all_result_pages(next_token, *result_key, &block)
           list = []
-          options = next_token ? Smash.new('marker' => next_token) : Smash.new
+          options = next_token ? Smash.new("marker" => next_token) : Smash.new
           result = block.call(options)
           content = result.get(*result_key.dup)
-          if(content.is_a?(Array))
+          if content.is_a?(Array)
             list += content
           else
             list << content
           end
           set = result.get(*result_key.slice(0, 2))
-          if(set.is_a?(Hash) && set['IsTruncated'] && set['Contents'])
-            content_key = (
-              set['Contents'].respond_to?(:last) ? set['Contents'].last : set['Contents']
-            )['Key']
+          if set.is_a?(Hash) && set["IsTruncated"] && set["Contents"]
+            content_key = (set["Contents"].respond_to?(:last) ? set["Contents"].last : set["Contents"])["Key"]
             list += all_result_pages(content_key, *result_key, &block)
           end
           list.compact
@@ -53,13 +51,13 @@ module Miasma
         def initialize(args)
           args = args.to_smash
           cache_region = args[:aws_region]
-          args[:aws_region] = args.fetch(:aws_bucket_region, 'us-east-1')
+          args[:aws_region] = args.fetch(:aws_bucket_region, "us-east-1")
           super(args)
           aws_region = cache_region
-          if(aws_bucket_region && aws_bucket_region != 'us-east-1')
+          if aws_bucket_region && aws_bucket_region != "us-east-1"
             self.aws_host = "s3-#{aws_bucket_region}.amazonaws.com"
           else
-            self.aws_host = 's3.amazonaws.com'
+            self.aws_host = "s3.amazonaws.com"
           end
         end
 
@@ -68,24 +66,24 @@ module Miasma
         # @param bucket [Models::Storage::Bucket]
         # @return [Models::Storage::Bucket]
         def bucket_save(bucket)
-          unless(bucket.persisted?)
+          unless bucket.persisted?
             req_args = Smash.new(
               :method => :put,
-              :path => '/',
-              :endpoint => bucket_endpoint(bucket)
+              :path => "/",
+              :endpoint => bucket_endpoint(bucket),
             )
-            if(aws_bucket_region)
+            if aws_bucket_region
               req_args[:body] = XmlSimple.xml_out(
                 Smash.new(
-                  'CreateBucketConfiguration' => {
-                    'LocationConstraint' => aws_bucket_region
-                  }
+                  "CreateBucketConfiguration" => {
+                    "LocationConstraint" => aws_bucket_region,
+                  },
                 ),
-                'AttrPrefix' => true,
-                'KeepRoot' => true
+                "AttrPrefix" => true,
+                "KeepRoot" => true,
               )
               req_args[:headers] = Smash.new(
-                'Content-Length' => req_args[:body].size.to_s
+                "Content-Length" => req_args[:body].size.to_s,
               )
             end
             request(req_args)
@@ -101,14 +99,13 @@ module Miasma
         # @return [Models::Storage::Bucket, NilClass]
         def bucket_get(ident)
           bucket = Bucket.new(self,
-            :id => ident,
-            :name => ident
-          )
+                              :id => ident,
+                              :name => ident)
           begin
             bucket.reload
             bucket
           rescue Error::ApiError::RequestError => e
-            if(e.response.status == 404)
+            if e.response.status == 404
               nil
             else
               raise
@@ -121,12 +118,12 @@ module Miasma
         # @param bucket [Models::Storage::Bucket]
         # @return [TrueClass, FalseClass]
         def bucket_destroy(bucket)
-          if(bucket.persisted?)
+          if bucket.persisted?
             request(
-              :path => '/',
+              :path => "/",
               :method => :delete,
               :endpoint => bucket_endpoint(bucket),
-              :expects => 204
+              :expects => 204,
             )
             true
           else
@@ -139,15 +136,15 @@ module Miasma
         # @param bucket [Models::Storage::Bucket]
         # @return [Models::Storage::Bucket]
         def bucket_reload(bucket)
-          if(bucket.persisted?)
+          if bucket.persisted?
             begin
               result = request(
-                :path => '/',
+                :path => "/",
                 :method => :head,
-                :endpoint => bucket_endpoint(bucket)
+                :endpoint => bucket_endpoint(bucket),
               )
             rescue Error::ApiError::RequestError => e
-              if(e.response.status == 404)
+              if e.response.status == 404
                 bucket.data.clear
                 bucket.dirty.clear
               else
@@ -171,18 +168,18 @@ module Miasma
         #
         # @return [Array<Models::Storage::Bucket>]
         def bucket_all
-          result = all_result_pages(nil, :body, 'ListAllMyBucketsResult', 'Buckets', 'Bucket') do |options|
+          result = all_result_pages(nil, :body, "ListAllMyBucketsResult", "Buckets", "Bucket") do |options|
             request(
-              :path => '/',
-              :params => options
+              :path => "/",
+              :params => options,
             )
           end
           result.map do |bkt|
             Bucket.new(
               self,
-              :id => bkt['Name'],
-              :name => bkt['Name'],
-              :created => bkt['CreationDate']
+              :id => bkt["Name"],
+              :name => bkt["Name"],
+              :created => bkt["CreationDate"],
             ).valid_state
           end
         end
@@ -192,21 +189,21 @@ module Miasma
         # @param args [Hash] filter options
         # @return [Array<Models::Storage::File>]
         def file_filter(bucket, args)
-          if(args[:prefix])
+          if args[:prefix]
             result = request(
-              :path => '/',
+              :path => "/",
               :endpoint => bucket_endpoint(bucket),
               :params => Smash.new(
-                :prefix => args[:prefix]
-              )
+                :prefix => args[:prefix],
+              ),
             )
-            [result.get(:body, 'ListBucketResult', 'Contents')].flatten.compact.map do |file|
+            [result.get(:body, "ListBucketResult", "Contents")].flatten.compact.map do |file|
               File.new(
                 bucket,
-                :id => ::File.join(bucket.name, file['Key']),
-                :name => file['Key'],
-                :updated => file['LastModified'],
-                :size => file['Size'].to_i
+                :id => ::File.join(bucket.name, file["Key"]),
+                :name => file["Key"],
+                :updated => file["LastModified"],
+                :size => file["Size"].to_i,
               ).valid_state
             end
           else
@@ -219,20 +216,20 @@ module Miasma
         # @param bucket [Bucket]
         # @return [Array<File>]
         def file_all(bucket)
-          result = all_result_pages(nil, :body, 'ListBucketResult', 'Contents') do |options|
+          result = all_result_pages(nil, :body, "ListBucketResult", "Contents") do |options|
             request(
-              :path => '/',
+              :path => "/",
               :params => options,
-              :endpoint => bucket_endpoint(bucket)
+              :endpoint => bucket_endpoint(bucket),
             )
           end
           result.map do |file|
             File.new(
               bucket,
-              :id => ::File.join(bucket.name, file['Key']),
-              :name => file['Key'],
-              :updated => file['LastModified'],
-              :size => file['Size'].to_i
+              :id => ::File.join(bucket.name, file["Key"]),
+              :name => file["Key"],
+              :updated => file["LastModified"],
+              :size => file["Size"].to_i,
             ).valid_state
           end
         end
@@ -242,25 +239,25 @@ module Miasma
         # @param file [Models::Storage::File]
         # @return [Models::Storage::File]
         def file_save(file)
-          if(file.dirty?)
+          if file.dirty?
             file.load_data(file.attributes)
             args = Smash.new
             headers = Smash[
               Smash.new(
-                :content_type => 'Content-Type',
-                :content_disposition => 'Content-Disposition',
-                :content_encoding => 'Content-Encoding'
+                :content_type => "Content-Type",
+                :content_disposition => "Content-Disposition",
+                :content_encoding => "Content-Encoding",
               ).map do |attr, key|
-                if(file.attributes[attr])
+                if file.attributes[attr]
                   [key, file.attributes[attr]]
                 end
               end.compact
             ]
-            unless(headers.empty?)
+            unless headers.empty?
               args[:headers] = headers
             end
-            if(file.attributes[:body].respond_to?(:read) &&
-              file.attributes[:body].size >= Storage::MAX_BODY_SIZE_FOR_STRINGIFY)
+            if (file.attributes[:body].respond_to?(:read) &&
+                file.attributes[:body].size >= Storage::MAX_BODY_SIZE_FOR_STRINGIFY)
               upload_id = request(
                 args.merge(
                   Smash.new(
@@ -268,16 +265,16 @@ module Miasma
                     :path => file_path(file),
                     :endpoint => bucket_endpoint(file.bucket),
                     :params => {
-                      :uploads => true
-                    }
+                      :uploads => true,
+                    },
                   )
                 )
-              ).get(:body, 'InitiateMultipartUploadResult', 'UploadId')
+              ).get(:body, "InitiateMultipartUploadResult", "UploadId")
               begin
                 count = 1
                 parts = []
                 file.body.rewind
-                while(content = file.body.read(Storage::READ_BODY_CHUNK_SIZE * 1.5))
+                while content = file.body.read(Storage::READ_BODY_CHUNK_SIZE * 1.5)
                   parts << [
                     count,
                     request(
@@ -285,69 +282,69 @@ module Miasma
                       :path => file_path(file),
                       :endpoint => bucket_endpoint(file.bucket),
                       :headers => Smash.new(
-                        'Content-Length' => content.size,
-                        'Content-MD5' => Digest::MD5.base64digest(content)
+                        "Content-Length" => content.size,
+                        "Content-MD5" => Digest::MD5.base64digest(content),
                       ),
                       :params => Smash.new(
-                        'partNumber' => count,
-                        'uploadId' => upload_id
+                        "partNumber" => count,
+                        "uploadId" => upload_id,
                       ),
-                      :body => content
-                    ).get(:headers, :etag)
+                      :body => content,
+                    ).get(:headers, :etag),
                   ]
                   count += 1
                 end
                 complete = XmlSimple.xml_out(
                   Smash.new(
-                    'CompleteMultipartUpload' => {
-                      'Part' => parts.map{|part|
-                        {'PartNumber' => part.first, 'ETag' => part.last}
-                      }
-                    }
+                    "CompleteMultipartUpload" => {
+                      "Part" => parts.map { |part|
+                        {"PartNumber" => part.first, "ETag" => part.last}
+                      },
+                    },
                   ),
-                  'AttrPrefix' => true,
-                  'KeepRoot' => true
+                  "AttrPrefix" => true,
+                  "KeepRoot" => true,
                 )
                 result = request(
                   :method => :post,
                   :path => file_path(file),
                   :endpoint => bucket_endpoint(file.bucket),
                   :params => Smash.new(
-                    'uploadId' => upload_id
+                    "uploadId" => upload_id,
                   ),
                   :headers => Smash.new(
-                    'Content-Length' => complete.size
+                    "Content-Length" => complete.size,
                   ),
-                  :body => complete
+                  :body => complete,
                 )
-                file.etag = result.get(:body, 'CompleteMultipartUploadResult', 'ETag')
+                file.etag = result.get(:body, "CompleteMultipartUploadResult", "ETag")
               rescue => e
                 request(
                   :method => :delete,
                   :path => file_path(file),
                   :endpoint => bucket_endpoint(file.bucket),
                   :params => {
-                    'uploadId' => upload_id
+                    "uploadId" => upload_id,
                   },
-                  :expects => 204
+                  :expects => 204,
                 )
                 raise
               end
             else
-              if(file.attributes[:body].respond_to?(:readpartial))
-                args.set(:headers, 'Content-Length', file.body.size.to_s)
+              if file.attributes[:body].respond_to?(:readpartial)
+                args.set(:headers, "Content-Length", file.body.size.to_s)
                 file.body.rewind
                 args[:body] = file.body.readpartial(file.body.size)
                 file.body.rewind
               else
-                args.set(:headers, 'Content-Length', 0)
+                args.set(:headers, "Content-Length", 0)
               end
               result = request(
                 args.merge(
                   Smash.new(
                     :method => :put,
                     :path => file_path(file),
-                    :endpoint => bucket_endpoint(file.bucket)
+                    :endpoint => bucket_endpoint(file.bucket),
                   )
                 )
               )
@@ -364,12 +361,12 @@ module Miasma
         # @param file [Models::Storage::File]
         # @return [TrueClass, FalseClass]
         def file_destroy(file)
-          if(file.persisted?)
+          if file.persisted?
             request(
               :method => :delete,
               :path => file_path(file),
               :endpoint => bucket_endpoint(file.bucket),
-              :expects => 204
+              :expects => 204,
             )
             true
           else
@@ -382,11 +379,11 @@ module Miasma
         # @param file [Models::Storage::File]
         # @return [Models::Storage::File]
         def file_reload(file)
-          if(file.persisted?)
+          if file.persisted?
             name = file.name
             result = request(
               :path => file_path(file),
-              :endpoint => bucket_endpoint(file.bucket)
+              :endpoint => bucket_endpoint(file.bucket),
             )
             file.data.clear && file.dirty.clear
             info = result[:headers]
@@ -396,7 +393,7 @@ module Miasma
               :updated => info[:last_modified],
               :etag => info[:etag],
               :size => info[:content_length].to_i,
-              :content_type => info[:content_type]
+              :content_type => info[:content_type],
             ).valid_state
           end
           file
@@ -407,16 +404,16 @@ module Miasma
         # @param timeout_secs [Integer] seconds available
         # @return [String] URL
         def file_url(file, timeout_secs)
-          if(file.persisted?)
+          if file.persisted?
             signer.generate_url(
               :get, ::File.join(uri_escape(file.bucket.name), file_path(file)),
               :headers => Smash.new(
-                'Host' => aws_host
+                "Host" => aws_host,
               ),
               :params => Smash.new(
-                'X-Amz-Date' => Contrib::AwsApiCore.time_iso8601,
-                'X-Amz-Expires' => timeout_secs
-              )
+                "X-Amz-Date" => Contrib::AwsApiCore.time_iso8601,
+                "X-Amz-Expires" => timeout_secs,
+              ),
             )
           else
             raise Error::ModelPersistError.new "#{file} has not been saved!"
@@ -429,18 +426,18 @@ module Miasma
         # @return [IO, HTTP::Response::Body]
         def file_body(file)
           file_content = nil
-          if(file.persisted?)
+          if file.persisted?
             result = request(
               :path => file_path(file),
               :endpoint => bucket_endpoint(file.bucket),
-              :disable_body_extraction => true
+              :disable_body_extraction => true,
             )
             content = result[:body]
             begin
-              if(content.is_a?(String))
+              if content.is_a?(String)
                 file_content = StringIO.new(content)
               else
-                if(content.respond_to?(:stream!))
+                if content.respond_to?(:stream!)
                   content.stream!
                 end
                 file_content = content
@@ -449,7 +446,7 @@ module Miasma
               file_content = StringIO.new(content.to_s)
             end
           else
-            file_content = StringIO.new('')
+            file_content = StringIO.new("")
           end
           File::Streamable.new(file_content)
         end
@@ -463,18 +460,17 @@ module Miasma
         # happening (which implicitly forces :form) or :json is used
         # it will not properly checksum. (but that's probably okay)
         def update_request(con, opts)
-          opts[:headers]['x-amz-content-sha256'] = Digest::SHA256.
-            hexdigest(opts.fetch(:body, ''))
+          opts[:headers]["x-amz-content-sha256"] = Digest::SHA256.
+            hexdigest(opts.fetch(:body, ""))
           true
         end
 
         # @return [String] escaped file path
         def file_path(file)
-          file.name.split('/').map do |part|
+          file.name.split("/").map do |part|
             uri_escape(part)
-          end.join('/')
+          end.join("/")
         end
-
       end
     end
   end
