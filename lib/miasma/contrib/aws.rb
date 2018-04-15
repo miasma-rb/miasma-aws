@@ -415,19 +415,22 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def custom_setup(creds)
-          if creds[:aws_profile_name]
-            creds.replace(
-              load_aws_file(
-                aws_config_file,
-                creds[:aws_profile_name]
-              ).merge(
-                load_aws_file(
-                  aws_credentials_file,
-                  creds[:aws_profile_name]
-                )
-              ).merge(creds)
-            )
+          cred_file = load_aws_file(aws_credentials_file)
+          config_file = load_aws_file(aws_config_file)
+          file_creds = Smash.new.tap do |fc|
+            (config_file.keys + cred_file.keys).uniq.reverse.each do |k|
+              fc[k] = config_file.fetch(k, Smash.new).merge(
+                cred_file.fetch(k, Smash.new))
+            end
           end
+          profile = creds[:aws_profile_name]
+          new_creds = Smash.new
+          while profile
+            new_creds = file_creds.fetch(profile, Smash.new).merge(new_creds)
+            profile = new_creds.delete(:source_profile)
+          end
+          new_creds = file_creds.fetch(:default, Smash.new).merge(new_creds)
+          creds.replace(new_creds.merge(creds))
           if creds[:aws_iam_instance_profile]
             self.class.const_get(:ECS_TASK_PROFILE_PATH).nil? ?
               load_instance_credentials!(creds) :
@@ -594,12 +597,11 @@ module Miasma
         # Load configuration from the AWS configuration file
         #
         # @param file_path [String] path to configuration file
-        # @param profile [String] name of profile to load
         # @return [Smash]
-        def load_aws_file(file_path, profile)
+        def load_aws_file(file_path)
           if File.exist?(file_path)
-            l_config = Smash.new.tap do |creds|
-              key = nil
+            Smash.new.tap do |creds|
+              key = :default
               File.readlines(file_path).each_with_index do |line, idx|
                 line.strip!
                 next if line.empty? || line.start_with?("#")
@@ -642,17 +644,6 @@ module Miasma
                 end
               end
             end
-
-            l_profile = l_config.fetch(profile, Smash.new)
-            l_source_profile = l_config.fetch(l_profile[:source_profile], Smash.new)
-
-            l_creds = l_config.fetch(
-              :default, Smash.new
-            ).merge(
-              l_source_profile
-            ).merge(
-              l_profile
-            )
           else
             Smash.new
           end

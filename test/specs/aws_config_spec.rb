@@ -110,5 +110,15 @@ describe Miasma::Contrib::AwsApiCore::ApiCommon do
       args = instance.attributes.to_smash
       -> { instance.custom_setup(args) }.must_raise ArgumentError
     end
+
+    it "should load and merge files and source profile" do
+      instance = klass.new
+      instance.aws_config_file = File.join(config_dir, "config.multiple")
+      instance.aws_credentials_file = File.join(config_dir, "creds.multiple")
+      instance.aws_profile_name = "multimerge"
+      args = instance.attributes.to_smash
+      instance.custom_setup(args)
+      args[:aws_access_key_id].must_equal "BANG"
+    end
   end
 end
