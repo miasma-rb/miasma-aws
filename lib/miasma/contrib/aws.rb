@@ -346,7 +346,7 @@ module Miasma
             attribute :aws_sts_role_session_name, String
             attribute :aws_sts_region, String
             attribute :aws_sts_host, String
-            attribute :aws_sts_session_token, String
+            attribute :aws_sts_session_token, String, :default => ENV["AWS_SESSION_TOKEN"]
             attribute :aws_sts_session_token_code, [String, Proc, Method]
             attribute :aws_sts_mfa_serial_number, [String]
             attribute :aws_credentials_file, String,
@@ -355,11 +355,11 @@ module Miasma
             attribute :aws_config_file, String,
               :required => true,
               :default => ENV.fetch("AWS_CONFIG_FILE", File.join(Dir.home, ".aws/config"))
-            attribute :aws_access_key_id, String, :required => true
-            attribute :aws_secret_access_key, String, :required => true
+            attribute :aws_access_key_id, String, :required => true, :default => ENV["AWS_ACCESS_KEY_ID"]
+            attribute :aws_secret_access_key, String, :required => true, :default => ENV["AWS_SECRET_ACCESS_KEY"]
             attribute :aws_iam_instance_profile, [TrueClass, FalseClass], :default => false
             attribute :aws_ecs_task_profile, [TrueClass, FalseClass], :default => false
-            attribute :aws_region, String, :required => true
+            attribute :aws_region, String, :required => true, :default => ENV["AWS_DEFAULT_REGION"]
             attribute :aws_host, String
             attribute :aws_bucket_region, String
             attribute :api_endpoint, String, :required => true, :default => "amazonaws.com"
