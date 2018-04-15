@@ -1,3 +1,7 @@
+# v0.3.12
+* [enhancement] Add support for defaulting to `AWS_` env vars
+* [fix] Properly parse AWS configuration/credentials file
+
 # v0.3.10
 * [fix] Use custom attribute to store last stack event ID (#45)
 
