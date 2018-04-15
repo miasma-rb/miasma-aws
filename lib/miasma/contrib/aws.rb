@@ -339,7 +339,7 @@ module Miasma
       module ApiCommon
         def self.included(klass)
           klass.class_eval do
-            attribute :aws_profile_name, [FalseClass, String], :default => "default"
+            attribute :aws_profile_name, [FalseClass, String], :default => ENV.fetch("AWS_PROFILE", "default")
             attribute :aws_sts_token, String
             attribute :aws_sts_role_arn, String
             attribute :aws_sts_external_id, String
@@ -349,10 +349,12 @@ module Miasma
             attribute :aws_sts_session_token, String
             attribute :aws_sts_session_token_code, [String, Proc, Method]
             attribute :aws_sts_mfa_serial_number, [String]
-            attribute :aws_credentials_file, String, :required => true,
-                                                     :default => File.join(Dir.home, ".aws/credentials")
-            attribute :aws_config_file, String, :required => true,
-                                                :default => File.join(Dir.home, ".aws/config")
+            attribute :aws_credentials_file, String,
+              :required => true,
+              :default => ENV.fetch("AWS_SHARED_CREDENTIALS_FILE", File.join(Dir.home, ".aws/credentials"))
+            attribute :aws_config_file, String,
+              :required => true,
+              :default => ENV.fetch("AWS_CONFIG_FILE", File.join(Dir.home, ".aws/config"))
             attribute :aws_access_key_id, String, :required => true
             attribute :aws_secret_access_key, String, :required => true
             attribute :aws_iam_instance_profile, [TrueClass, FalseClass], :default => false
@@ -420,7 +422,8 @@ module Miasma
           file_creds = Smash.new.tap do |fc|
             (config_file.keys + cred_file.keys).uniq.reverse.each do |k|
               fc[k] = config_file.fetch(k, Smash.new).merge(
-                cred_file.fetch(k, Smash.new))
+                cred_file.fetch(k, Smash.new)
+              )
             end
           end
           profile = creds[:aws_profile_name]
