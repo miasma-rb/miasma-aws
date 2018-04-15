@@ -12,7 +12,6 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.add_runtime_dependency 'miasma', '>= 0.3.1', '< 0.5'
   s.add_development_dependency 'rake', '~> 10'
-  s.add_development_dependency 'rubocop', '0.37.2'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'vcr'
   s.add_development_dependency 'mocha'
