@@ -347,6 +347,35 @@ module Miasma
           end
         end
 
+        # Load all plans associated to given stack
+        #
+        # @param stack [Models::Orchestration::Stack]
+        # @return [Array<Models::Orchestration::Stack::Plan>]
+        def stack_plan_all(stack)
+          all_result_pages(nil, :body,
+            "ListChangeSetsResponse", "ListChangeSetsResult",
+            "Summaries", "member") do |options|
+            request(
+              :method => :post,
+              :path => "/",
+              :form => options.merge(
+                Smash.new(
+                  "Action" => "ListChangeSets",
+                  "StackName" => stack.id || stack.name,
+                )
+              ),
+            )
+          end.map do |res|
+            stack = Stack.new(self,
+              id: res["StackId"],
+              name: res["StackName"],
+            )
+            stack.custom = {:plan_name => res["ChangeSetName"],
+              :plan_id => res["ChangeSetId"]}
+            stack.plan
+          end
+        end
+
         # Generate changeset name given stack. This
         # is a unique name for miasma and ensures only
         # one changeset is used/persisted for miasma
