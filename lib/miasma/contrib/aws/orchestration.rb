@@ -148,30 +148,7 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Models::Orchestration::Stack]
         def stack_save(stack)
-          params = Smash.new("StackName" => stack.name)
-          if stack.dirty?(:parameters)
-            initial_parameters = stack.data[:parameters] || {}
-          else
-            initial_parameters = {}
-          end
-          (stack.parameters || {}).each_with_index do |pair, idx|
-            params["Parameters.member.#{idx + 1}.ParameterKey"] = pair.first
-            if initial_parameters[pair.first] == pair.last
-              params["Parameters.member.#{idx + 1}.UsePreviousValue"] = true
-            else
-              params["Parameters.member.#{idx + 1}.ParameterValue"] = pair.last
-            end
-          end
-          (stack.capabilities || []).each_with_index do |cap, idx|
-            params["Capabilities.member.#{idx + 1}"] = cap
-          end
-          (stack.notification_topics || []).each_with_index do |topic, idx|
-            params["NotificationARNs.member.#{idx + 1}"] = topic
-          end
-          (stack.tags || {}).each_with_index do |tag, idx|
-            params["Tags.member.#{idx + 1}.Key"] = tag.first
-            params["Tags.member.#{idx + 1}.Value"] = tag.last
-          end
+          params = common_stack_params(stack)
           if stack.custom[:stack_policy_body]
             params["StackPolicyBody"] = MultiJson.dump(stack.custom[:stack_policy_body])
           end
@@ -183,13 +160,6 @@ module Miasma
           end
           if stack.on_failure
             params["OnFailure"] = stack.on_failure == "nothing" ? "DO_NOTHING" : stack.on_failure.upcase
-          end
-          if stack.template_url
-            params["TemplateURL"] = stack.template_url
-          elsif !stack.dirty?(:template) && stack.persisted?
-            params["UsePreviousTemplate"] = true
-          else
-            params["TemplateBody"] = MultiJson.dump(stack.template)
           end
           if stack.persisted?
             result = request(
@@ -214,6 +184,178 @@ module Miasma
             stack.id = result.get(:body, "CreateStackResponse", "CreateStackResult", "StackId")
             stack.valid_state
           end
+        end
+
+        # Generate a new stack plan from the API
+        #
+        # @param stack [Models::Orchestration::Stack]
+        # @return [Models::Orchestration::Stack]
+        # @todo Needs to include the rolearn and resourcetypes
+        #       at some point but more thought on how to integrate
+        def stack_plan(stack)
+          params = common_stack_params(stack)
+          result = request(
+            :path => "/",
+            :method => :post,
+            :form => params.merge(Smash.new(
+              "Action" => "CreateChangeSet",
+              "ChangeSetName" => changeset_name(stack),
+              "StackName" => stack.name,
+              "ChangeSetType" => stack.persisted? ? "UPDATE" : "CREATE"
+            ))
+          )
+          stack.reload
+          stack.plan
+        end
+
+        # Load the plan for the stack
+        #
+        # @param stack [Models::Orchestration::Stack]
+        # @return [Models::Orchestration::Stack::Plan]
+        def stack_plan_load(stack)
+          if stack.attributes[:plan]
+            plan = stack.attributes[:plan]
+          else
+            plan = Stack::Plan.new(stack, name: changeset_name(stack))
+          end
+          if stack.custom[:plan_name]
+            if stack.custom[:plan_name] != plan.name
+              plan.name = stack.custom[:plan_name]
+            else
+              plan.name = changeset_name(stack)
+            end
+          end
+          result = nil
+          begin
+            result = request(
+              :path => "/",
+              :method => :post,
+              :form => Smash.new(
+                "Action" => "DescribeChangeSet",
+                "ChangeSetName" => plan.name,
+                "StackName" => stack.name,
+              )
+            )
+          rescue Error::ApiError::RequestError => e
+            # Plan does not exist
+            if e.response.code == 404
+              return nil
+            end
+            # Stack does not exist
+            if e.response.code == 400 && e.message.include?("ValidationError: Stack")
+              return nil
+            end
+            raise
+          end
+          res = result.get(:body, "DescribeChangeSetResponse", "DescribeChangeSetResult")
+          plan.id = res["ChangeSetId"]
+          plan.name = res["ChangeSetName"]
+          plan.custom = {
+            :execution_status => res["ExecutionStatus"],
+            :stack_name => res["StackName"],
+            :stack_id => res["StackId"],
+            :status => res["Status"],
+          }
+          items = {:add => [], :replace => [], :remove => [], :unknown => [], :interrupt => []}
+          [res.get("Changes", "member")].compact.flatten.each do |chng|
+            if chng["Type"] == "Resource"
+              item_diffs = [chng.get("ResourceChange", "Details", "member")].compact.flatten.map do |d|
+                Stack::Plan::Diff.new(
+                  :name => [
+                    d.get("Target", "Attribute"),
+                    d.get("Target", "Name")].compact.join("."),
+                  :current => d["ChangeSource"],
+                  :proposed => d["Evaluation"]
+                )
+              end
+              type = case chng.get("ResourceChange", "Action").to_s.downcase
+                     when "add"
+                       :add
+                     when "modify"
+                       chng.get("ResourceChange", "Replacement") == "True" ? :replace : :interrupt
+                     when "remove"
+                       :remove
+                     else
+                       :unknown
+                     end
+              items[type] << Stack::Plan::Item.new(
+                :name => chng.get("ResourceChange", "LogicalResourceId"),
+                :type => chng.get("ResourceChange", "ResourceType"),
+                :diffs => item_diffs
+              )
+            end
+          end.compact
+          items.each do |type, list|
+            plan.send("#{type}=", list)
+          end
+          if plan.custom[:stack_id]
+            stack.id = plan.custom[:stack_id]
+            stack.valid_state
+          end
+          stack.plan = plan.valid_state
+        end
+
+        # Delete the plan attached to the stack
+        #
+        # @param stack [Models::Orchestration::Stack]
+        # @return [Models::Orchestration::Stack]
+        def stack_plan_destroy(stack)
+          request(
+            :path => "/",
+            :method => :post,
+            :form => Smash.new(
+              "Action" => "DeleteChangeSet",
+              "ChangeSetName" => stack.plan.id,
+              "StackName" => stack.name
+            )
+          )
+          stack.plan = nil
+          stack.valid_state
+        end
+
+        # Apply the plan attached to the stack
+        #
+        # @param stack [Model::Orchestration::Stack]
+        # @return [Model::Orchestration::Stack]
+        def stack_plan_execute(stack)
+          request(
+            :path => "/",
+            :method => :post,
+            :form => Smash.new(
+              "Action" => "ExecuteChangeSet",
+              "ChangeSetName" => stack.plan.id,
+              "StackName" => stack.name
+            )
+          )
+          stack.reload
+        end
+
+        # Reload the plan
+        #
+        # @param plan [Model::Orchestration::Stack::Plan]
+        # @return [Model::Orchestration::Stack::Plan]
+        def stack_plan_reload(plan)
+          if plan.stack.plan == plan
+            stack_plan_load(plan.stack)
+          else
+            stack = Stack.new(self,
+              id: plan.custom[:stack_id],
+              name: plan.custom[:stack_name],
+            )
+            stack.dirty[:plan] = plan
+            stack_plan_load(stack)
+          end
+        end
+
+        # Generate changeset name given stack. This
+        # is a unique name for miasma and ensures only
+        # one changeset is used/persisted for miasma
+        # interactions.
+        #
+        # @param stack [Models::Orchestration::Stack]
+        # @return [String]
+        def changeset_name(stack)
+          "miasma-changeset-#{stack.name}"
         end
 
         # Reload the stack data from the API
@@ -435,6 +577,47 @@ module Miasma
         def event_reload(event)
           event.stack.events.reload
           event.stack.events.get(event.id)
+        end
+
+        # Common parameters used for stack creation/update
+        # requests. This is currently shared between stack
+        # creation and plan creation
+        #
+        # @param stack [Model::Orchestration::Stack]
+        # @return [Smash]
+        def common_stack_params(stack)
+          params = Smash.new("StackName" => stack.name)
+          if stack.dirty?(:parameters)
+            initial_parameters = stack.data[:parameters] || {}
+          else
+            initial_parameters = {}
+          end
+          (stack.parameters || {}).each_with_index do |pair, idx|
+            params["Parameters.member.#{idx + 1}.ParameterKey"] = pair.first
+            if initial_parameters[pair.first] == pair.last
+              params["Parameters.member.#{idx + 1}.UsePreviousValue"] = true
+            else
+              params["Parameters.member.#{idx + 1}.ParameterValue"] = pair.last
+            end
+          end
+          (stack.capabilities || []).each_with_index do |cap, idx|
+            params["Capabilities.member.#{idx + 1}"] = cap
+          end
+          (stack.notification_topics || []).each_with_index do |topic, idx|
+            params["NotificationARNs.member.#{idx + 1}"] = topic
+          end
+          (stack.tags || {}).each_with_index do |tag, idx|
+            params["Tags.member.#{idx + 1}.Key"] = tag.first
+            params["Tags.member.#{idx + 1}.Value"] = tag.last
+          end
+          if stack.template_url
+            params["TemplateURL"] = stack.template_url
+          elsif !stack.dirty?(:template) && stack.persisted?
+            params["UsePreviousTemplate"] = true
+          else
+            params["TemplateBody"] = MultiJson.dump(stack.template)
+          end
+          params
         end
       end
     end
