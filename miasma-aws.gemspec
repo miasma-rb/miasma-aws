@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'webmock', '~> 1.23.0'
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'minitest-vcr'
-  s.add_development_dependency 'rufo'
+  s.add_development_dependency 'rufo', '~> 0.3.0'
   s.add_development_dependency 'rspec', '~> 3.5'
   s.files = Dir['lib/**/*'] + %w(miasma-aws.gemspec README.md CHANGELOG.md LICENSE)
 end
