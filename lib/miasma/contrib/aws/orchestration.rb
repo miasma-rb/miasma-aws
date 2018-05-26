@@ -201,8 +201,8 @@ module Miasma
               "Action" => "CreateChangeSet",
               "ChangeSetName" => changeset_name(stack),
               "StackName" => stack.name,
-              "ChangeSetType" => stack.persisted? ? "UPDATE" : "CREATE"
-            ))
+              "ChangeSetType" => stack.persisted? ? "UPDATE" : "CREATE",
+            )),
           )
           stack.reload
           stack.plan
@@ -226,27 +226,33 @@ module Miasma
             end
           end
           result = nil
-          begin
-            result = request(
-              :path => "/",
-              :method => :post,
-              :form => Smash.new(
-                "Action" => "DescribeChangeSet",
-                "ChangeSetName" => plan.name,
-                "StackName" => stack.name,
+          Bogo::Retry.build(:linear, max_attempts: 10, wait_interval: 5, ui: Bogo::Ui.new) do
+            begin
+              result = request(
+                :path => "/",
+                :method => :post,
+                :form => Smash.new(
+                  "Action" => "DescribeChangeSet",
+                  "ChangeSetName" => plan.name,
+                  "StackName" => stack.name,
+                ),
               )
-            )
-          rescue Error::ApiError::RequestError => e
-            # Plan does not exist
-            if e.response.code == 404
-              return nil
+            rescue Error::ApiError::RequestError => e
+              # Plan does not exist
+              if e.response.code == 404
+                return nil
+              end
+              # Stack does not exist
+              if e.response.code == 400 && e.message.include?("ValidationError: Stack")
+                return nil
+              end
+              raise
             end
-            # Stack does not exist
-            if e.response.code == 400 && e.message.include?("ValidationError: Stack")
-              return nil
+            status = result.get(:body, "DescribeChangeSetResponse", "DescribeChangeSetResult", "ExecutionStatus")
+            if status != "AVAILABLE"
+              raise "Plan execution is not yet available"
             end
-            raise
-          end
+          end.run!
           res = result.get(:body, "DescribeChangeSetResponse", "DescribeChangeSetResult")
           plan.id = res["ChangeSetId"]
           plan.name = res["ChangeSetName"]
@@ -256,6 +262,7 @@ module Miasma
             :stack_id => res["StackId"],
             :status => res["Status"],
           }
+          plan.state = res["ExecutionStatus"].downcase.to_sym
           items = {:add => [], :replace => [], :remove => [], :unknown => [], :interrupt => []}
           [res.get("Changes", "member")].compact.flatten.each do |chng|
             if chng["Type"] == "Resource"
@@ -263,16 +270,18 @@ module Miasma
                 Stack::Plan::Diff.new(
                   :name => [
                     d.get("Target", "Attribute"),
-                    d.get("Target", "Name")].compact.join("."),
+                    d.get("Target", "Name"),
+                  ].compact.join("."),
                   :current => d["ChangeSource"],
-                  :proposed => d["Evaluation"]
+                  :proposed => d["Evaluation"],
                 )
               end
               type = case chng.get("ResourceChange", "Action").to_s.downcase
                      when "add"
                        :add
                      when "modify"
-                       chng.get("ResourceChange", "Replacement") == "True" ? :replace : :interrupt
+                       chng.get("ResourceChange", "Replacement") == "True" ?
+                         :replace : :interrupt
                      when "remove"
                        :remove
                      else
@@ -281,7 +290,7 @@ module Miasma
               items[type] << Stack::Plan::Item.new(
                 :name => chng.get("ResourceChange", "LogicalResourceId"),
                 :type => chng.get("ResourceChange", "ResourceType"),
-                :diffs => item_diffs
+                :diffs => item_diffs,
               )
             end
           end.compact
@@ -306,8 +315,8 @@ module Miasma
             :form => Smash.new(
               "Action" => "DeleteChangeSet",
               "ChangeSetName" => stack.plan.id,
-              "StackName" => stack.name
-            )
+              "StackName" => stack.name,
+            ),
           )
           stack.plan = nil
           stack.valid_state
@@ -324,8 +333,8 @@ module Miasma
             :form => Smash.new(
               "Action" => "ExecuteChangeSet",
               "ChangeSetName" => stack.plan.id,
-              "StackName" => stack.name
-            )
+              "StackName" => stack.name,
+            ),
           )
           stack.reload
         end
@@ -339,9 +348,8 @@ module Miasma
             stack_plan_load(plan.stack)
           else
             stack = Stack.new(self,
-              id: plan.custom[:stack_id],
-              name: plan.custom[:stack_name],
-            )
+                              id: plan.custom[:stack_id],
+                              name: plan.custom[:stack_name])
             stack.dirty[:plan] = plan
             stack_plan_load(stack)
           end
@@ -353,8 +361,8 @@ module Miasma
         # @return [Array<Models::Orchestration::Stack::Plan>]
         def stack_plan_all(stack)
           all_result_pages(nil, :body,
-            "ListChangeSetsResponse", "ListChangeSetsResult",
-            "Summaries", "member") do |options|
+                           "ListChangeSetsResponse", "ListChangeSetsResult",
+                           "Summaries", "member") do |options|
             request(
               :method => :post,
               :path => "/",
@@ -367,11 +375,10 @@ module Miasma
             )
           end.map do |res|
             stack = Stack.new(self,
-              id: res["StackId"],
-              name: res["StackName"],
-            )
+                              id: res["StackId"],
+                              name: res["StackName"])
             stack.custom = {:plan_name => res["ChangeSetName"],
-              :plan_id => res["ChangeSetId"]}
+                            :plan_id => res["ChangeSetId"]}
             stack.plan
           end
         end
@@ -441,9 +448,8 @@ module Miasma
                 "StackName" => stack.id,
               ),
             )
-            MultiJson.load(
-              result.get(:body, "GetTemplateResponse", "GetTemplateResult", "TemplateBody")
-            ).to_smash
+            template = result.get(:body, "GetTemplateResponse", "GetTemplateResult", "TemplateBody")
+            template.nil? ? Smash.new : MultiJson.load(template)
           else
             Smash.new
           end
