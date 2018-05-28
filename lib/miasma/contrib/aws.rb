@@ -424,21 +424,25 @@ module Miasma
           new_config_creds = Smash.new
           while profile
             new_config_creds = config_file.fetch(profile, Smash.new).merge(
-              new_config_creds)
+              new_config_creds
+            )
             profile = new_config_creds.delete(:source_profile)
             profile_list << profile
           end
           new_config_creds = config_file.fetch(:default, Smash.new).merge(
-            new_config_creds)
+            new_config_creds
+          )
           profile = creds[:aws_profile_name]
           new_creds = Smash.new
           profile_list.each do |profile|
             new_creds = cred_file.fetch(profile, Smash.new).merge(
-              new_creds)
+              new_creds
+            )
             profile = new_creds.delete(:source_profile)
           end
           new_creds = cred_file.fetch(:default, Smash.new).merge(
-            new_creds)
+            new_creds
+          )
           new_creds = new_creds.merge(new_config_creds)
           new_creds.each_pair do |key, value|
             creds[key] = value if creds[key].nil?
