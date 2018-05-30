@@ -74,7 +74,14 @@ describe Miasma::Models::Compute::Aws do
 
     it "should destroy the instance" do
       expect { subject.server_destroy(server) }.not_to raise_error
-      expect(server.id).to be_nil
+    end
+
+    context "when model is not persisted" do
+      let(:server_id) { nil }
+
+      it "should raise an error" do
+        expect { subject.server_destroy(server) }.to raise_error(Miasma::Error::ModelPersistError)
+      end
     end
   end
 end
