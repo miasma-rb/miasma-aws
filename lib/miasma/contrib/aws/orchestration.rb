@@ -194,17 +194,21 @@ module Miasma
         #       at some point but more thought on how to integrate
         def stack_plan(stack)
           params = common_stack_params(stack)
+          plan_name = changeset_name(stack)
           result = request(
             :path => "/",
             :method => :post,
             :form => params.merge(Smash.new(
               "Action" => "CreateChangeSet",
-              "ChangeSetName" => changeset_name(stack),
+              "ChangeSetName" => plan_name,
               "StackName" => stack.name,
               "ChangeSetType" => stack.persisted? ? "UPDATE" : "CREATE",
             )),
           )
           stack.reload
+          # Ensure we have the same plan name in use after reload
+          stack.custom = stack.custom.dup
+          stack.custom[:plan_name] = plan_name
           stack.plan
         end
 
@@ -391,7 +395,7 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [String]
         def changeset_name(stack)
-          "miasma-changeset-#{stack.name}"
+          stack.custom.fetch(:plan_name, "miasma-changeset-#{stack.name}")
         end
 
         # Reload the stack data from the API
