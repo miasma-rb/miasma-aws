@@ -267,18 +267,40 @@ module Miasma
             :status => res["Status"],
           }
           plan.state = res["ExecutionStatus"].downcase.to_sym
+          plan.parameters = Smash[
+            [res.get("Parameters", "member")].compact.flatten.map{ |param|
+              [param["ParameterKey"], param["ParameterValue"]]
+            }
+          ]
+          plan.created_at = res["CreationTime"]
+          original_template = stack.template
+          proposed_template = stack_plan_template(plan, :processed)
           items = {:add => [], :replace => [], :remove => [], :unknown => [], :interrupt => []}
           [res.get("Changes", "member")].compact.flatten.each do |chng|
             if chng["Type"] == "Resource"
-              item_diffs = [chng.get("ResourceChange", "Details", "member")].compact.flatten.map do |d|
-                Stack::Plan::Diff.new(
-                  :name => [
-                    d.get("Target", "Attribute"),
-                    d.get("Target", "Name"),
-                  ].compact.join("."),
-                  :current => d["ChangeSource"],
-                  :proposed => d["Evaluation"],
+              item_diffs = []
+              [chng.get("ResourceChange", "Details", "member")].compact.flatten.each do |d|
+                item_path = [
+                  d.get("Target", "Attribute"),
+                  d.get("Target", "Name"),
+                ].compact
+                original_value = original_template.get("Resources", chng.get("ResourceChange", "LogicalResourceId"), *item_path)
+                if original_value.is_a?(Hash) && stack.parameters.key?(original_value["Ref"])
+                  original_value = stack.parameters[original_value["Ref"]]
+                end
+                new_value = proposed_template.get("Resources", chng.get("ResourceChange", "LogicalResourceId"), *item_path)
+                if new_value.is_a?(Hash) && plan.parameters.key?(new_value["Ref"])
+                  new_value = plan.parameters[new_value["Ref"]]
+                end
+                diff = Stack::Plan::Diff.new(
+                  :name => item_path.join("."),
+                  :current => original_value.inspect,
+                  :proposed => new_value.inspect,
                 )
+
+                unless item_diffs.detect{|d| d.name == diff.name && d.current == diff.current && d.proposed == diff.proposed}
+                  item_diffs << diff
+                end
               end
               type = case chng.get("ResourceChange", "Action").to_s.downcase
                      when "add"
@@ -294,18 +316,31 @@ module Miasma
               items[type] << Stack::Plan::Item.new(
                 :name => chng.get("ResourceChange", "LogicalResourceId"),
                 :type => chng.get("ResourceChange", "ResourceType"),
-                :diffs => item_diffs,
+                :diffs => item_diffs.sort_by(&:name),
               )
             end
           end.compact
           items.each do |type, list|
-            plan.send("#{type}=", list)
+            plan.send("#{type}=", list.sort_by(&:name))
           end
           if plan.custom[:stack_id]
             stack.id = plan.custom[:stack_id]
             stack.valid_state
           end
           stack.plan = plan.valid_state
+        end
+
+        def stack_plan_template(plan, state)
+          result = request(
+            :path => "/",
+            :method => :post,
+            :form => Smash.new(
+              "Action" => "GetTemplate",
+              "ChangeSetName" => plan.id,
+              "TemplateStage" => state.to_s.capitalize
+            )
+          )
+          MultiJson.load(result.get(:body, "GetTemplateResponse", "GetTemplateResult", "TemplateBody")).to_smash
         end
 
         # Delete the plan attached to the stack
