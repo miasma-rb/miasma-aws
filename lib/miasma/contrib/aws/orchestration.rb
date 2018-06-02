@@ -268,13 +268,12 @@ module Miasma
           }
           plan.state = res["ExecutionStatus"].downcase.to_sym
           plan.parameters = Smash[
-            [res.get("Parameters", "member")].compact.flatten.map{ |param|
+            [res.get("Parameters", "member")].compact.flatten.map { |param|
               [param["ParameterKey"], param["ParameterValue"]]
             }
           ]
           plan.created_at = res["CreationTime"]
-          original_template = stack.template
-          proposed_template = stack_plan_template(plan, :processed)
+          plan.template = stack_plan_template(plan, :processed)
           items = {:add => [], :replace => [], :remove => [], :unknown => [], :interrupt => []}
           [res.get("Changes", "member")].compact.flatten.each do |chng|
             if chng["Type"] == "Resource"
@@ -284,11 +283,11 @@ module Miasma
                   d.get("Target", "Attribute"),
                   d.get("Target", "Name"),
                 ].compact
-                original_value = original_template.get("Resources", chng.get("ResourceChange", "LogicalResourceId"), *item_path)
+                original_value = stack.template.get("Resources", chng.get("ResourceChange", "LogicalResourceId"), *item_path)
                 if original_value.is_a?(Hash) && stack.parameters.key?(original_value["Ref"])
                   original_value = stack.parameters[original_value["Ref"]]
                 end
-                new_value = proposed_template.get("Resources", chng.get("ResourceChange", "LogicalResourceId"), *item_path)
+                new_value = plan.template.get("Resources", chng.get("ResourceChange", "LogicalResourceId"), *item_path)
                 if new_value.is_a?(Hash) && plan.parameters.key?(new_value["Ref"])
                   new_value = plan.parameters[new_value["Ref"]]
                 end
@@ -298,7 +297,7 @@ module Miasma
                   :proposed => new_value.inspect,
                 )
 
-                unless item_diffs.detect{|d| d.name == diff.name && d.current == diff.current && d.proposed == diff.proposed}
+                unless item_diffs.detect { |d| d.name == diff.name && d.current == diff.current && d.proposed == diff.proposed }
                   item_diffs << diff
                 end
               end
@@ -337,8 +336,8 @@ module Miasma
             :form => Smash.new(
               "Action" => "GetTemplate",
               "ChangeSetName" => plan.id,
-              "TemplateStage" => state.to_s.capitalize
-            )
+              "TemplateStage" => state.to_s.capitalize,
+            ),
           )
           MultiJson.load(result.get(:body, "GetTemplateResponse", "GetTemplateResult", "TemplateBody")).to_smash
         end
