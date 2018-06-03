@@ -1,3 +1,6 @@
+# v0.3.14
+* [feature] Add orchestration stack planning support (#46)
+
 # v0.3.12
 * [enhancement] Add support for defaulting to `AWS_` env vars
 * [fix] Properly parse AWS configuration/credentials file
