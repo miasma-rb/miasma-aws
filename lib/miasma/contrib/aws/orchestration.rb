@@ -284,7 +284,7 @@ module Miasma
                   d.get("Target", "Name"),
                 ].compact
                 original_value = stack.template.get("Resources", chng.get("ResourceChange", "LogicalResourceId"), *item_path)
-                if original_value.is_a?(Hash) && stack.parameters.key?(original_value["Ref"])
+                if original_value.is_a?(Hash) && (stack.parameters || {}).key?(original_value["Ref"])
                   original_value = stack.parameters[original_value["Ref"]]
                 end
                 new_value = plan.template.get("Resources", chng.get("ResourceChange", "LogicalResourceId"), *item_path)
