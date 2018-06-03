@@ -1,0 +1,6 @@
+[default]
+aws_access_key_id=fubar
+aws_secret_access_key=foobar
+
+[thing2]
+aws_access_key_id=BANG

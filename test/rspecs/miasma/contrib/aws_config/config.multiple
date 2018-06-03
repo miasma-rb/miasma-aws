@@ -1,0 +1,18 @@
+[default]
+region=north
+output=json
+
+[profile thing1]
+region=south
+
+[profile thing2]
+output=text
+customized=thing
+
+[profile thing3]
+thing3=loaded
+source_profile=thing2
+
+[profile multimerge]
+base=value
+source_profile=thing3

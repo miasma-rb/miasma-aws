@@ -419,21 +419,35 @@ module Miasma
         def custom_setup(creds)
           cred_file = load_aws_file(aws_credentials_file)
           config_file = load_aws_file(aws_config_file)
-          file_creds = Smash.new.tap do |fc|
-            (config_file.keys + cred_file.keys).uniq.reverse.each do |k|
-              fc[k] = config_file.fetch(k, Smash.new).merge(
-                cred_file.fetch(k, Smash.new)
-              )
-            end
+          profile = creds[:aws_profile_name]
+          profile_list = [profile].compact
+          new_config_creds = Smash.new
+          while profile
+            new_config_creds = config_file.fetch(profile, Smash.new).merge(
+              new_config_creds
+            )
+            profile = new_config_creds.delete(:source_profile)
+            profile_list << profile
           end
+          new_config_creds = config_file.fetch(:default, Smash.new).merge(
+            new_config_creds
+          )
           profile = creds[:aws_profile_name]
           new_creds = Smash.new
-          while profile
-            new_creds = file_creds.fetch(profile, Smash.new).merge(new_creds)
+          profile_list.each do |profile|
+            new_creds = cred_file.fetch(profile, Smash.new).merge(
+              new_creds
+            )
             profile = new_creds.delete(:source_profile)
           end
-          new_creds = file_creds.fetch(:default, Smash.new).merge(new_creds)
-          creds.replace(new_creds.merge(creds))
+          new_creds = cred_file.fetch(:default, Smash.new).merge(
+            new_creds
+          )
+          new_creds = new_creds.merge(new_config_creds)
+          new_creds.each_pair do |key, value|
+            creds[key] = value if creds[key].nil?
+          end
+          creds.replace(new_creds)
           if creds[:aws_iam_instance_profile]
             self.class.const_get(:ECS_TASK_PROFILE_PATH).nil? ?
               load_instance_credentials!(creds) :

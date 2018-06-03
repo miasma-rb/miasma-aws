@@ -24,7 +24,6 @@ module Miasma
           "stopped" => :stopped,
         ).to_smash(:freeze)
 
-        # @todo catch bad lookup and clear model
         def server_reload(server)
           result = request(
             :method => :post,
@@ -68,7 +67,7 @@ module Miasma
               },
             )
           else
-            raise "this doesn't even exist"
+            raise Error::ModelPersistError.new("Server is not persisted")
           end
         end
 
@@ -101,7 +100,7 @@ module Miasma
               },
             )
           else
-            raise "WAT DO I DO!?"
+            raise Error::ModelPersistError.new("Server is not persisted")
           end
         end
 
