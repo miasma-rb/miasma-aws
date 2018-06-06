@@ -444,8 +444,10 @@ module Miasma
             new_creds
           )
           new_creds = new_creds.merge(new_config_creds)
-          new_creds.each_pair do |key, value|
-            creds[key] = value if creds[key].nil?
+          creds.keys.each do |key|
+            if creds[key] && new_creds[key].nil?
+              new_creds[key] = creds[key]
+            end
           end
           creds.replace(new_creds)
           if creds[:aws_iam_instance_profile]
