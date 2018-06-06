@@ -1,3 +1,6 @@
+# v0.3.16
+* [fix] Fix configuration file merging with initial credentials
+
 # v0.3.14
 * [feature] Add orchestration stack planning support (#46)
 
