@@ -1,16 +1,16 @@
 require "miasma/contrib/aws"
 
 describe Miasma::Contrib::AwsApiCore::ApiCommon do
-  describe "Configuration file parsing" do
-    let(:klass) do
-      Class.new do
-        include Bogo::Lazy
-        include Miasma::Contrib::AwsApiCore::ApiCommon
-      end
+  let(:klass) do
+    Class.new do
+      include Bogo::Lazy
+      include Miasma::Contrib::AwsApiCore::ApiCommon
     end
+  end
 
-    let(:config_dir) { File.join(File.dirname(__FILE__), "aws_config") }
+  let(:config_dir) { File.join(File.dirname(__FILE__), "aws_config") }
 
+  describe "Configuration file parsing" do
     it "should load the default configuration file" do
       instance = klass.new
       instance.aws_config_file = File.join(config_dir, "config.default")
@@ -118,6 +118,38 @@ describe Miasma::Contrib::AwsApiCore::ApiCommon do
       args = instance.attributes.to_smash
       instance.custom_setup(args)
       expect(args[:aws_access_key_id]).to eq("BANG")
+    end
+  end
+
+  describe "default value overrides" do
+    let(:default_id) { "DEFAULT_ID" }
+
+    before do
+      expect(ENV).to receive(:[]).with("AWS_ACCESS_KEY_ID").and_return(default_id)
+      allow(ENV).to receive(:[]).and_return("UNSET")
+    end
+
+    it "should return default id value by default" do
+      instance = klass.new
+      instance.custom_setup(instance.attributes.to_smash)
+      expect(instance.aws_access_key_id).to eq(default_id)
+    end
+
+    it "should use value from configuration file" do
+      instance = klass.new
+      instance.aws_credentials_file = File.join(config_dir, "creds.default")
+      args = instance.attributes
+      instance.custom_setup(args)
+      expect(instance.aws_access_key_id).to eq("fubar")
+    end
+
+    it "should use set value" do
+      instance = klass.new
+      instance.aws_credentials_file = File.join(config_dir, "creds.default")
+      instance.aws_access_key_id = "override"
+      args = instance.attributes
+      instance.custom_setup(args)
+      expect(instance.aws_access_key_id).to eq("override")
     end
   end
 end

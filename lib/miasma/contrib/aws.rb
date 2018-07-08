@@ -346,7 +346,7 @@ module Miasma
             attribute :aws_sts_role_session_name, String
             attribute :aws_sts_region, String
             attribute :aws_sts_host, String
-            attribute :aws_sts_session_token, String, :default => ENV["AWS_SESSION_TOKEN"]
+            attribute :aws_sts_session_token, String
             attribute :aws_sts_session_token_code, [String, Proc, Method]
             attribute :aws_sts_mfa_serial_number, [String]
             attribute :aws_credentials_file, String,
@@ -444,17 +444,15 @@ module Miasma
             new_creds
           )
           new_creds = new_creds.merge(new_config_creds)
-          creds.keys.each do |key|
-            if creds[key] && new_creds[key].nil?
-              new_creds[key] = creds[key]
-            end
-          end
+          # Update original data source
           creds.replace(new_creds)
           if creds[:aws_iam_instance_profile]
             self.class.const_get(:ECS_TASK_PROFILE_PATH).nil? ?
               load_instance_credentials!(creds) :
               load_ecs_credentials!(creds)
           end
+          # Set underlying attributes
+          data.replace(creds)
           true
         end
 
