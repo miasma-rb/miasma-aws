@@ -1,3 +1,6 @@
+# v0.3.18
+* [fix] Prevent defaults overriding attribute values (#49)
+
 # v0.3.16
 * [fix] Fix configuration file merging with initial credentials
 
