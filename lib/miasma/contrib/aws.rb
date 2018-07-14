@@ -788,7 +788,7 @@ module Miasma
         def sts_assume_role_update_required?(args = {})
           if args.fetch(:aws_sts_role_arn, attributes[:aws_sts_role_arn])
             expiry = args.fetch(:aws_sts_token_expires, attributes[:aws_sts_token_expires])
-            expiry.nil? || expiry <= Time.now - 15
+            expiry.nil? || expiry - 15 <= Time.now
           else
             false
           end
@@ -803,7 +803,7 @@ module Miasma
               :aws_sts_session_token_expires,
               attributes[:aws_sts_session_token_expires]
             )
-            expiry.nil? || expiry <= Time.now - 15
+            expiry.nil? || expiry - 15 <= Time.now
           else
             false
           end
