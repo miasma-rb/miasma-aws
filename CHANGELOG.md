@@ -1,3 +1,7 @@
+# v0.3.20
+* [fix] Properly calculate token expiry (#52)
+* [enhancement] Generate custom exception when key is not provided to signer (#53)
+
 # v0.3.18
 * [fix] Prevent defaults overriding attribute values (#49)
 
