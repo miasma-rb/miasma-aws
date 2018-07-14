@@ -94,7 +94,11 @@ module Miasma
         # @param key_override [Object]
         # @return [Object] signature
         def sign(data, key_override = nil)
-          result = OpenSSL::HMAC.digest(digest, key_override || key, data)
+          s_key = key_override || key
+          if s_key.nil?
+            raise ArgumentError.new("No key provided for signing data")
+          end
+          result = OpenSSL::HMAC.digest(digest, key_override || key, data.to_s)
           digest.reset
           result
         end
