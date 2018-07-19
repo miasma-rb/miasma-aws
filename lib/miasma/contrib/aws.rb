@@ -799,23 +799,20 @@ module Miasma
         # @return [TrueClass, FalseClass]
         # @note update check only applied if assuming role
         def sts_assume_role_update_required?(args = {})
-          if args.fetch(:aws_sts_role_arn, attributes[:aws_sts_role_arn])
-            expiry = args.fetch(:aws_sts_token_expires, attributes[:aws_sts_token_expires])
-            expiry.nil? || expiry - self.class.const_get(:STS_TOKEN_EXPIRY_BUFFER) <= Time.now
-          else
-            false
-          end
+          attribute_update_required?(:aws_sts_role_arn,
+            :aws_sts_token_expires, args)
         end
 
         # @return [TrueClass, FalseClass]
         # @note update check only applied if assuming role
         def sts_mfa_session_update_required?(args = {})
-          if (args.fetch(:aws_sts_session_token_code,
-                         attributes[:aws_sts_session_token_code]))
-            expiry = args.fetch(
-              :aws_sts_session_token_expires,
-              attributes[:aws_sts_session_token_expires]
-            )
+          attribute_update_required?(:aws_sts_session_token_code,
+            :aws_sts_session_token_expires, args)
+        end
+
+        def attribute_update_required?(key, expiry_key, args)
+          if (args.fetch(key, attributes[key]))
+            expiry = args.fetch(expiry_key, attributes[expiry_key])
             expiry.nil? || expiry - self.class.const_get(:STS_TOKEN_EXPIRY_BUFFER) <= Time.now
           else
             false
