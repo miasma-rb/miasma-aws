@@ -1,13 +1,13 @@
 [default]
 region=north
-output=json
+aws_output=json
 
 [profile thing1]
 region=south
 
 [profile thing2]
-output=text
-customized=thing
+aws_output=text
+aws_customized=thing
 
 [profile thing3]
 thing3=loaded
