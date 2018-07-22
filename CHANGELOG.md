@@ -1,3 +1,8 @@
+# v0.3.22
+* [fix] Resolve configuration loading issues (#58)
+* [enhancement] Update token refresh to within 10m of expiry (#59)
+* [enhancement] Unify token expiry checks (#56)
+
 # v0.3.20
 * [fix] Properly calculate token expiry (#52)
 * [enhancement] Generate custom exception when key is not provided to signer (#53)
