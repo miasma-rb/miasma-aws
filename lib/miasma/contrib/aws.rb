@@ -813,7 +813,7 @@ module Miasma
         # Check if STS attribute requires update
         #
         # @param key [String, Symbol] token key
-        # @param expiry_key [Time] expiry of token
+        # @param expiry_key [String, Symbol] expiry of token (Time instance)
         # @param args [Hash] overrides to check instead of instance values
         # @return [TrueClass, FalseClass]
         def sts_attribute_update_required?(key, expiry_key, args = {})
