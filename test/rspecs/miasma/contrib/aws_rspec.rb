@@ -12,7 +12,7 @@ describe Miasma::Contrib::AwsApiCore::ApiCommon do
 
   describe "#sts_assume_role_update_required?" do
     let(:aws_sts_role_arn) { "ARN" }
-    let(:aws_sts_token_expires) { Time.now + 60 }
+    let(:aws_sts_token_expires) { Time.now + 700 }
 
     context "with role arn set in attributes" do
       before do
@@ -52,7 +52,7 @@ describe Miasma::Contrib::AwsApiCore::ApiCommon do
 
   describe "#sts_mfa_session_update_required?" do
     let(:aws_sts_session_token_code) { "CODE" }
-    let(:aws_sts_session_token_expires) { Time.now + 60 }
+    let(:aws_sts_session_token_expires) { Time.now + 700 }
 
     context "with role arn set in attributes" do
       before do
