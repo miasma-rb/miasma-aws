@@ -421,9 +421,14 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def custom_setup(creds)
-          cred_file = load_aws_file(aws_credentials_file)
-          config_file = load_aws_file(aws_config_file)
-          profile = creds[:aws_profile_name]
+          cred_file = load_aws_file(creds.fetch(
+            :aws_credentials_file, aws_credentials_file
+          ))
+          config_file = load_aws_file(creds.fetch(
+            :aws_config_file, aws_config_file
+          ))
+          # Load any configuration available from the config file
+          profile = creds.fetch(:aws_profile_name, aws_profile_name)
           profile_list = [profile].compact
           new_config_creds = Smash.new
           while profile
@@ -436,7 +441,7 @@ module Miasma
           new_config_creds = config_file.fetch(:default, Smash.new).merge(
             new_config_creds
           )
-          profile = creds[:aws_profile_name]
+          # Load any configuration available from the creds file
           new_creds = Smash.new
           profile_list.each do |profile|
             new_creds = cred_file.fetch(profile, Smash.new).merge(
@@ -448,15 +453,17 @@ module Miasma
             new_creds
           )
           new_creds = new_creds.merge(new_config_creds)
-          # Update original data source
+          # Provided credentials override any config file or creds
+          # file configuration so set them into new creds if available
+          new_creds.merge!(creds)
+          # Replace creds hash with updated hash so it is loaded with
+          # updated values
           creds.replace(new_creds)
           if creds[:aws_iam_instance_profile]
             self.class.const_get(:ECS_TASK_PROFILE_PATH).nil? ?
               load_instance_credentials!(creds) :
               load_ecs_credentials!(creds)
           end
-          # Set underlying attributes
-          data.replace(creds)
           true
         end
 
