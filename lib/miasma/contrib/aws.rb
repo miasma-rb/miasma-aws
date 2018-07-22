@@ -817,8 +817,8 @@ module Miasma
         # @param args [Hash] overrides to check instead of instance values
         # @return [TrueClass, FalseClass]
         def sts_attribute_update_required?(key, expiry_key, args = {})
-          if args.fetch(key, attributes[key])
-            expiry = args.fetch(expiry_key, attributes[expiry_key])
+          if args.to_smash.fetch(key, attributes[key])
+            expiry = args.to_smash.fetch(expiry_key, attributes[expiry_key])
             expiry.nil? || expiry - self.class.const_get(:STS_TOKEN_EXPIRY_BUFFER) <= Time.now
           else
             false
