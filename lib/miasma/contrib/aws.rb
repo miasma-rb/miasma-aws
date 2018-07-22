@@ -395,6 +395,8 @@ module Miasma
           klass.const_set(
             :ECS_TASK_PROFILE_PATH, ENV["AWS_CONTAINER_CREDENTIALS_RELATIVE_URI"]
           )
+          # Reload sts tokens if expiry is within the next 10 minutes
+          klass.const_set(:STS_TOKEN_EXPIRY_BUFFER, 600)
         end
 
         # Build new API for specified type using current provider / creds
@@ -799,7 +801,7 @@ module Miasma
         def sts_assume_role_update_required?(args = {})
           if args.fetch(:aws_sts_role_arn, attributes[:aws_sts_role_arn])
             expiry = args.fetch(:aws_sts_token_expires, attributes[:aws_sts_token_expires])
-            expiry.nil? || expiry - 15 <= Time.now
+            expiry.nil? || expiry - self.class.const_get(:STS_TOKEN_EXPIRY_BUFFER) <= Time.now
           else
             false
           end
@@ -814,7 +816,7 @@ module Miasma
               :aws_sts_session_token_expires,
               attributes[:aws_sts_session_token_expires]
             )
-            expiry.nil? || expiry - 15 <= Time.now
+            expiry.nil? || expiry - self.class.const_get(:STS_TOKEN_EXPIRY_BUFFER) <= Time.now
           else
             false
           end
