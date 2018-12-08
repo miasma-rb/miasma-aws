@@ -56,6 +56,8 @@ module Miasma
 
       # HMAC helper class
       class Hmac
+        include Bogo::Logger::Helpers
+        logger_name("aws.hmac")
 
         # @return [OpenSSL::Digest]
         attr_reader :digest
@@ -82,6 +84,7 @@ module Miasma
         # @param content [String] content to digest
         # @return [String] hashed result
         def hexdigest_of(content)
+          logger.debug("generating hexdigest for `#{content.inspect}`")
           digest << content
           hash = digest.hexdigest
           digest.reset
@@ -94,11 +97,17 @@ module Miasma
         # @param key_override [Object]
         # @return [Object] signature
         def sign(data, key_override = nil)
-          s_key = key_override || key
-          if s_key.nil?
-            raise ArgumentError.new("No key provided for signing data")
+          logger.debug("signing data `#{data.inspect}`")
+          s_key = key
+          if key_override
+            logger.debug("using key override for signing")
+            s_key = key_override
           end
-          result = OpenSSL::HMAC.digest(digest, key_override || key, data.to_s)
+          if s_key.nil?
+            logger.error("no key provided to sign")
+            raise ArgumentError, "No key provided for signing data"
+          end
+          result = OpenSSL::HMAC.digest(digest, s_key, data.to_s)
           digest.reset
           result
         end
@@ -109,6 +118,7 @@ module Miasma
         # @param key_override [Object]
         # @return [String] hex encoded signature
         def hex_sign(data, key_override = nil)
+          logger.debug("hex signing data `#{data.inspect}`")
           result = OpenSSL::HMAC.hexdigest(digest, key_override || key, data)
           digest.reset
           result
@@ -120,7 +130,7 @@ module Miasma
 
         # Create new instance
         def initialize(*args)
-          raise NotImplementedError.new "This class should not be used directly!"
+          raise NotImplementedError, "This class should not be used directly!"
         end
 
         # Generate the signature
@@ -146,6 +156,8 @@ module Miasma
 
       # AWS signature version 4
       class SignatureV4 < Signature
+        include Bogo::Logger::Helpers
+        logger_name("aws.signature4")
 
         # @return [Hmac]
         attr_reader :hmac
@@ -201,6 +213,7 @@ module Miasma
             opts.merge(:body => "UNSIGNED-PAYLOAD")
           )
           params = opts[:params].merge("X-Amz-Signature" => signature)
+          logger.debug("url generation parameters `#{params.inspect}`")
           "https://#{opts[:headers]["Host"]}/#{path}?#{canonical_query(params)}"
         end
 
@@ -219,6 +232,7 @@ module Miasma
               can_req = build_canonical_request(http_method, path, opts)
             ),
           ].join("\n")
+          logger.debug("generating signature for `#{to_sign.inspect}`")
           signature = sign_request(to_sign)
         end
 
@@ -240,7 +254,9 @@ module Miasma
               )
             )
           )
-          hmac.hex_sign(request, key)
+          signature = hmac.hex_sign(request, key)
+          logger.debug("generated signature `#{signature.inspect}`")
+          signature
         end
 
         # @return [String] signature algorithm
@@ -405,6 +421,7 @@ module Miasma
         # @return [Api]
         def api_for(type)
           memoize(type) do
+            logger.debug("building API for type `#{type}`")
             creds = attributes.dup
             creds.delete(:aws_host)
             Miasma.api(
@@ -423,6 +440,7 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def custom_setup(creds)
+          logger.debug("running custom setup configuration updates")
           cred_file = load_aws_file(creds.fetch(
             :aws_credentials_file, aws_credentials_file
           ))
@@ -434,6 +452,7 @@ module Miasma
           profile_list = [profile].compact
           new_config_creds = Smash.new
           while profile
+            logger.debug("loading aws configuration profile: #{profile}")
             new_config_creds = config_file.fetch(profile, Smash.new).merge(
               new_config_creds
             )
@@ -446,6 +465,7 @@ module Miasma
           # Load any configuration available from the creds file
           new_creds = Smash.new
           profile_list.each do |profile|
+            logger.debug("loading aws credentials profile: #{profile}")
             new_creds = cred_file.fetch(profile, Smash.new).merge(
               new_creds
             )
@@ -475,6 +495,7 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def after_setup(creds)
+          logger.debug("running after setup configuration updates")
           skip = self.class.attributes.keys.map(&:to_s)
           creds.each do |k, v|
             k = k.to_s
@@ -489,6 +510,7 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def load_instance_credentials!(creds)
+          logger.debug("loading instance credentials")
           role = HTTP.get(
             [
               self.class.const_get(:INSTANCE_PROFILE_HOST),
@@ -506,7 +528,8 @@ module Miasma
           unless data.is_a?(Hash)
             begin
               data = MultiJson.load(data.to_s)
-            rescue MultiJson::ParseError
+            rescue MultiJson::ParseError => err
+              logger.debug("failed to parse instance credentials - #{err}")
               data = {}
             end
           end
@@ -522,6 +545,7 @@ module Miasma
         # @param creds [Hash]
         # @return [TrueClass]
         def load_ecs_credentials!(creds)
+          logger.debug("loading ECS credentials")
           # As per docs ECS_TASK_PROFILE_PATH is defined as
           # /credential_provider_version/credentials?id=task_UUID
           # where AWS fills in the version and UUID.
@@ -535,7 +559,8 @@ module Miasma
           unless data.is_a?(Hash)
             begin
               data = MultiJson.load(data.to_s)
-            rescue MultiJson::ParseError
+            rescue MultiJson::ParseError => err
+              logger.debug("failed to parse ECS credentials - #{err}")
               data = {}
             end
           end
@@ -564,6 +589,7 @@ module Miasma
         #
         # @return [String]
         def get_region
+          logger.debug("fetching region from meta-data service")
           az = HTTP.get(
             [
               self.class.const_get(:INSTANCE_PROFILE_HOST),
@@ -571,11 +597,13 @@ module Miasma
             ].join("/")
           ).body.to_s.strip
           az.sub!(/[a-zA-Z]+$/, "")
+          logger.debug("region from meta-data service: #{az}")
           az
         end
 
         def sts_mfa_session!(creds)
           if sts_mfa_session_update_required?(creds)
+            logger.debug("loading STS MFA session")
             sts = Miasma::Contrib::Aws::Api::Sts.new(
               :aws_access_key_id => creds[:aws_access_key_id],
               :aws_secret_access_key => creds[:aws_secret_access_key],
@@ -603,6 +631,7 @@ module Miasma
         # @return [TrueClass]
         def sts_assume_role!(creds)
           if sts_assume_role_update_required?(creds)
+            logger.debug("loading STS assume role")
             sts = Miasma::Contrib::Aws::Api::Sts.new(
               :aws_access_key_id => get_credential(:access_key_id, creds),
               :aws_secret_access_key => get_credential(:secret_access_key, creds),
@@ -630,6 +659,7 @@ module Miasma
         # @return [Smash]
         def load_aws_file(file_path)
           if File.exist?(file_path)
+            logger.debug("loading aws file @ #{file_path}")
             Smash.new.tap do |creds|
               key = :default
               File.readlines(file_path).each_with_index do |line, idx|
@@ -637,18 +667,16 @@ module Miasma
                 next if line.empty? || line.start_with?("#")
                 if line.start_with?("[")
                   unless line.end_with?("]")
-                    raise ArgumentError.new(
+                    raise ArgumentError,
                       "Failed to parse aws file! (#{file_path} line #{idx + 1})"
-                    )
                   end
                   key = line.tr("[]", "").strip.sub(/^profile /, "")
                   creds[key] = Smash.new
                 else
                   unless key
-                    raise ArgumentError.new(
+                    raise ArgumentError,
                       "Failed to parse aws file! (#{file_path} line #{idx + 1}) " \
                       "- No section defined!"
-                    )
                   end
                   line_args = line.split("=", 2).map(&:strip)
                   line_args.first.replace(
@@ -658,18 +686,16 @@ module Miasma
                   )
                   if line_args.last.start_with?('"')
                     unless line_args.last.end_with?('"')
-                      raise ArgumentError.new(
+                      raise ArgumentError,
                         "Failed to parse aws file! (#{file_path} line #{idx + 1})"
-                      )
                     end
                     line_args.last.replace(line_args.last[1..-2]) # NOTE: strip quoted values
                   end
                   begin
                     creds[key].merge!(Smash[*line_args])
                   rescue => e
-                    raise ArgumentError.new(
+                    raise ArgumentError,
                       "Failed to parse aws file! (#{file_path} line #{idx + 1})"
-                    )
                   end
                 end
               end
@@ -760,6 +786,7 @@ module Miasma
         # @param request_args [Array]
         # @return [HTTP::Response]
         def make_request(connection, http_method, request_args)
+          logger.debug("making #{http_method.to_s.upcase} request - #{request_args.inspect}")
           dest, options = request_args
           path = URI.parse(dest).path
           options = options ? options.to_smash : Smash.new

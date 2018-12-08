@@ -6,6 +6,9 @@ module Miasma
       # AWS Orchestration API
       class Aws < Orchestration
 
+        include Bogo::Logger::Helpers
+        logger_name("aws.orchestration")
+
         # Extended stack model to provide AWS specific stack options
         class Stack < Orchestration::Stack
           attribute :stack_policy_body, Hash, :coerce => lambda { |v| MultiJson.load(v).to_smash }
@@ -26,7 +29,7 @@ module Miasma
           "DELETE_IN_PROGRESS", "ROLLBACK_COMPLETE", "ROLLBACK_FAILED", "ROLLBACK_IN_PROGRESS",
           "UPDATE_COMPLETE", "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS", "UPDATE_IN_PROGRESS",
           "UPDATE_ROLLBACK_COMPLETE", "UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS", "UPDATE_ROLLBACK_FAILED",
-          "UPDATE_ROLLBACK_IN_PROGRESS",
+          "UPDATE_ROLLBACK_IN_PROGRESS", "REVIEW_IN_PROGRESS",
         ].map(&:freeze).freeze
 
         include Contrib::AwsApiCore::ApiCommon
@@ -59,10 +62,16 @@ module Miasma
         def load_stack_data(stack = nil)
           d_params = Smash.new("Action" => "DescribeStacks")
           l_params = Smash.new("Action" => "ListStacks")
-          STACK_STATES.each_with_index do |state, idx|
-            l_params["StackStatusFilter.member.#{idx + 1}"] = state.to_s.upcase
-          end
+          # TODO: Disable state filtering so we get entire list of defined
+          #       stacks. Allowing filtering would be ideal but need a generic
+          #       way to pass it through. This current filter setup imposes
+          #       list restrictions when new states are added that is less than
+          #       ideal
+          # STACK_STATES.each_with_index do |state, idx|
+          #   l_params["StackStatusFilter.member.#{idx + 1}"] = state.to_s.upcase
+          # end
           if stack
+            logger.debug("loading stack information for `#{stack.id}`")
             d_params["StackName"] = stack.id
             descriptions = all_result_pages(nil, :body,
                                             "DescribeStacksResponse", "DescribeStacksResult",
@@ -74,6 +83,7 @@ module Miasma
               )
             end
           else
+            logger.debug("loading stack listing information")
             lists = all_result_pages(nil, :body,
                                      "ListStacksResponse", "ListStacksResult",
                                      "StackSummaries", "member") do |options|
@@ -140,6 +150,8 @@ module Miasma
                 :stack_policy_url => stk["StackPolicyURL"],
               ),
             ).valid_state
+            logger.debug("loaded stack information `#{new_stack.inspect}`")
+            new_stack
           end
         end
 
@@ -148,6 +160,7 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Models::Orchestration::Stack]
         def stack_save(stack)
+          logger.debug("saving stack information `#{stack.inspect}`")
           params = common_stack_params(stack)
           if stack.custom[:stack_policy_body]
             params["StackPolicyBody"] = MultiJson.dump(stack.custom[:stack_policy_body])
@@ -193,8 +206,16 @@ module Miasma
         # @todo Needs to include the rolearn and resourcetypes
         #       at some point but more thought on how to integrate
         def stack_plan(stack)
+          logger.debug("generating plan for stack `#{stack.id}`")
           params = common_stack_params(stack)
           plan_name = changeset_name(stack)
+          if stack.persisted? && stack.state != :unknown
+            logger.debug("plan will update stack")
+            changeset_type = "UPDATE"
+          else
+            logger.debug("plan will create stack")
+            changeset_type = "CREATE"
+          end
           result = request(
             :path => "/",
             :method => :post,
@@ -202,7 +223,7 @@ module Miasma
               "Action" => "CreateChangeSet",
               "ChangeSetName" => plan_name,
               "StackName" => stack.name,
-              "ChangeSetType" => stack.persisted? ? "UPDATE" : "CREATE",
+              "ChangeSetType" => changeset_type,
             )),
           )
           stack.reload
@@ -229,6 +250,7 @@ module Miasma
               plan.name = changeset_name(stack)
             end
           end
+          logger.debug("loading plan `#{plan.name}` for stack `#{stack.id}`")
           result = nil
           Bogo::Retry.build(:linear, max_attempts: 10, wait_interval: 5, ui: Bogo::Ui.new) do
             begin
@@ -244,16 +266,19 @@ module Miasma
             rescue Error::ApiError::RequestError => e
               # Plan does not exist
               if e.response.code == 404
+                logger.warn("plan `#{plan.name}` does not exist for stack `#{stack.id}`")
                 return nil
               end
               # Stack does not exist
               if e.response.code == 400 && e.message.include?("ValidationError: Stack")
+                logger.warn("stack `#{stack.id}` does not exist")
                 return nil
               end
               raise
             end
             status = result.get(:body, "DescribeChangeSetResponse", "DescribeChangeSetResult", "ExecutionStatus")
             if status != "AVAILABLE"
+              logger.debug("plan `#{plan.name}` is not available (status: `#{status}`)")
               raise "Plan execution is not yet available"
             end
           end.run!
@@ -326,10 +351,12 @@ module Miasma
             stack.id = plan.custom[:stack_id]
             stack.valid_state
           end
+          logger.debug("plan `#{plan.name}` loaded for stack `#{stack.id}` - `#{plan.inspect}`")
           stack.plan = plan.valid_state
         end
 
         def stack_plan_template(plan, state)
+          logger.debug("loading template for plan `#{plan.name}`")
           result = request(
             :path => "/",
             :method => :post,
@@ -347,6 +374,7 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Models::Orchestration::Stack]
         def stack_plan_destroy(stack)
+          logger.debug("deleting plan `#{stack.plan.id}` for stack `#{stack.id}`")
           request(
             :path => "/",
             :method => :post,
@@ -365,6 +393,7 @@ module Miasma
         # @param stack [Model::Orchestration::Stack]
         # @return [Model::Orchestration::Stack]
         def stack_plan_execute(stack)
+          logger.debug("applying plan `#{stack.plan.id}` to stack `#{stack.id}`")
           request(
             :path => "/",
             :method => :post,
@@ -382,6 +411,7 @@ module Miasma
         # @param plan [Model::Orchestration::Stack::Plan]
         # @return [Model::Orchestration::Stack::Plan]
         def stack_plan_reload(plan)
+          logger.debug("reloading plan `#{plan.id}`")
           if plan.stack.plan == plan
             stack_plan_load(plan.stack)
           else
@@ -398,6 +428,7 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Array<Models::Orchestration::Stack::Plan>]
         def stack_plan_all(stack)
+          logger.debug("loading all plans for stack `#{stack.id}`")
           all_result_pages(nil, :body,
                            "ListChangeSetsResponse", "ListChangeSetsResult",
                            "Summaries", "member") do |options|
@@ -437,6 +468,7 @@ module Miasma
         # @param stack [Models::Orchestration::Stack]
         # @return [Models::Orchestration::Stack]
         def stack_reload(stack)
+          logger.debug("reloading stack `#{stack.id}`")
           if stack.persisted?
             ustack = Stack.new(self)
             ustack.id = stack.id
@@ -458,6 +490,7 @@ module Miasma
         # @return [TrueClass, FalseClass]
         def stack_destroy(stack)
           if stack.persisted?
+            logger.debug("deleting stack `#{stack.id}`")
             request(
               :method => :post,
               :path => "/",
@@ -468,6 +501,7 @@ module Miasma
             )
             true
           else
+            logger.debug("stack not persisted. delete is no-op `#{stack.name}`")
             false
           end
         end
@@ -478,6 +512,7 @@ module Miasma
         # @return [Smash] stack template
         def stack_template_load(stack)
           if stack.persisted?
+            logger.debug("loading template for stack `#{stack.id}`")
             result = request(
               :method => :post,
               :path => "/",
@@ -489,6 +524,7 @@ module Miasma
             template = result.get(:body, "GetTemplateResponse", "GetTemplateResult", "TemplateBody")
             template.nil? ? Smash.new : MultiJson.load(template)
           else
+            logger.debug("no template for non-persisted stack `#{stack.name}`")
             Smash.new
           end
         end
@@ -513,6 +549,7 @@ module Miasma
             )
             nil
           rescue Error::ApiError::RequestError => e
+            logger.error("template validate error - #{e.response.body}")
             MultiXml.parse(e.response.body.to_s).to_smash.get(
               "ErrorResponse", "Error", "Message"
             )
