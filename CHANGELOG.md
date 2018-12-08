@@ -1,3 +1,7 @@
+# v0.3.24
+* [enhancement] Add logging output to generic and orchestration
+* [fix] Attribute access for sts update check
+
 # v0.3.22
 * [fix] Resolve configuration loading issues (#58)
 * [enhancement] Update token refresh to within 10m of expiry (#59)
