@@ -6,6 +6,10 @@ describe Miasma::Contrib::AwsApiCore::ApiCommon do
       include Bogo::Lazy
       include Miasma::Contrib::AwsApiCore::ApiCommon
 
+      def self.name
+        "MiasmaTest"
+      end
+
       def initialize(args = {})
         custom_setup(args)
         load_data(args)

@@ -359,6 +359,7 @@ module Miasma
       module ApiCommon
         def self.included(klass)
           klass.class_eval do
+            include Bogo::Logger::Helpers
             attribute :aws_profile_name, [FalseClass, String], :default => ENV.fetch("AWS_PROFILE", "default")
             attribute :aws_sts_token, String
             attribute :aws_sts_role_arn, String

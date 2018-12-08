@@ -5,7 +5,6 @@ module Miasma
     class Orchestration
       # AWS Orchestration API
       class Aws < Orchestration
-
         include Bogo::Logger::Helpers
         logger_name("aws.orchestration")
 
