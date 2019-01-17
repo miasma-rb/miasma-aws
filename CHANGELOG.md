@@ -1,3 +1,6 @@
+# v0.3.26
+* [fix] Re-apply default stack state filtering on listing
+
 # v0.3.24
 * [enhancement] Add logging output to generic and orchestration
 * [fix] Attribute access for sts update check
