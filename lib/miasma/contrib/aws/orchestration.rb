@@ -61,14 +61,13 @@ module Miasma
         def load_stack_data(stack = nil)
           d_params = Smash.new("Action" => "DescribeStacks")
           l_params = Smash.new("Action" => "ListStacks")
-          # TODO: Disable state filtering so we get entire list of defined
-          #       stacks. Allowing filtering would be ideal but need a generic
-          #       way to pass it through. This current filter setup imposes
-          #       list restrictions when new states are added that is less than
-          #       ideal
-          # STACK_STATES.each_with_index do |state, idx|
-          #   l_params["StackStatusFilter.member.#{idx + 1}"] = state.to_s.upcase
-          # end
+          # TODO: Need to update to allow passing in list of desired
+          #       states for lookup or to remove state filtering. This
+          #       used to work with earlier versions with sfn but something
+          #       has changed breaking the integration.
+          STACK_STATES.each_with_index do |state, idx|
+            l_params["StackStatusFilter.member.#{idx + 1}"] = state.to_s.upcase
+          end
           if stack
             logger.debug("loading stack information for `#{stack.id}`")
             d_params["StackName"] = stack.id
