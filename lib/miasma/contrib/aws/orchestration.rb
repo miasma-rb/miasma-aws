@@ -663,7 +663,7 @@ module Miasma
               :resource_state => event["ResourceStatus"].downcase.to_sym,
               :resource_status => event["ResourceStatus"],
               :resource_status_reason => event["ResourceStatusReason"],
-              :time => Time.parse(event["Timestamp"]),
+              :time => Time.parse(event["Timestamp"]).localtime,
             ).valid_state
           end
           if evt_id
