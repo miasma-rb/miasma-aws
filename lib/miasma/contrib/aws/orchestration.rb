@@ -52,6 +52,10 @@ module Miasma
             :api => :orchestration,
             :collection => :stacks,
           ),
+          "AWS::S3::Bucket" => Smash.new(
+            :api => :storage,
+            :collection => :buckets,
+          ),
         ).to_smash(:freeze)
 
         # Fetch stacks or update provided stack data
