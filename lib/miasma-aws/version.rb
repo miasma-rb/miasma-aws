@@ -1,4 +1,4 @@
 module MiasmaAws
   # Current library version
-  VERSION = Gem::Version.new("0.3.27")
+  VERSION = Gem::Version.new("0.3.28")
 end

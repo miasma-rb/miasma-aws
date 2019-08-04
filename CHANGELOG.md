@@ -1,3 +1,7 @@
+# v3.2.28
+* [enhancement] Output event timestamps in local time
+* [enhancement] Add storage resource mapping
+
 # v0.3.26
 * [fix] Re-apply default stack state filtering on listing
 
