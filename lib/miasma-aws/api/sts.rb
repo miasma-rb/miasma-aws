@@ -54,6 +54,7 @@ module Miasma
               params["RoleArn"] = role_arn
               params["RoleSessionName"] = args[:session_name] || SecureRandom.uuid.tr("-", "")
               params["ExternalId"] = args[:external_id] if args[:external_id]
+              params["DurationSeconds"] = args[:duration] if args[:duration]
             end
             result = request(
               :path => "/",
