@@ -46,6 +46,7 @@ Miasma.api(
 * `aws_sts_session_token` - MFA related session token
 * `aws_sts_session_token_code` - Six digit code from MFA device
 * `aws_sts_mfa_serial_number` - Serial number or ARN of MFA device
+* `aws_sts_duration` - Specify duration of validity for token
 
 ### S3 related attributes
 
