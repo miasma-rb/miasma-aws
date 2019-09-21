@@ -1,3 +1,6 @@
+# v3.2.30
+* [enhancement] Add duration option for sts token
+
 # v3.2.28
 * [enhancement] Output event timestamps in local time
 * [enhancement] Add storage resource mapping
